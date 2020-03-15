@@ -6,5 +6,5 @@ Created for the COMP 3005 course at Carleton University. Winter 2020.
 
 ## Current ER Diagram
 <p style="text-align:right">
-<img src="ER Diagram/ER Diagram - Project - COMP3005.pdf" alt="ER Diagram">
+<img src="ER Diagram/ER Diagram - Project - COMP3005.png" alt="ER Diagram">
 </p>
