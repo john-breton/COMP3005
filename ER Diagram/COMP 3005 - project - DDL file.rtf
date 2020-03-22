@@ -1,0 +1,130 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2511
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fnil\fcharset0 Menlo-Regular;}
+{\colortbl;\red255\green255\blue255;\red17\green127\blue28;\red0\green0\blue0;\red22\green23\blue255;
+\red15\green0\blue170;\red175\green24\blue28;}
+{\*\expandedcolortbl;;\cssrgb\c0\c55686\c14510;\csgray\c0;\cssrgb\c11765\c23529\c100000;
+\cssrgb\c7843\c11765\c72549;\cssrgb\c74902\c16863\c14118;}
+\margl1440\margr1440\vieww10860\viewh20700\viewkind0
+\deftab577
+\pard\pardeftab577\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf2 -- Schema \cf3 \
+\
+\pard\pardeftab577\pardirnatural\partightenfactor0
+\cf4 CREATE\cf3  \cf5 schema\cf3  project;\
+\
+\pard\pardeftab577\pardirnatural\partightenfactor0
+\cf2 -- Entities\cf3 \
+\
+\pard\pardeftab577\pardirnatural\partightenfactor0
+\cf4 CREATE\cf3  \cf4 TABLE\cf3  project.\cf4 user\cf3  (\
+    user_name \cf5 character\cf3  \cf5 varying\cf3 (16) \cf4 PRIMARY\cf3  \cf5 KEY\cf3 ,\
+    \cf5 password\cf3  \cf5 character\cf3  \cf5 varying\cf3 (16),\
+    first_name \cf5 character\cf3  \cf5 varying\cf3 (10),\
+    last_name \cf5 character\cf3  \cf5 varying\cf3 (20),\
+    email \cf5 character\cf3  \cf5 varying\cf3 (30),\
+    shipping_add \cf5 character\cf3  \cf5 varying\cf3 (4),\
+    billing_add \cf5 character\cf3  \cf5 varying\cf3 (4)\
+);\
+\
+\cf4 CREATE\cf3  \cf4 TABLE\cf3  project.address (\
+    add_id \cf5 character\cf3  \cf5 varying\cf3 (4) \cf4 PRIMARY\cf3  \cf5 KEY\cf3 ,\
+    street_num \cf5 numeric\cf3 (6,0),\
+    street_name \cf5 character\cf3  \cf5 varying\cf3 (20),\
+    apartment \cf5 character\cf3  \cf5 varying\cf3 (6),\
+    city \cf5 character\cf3  \cf5 varying\cf3 (20),\
+    province \cf5 character\cf3  \cf5 varying\cf3 (20),\
+    country \cf5 character\cf3  \cf5 varying\cf3 (20),\
+    postal_code \cf5 character\cf3  \cf5 varying\cf3 (6)\
+);\
+\
+\cf4 CREATE\cf3  \cf4 TABLE\cf3  project.librarian (\
+    user_name \cf5 character\cf3  \cf5 varying\cf3 (16) \cf4 REFERENCES\cf3  project.\cf4 user\cf3 (user_name) \cf4 PRIMARY\cf3  \cf5 KEY\cf3 ,\
+    salary \cf5 numeric\cf3 (8,2)\
+);\
+\
+\cf4 CREATE\cf3  \cf4 TABLE\cf3  project.publisher (\
+    pub_id \cf5 character\cf3  \cf5 varying\cf3 (6) \cf4 PRIMARY\cf3  \cf5 KEY\cf3 ,\
+    \cf5 name\cf3  \cf5 character\cf3  \cf5 varying\cf3 (20),\
+    address \cf5 character\cf3  \cf5 varying\cf3 (4),\
+    email_add \cf5 character\cf3  \cf5 varying\cf3 (30),\
+    phone_num \cf5 numeric\cf3 (10,0),\
+    bank_acc \cf5 numeric\cf3 (15,0)\
+);\
+\
+\cf4 CREATE\cf3  \cf4 TABLE\cf3  project.book (\
+    isbn \cf5 numeric\cf3 (13,0) \cf4 PRIMARY\cf3  \cf5 KEY\cf3 ,\
+    \cf5 name\cf3  \cf5 character\cf3  \cf5 varying\cf3 (30),\
+    \cf5 version\cf3  \cf5 numeric\cf3 (2,0),\
+    genre \cf5 character\cf3  \cf5 varying\cf3 (10),\
+    num_pages \cf5 numeric\cf3 (4,0),\
+    price \cf5 numeric\cf3 (5,2),\
+    royalty \cf5 numeric\cf3 (3,1),\
+    stock \cf5 integer\cf3 \
+);\
+\
+\cf4 CREATE\cf3  \cf4 TABLE\cf3  project.basket (\
+    basket_id \cf5 numeric\cf3 (8,0) \cf4 PRIMARY\cf3  \cf5 KEY\cf3 \
+);\
+\
+\cf4 CREATE\cf3  \cf4 TABLE\cf3  project.author (\
+    auth_id \cf5 character\cf3  \cf5 varying\cf3 (6) \cf4 PRIMARY\cf3  \cf5 KEY\cf3 ,\
+    first_name \cf5 character\cf3  \cf5 varying\cf3 (10),\
+    last_name \cf5 character\cf3  \cf5 varying\cf3 (20)\
+);\
+\
+\cf4 CREATE\cf3  \cf4 TABLE\cf3  project.\cf4 order\cf3  (\
+    order_num \cf5 numeric\cf3 (8,0) \cf4 PRIMARY\cf3  \cf5 KEY\cf3 ,\
+    tracking_num \cf5 numeric\cf3 (16,0),\
+    date_placed \cf5 timestamp\cf3  \cf5 without\cf3  \cf5 time\cf3  \cf5 zone\cf3 ,\
+    total_price \cf5 numeric\cf3 (6,2)\
+);\
+\
+\pard\pardeftab577\pardirnatural\partightenfactor0
+\cf2 -- Relations\cf3 \
+\
+\pard\pardeftab577\pardirnatural\partightenfactor0
+\cf4 CREATE\cf3  \cf4 TABLE\cf3  project.\cf6 "hasAdd"\cf3  (\
+    user_name \cf5 character\cf3  \cf5 varying\cf3 (16) \cf4 REFERENCES\cf3  project.\cf4 user\cf3 (user_name),\
+    add_id \cf5 character\cf3  \cf5 varying\cf3 (4) \cf4 REFERENCES\cf3  project.address(add_id),\
+    isshipping \cf5 boolean\cf3  \cf4 NOT\cf3  \cf4 NULL\cf3  \cf4 UNIQUE\cf3 ,\
+    isbilling \cf5 boolean\cf3  \cf4 NOT\cf3  \cf4 NULL\cf3  \cf4 UNIQUE\cf3 ,\
+    \cf4 CONSTRAINT\cf3  hasadd_pkey \cf4 PRIMARY\cf3  \cf5 KEY\cf3  (user_name, add_id)\
+);\
+\
+\cf4 CREATE\cf3  \cf4 TABLE\cf3  project.pubadd (\
+    add_id \cf5 character\cf3  \cf5 varying\cf3 (4) \cf4 REFERENCES\cf3  project.address(add_id),\
+    pub_id \cf5 character\cf3  \cf5 varying\cf3 (6) \cf4 REFERENCES\cf3  project.publisher(pub_id) \cf4 UNIQUE\cf3 ,\
+    \cf4 CONSTRAINT\cf3  pubadd_pkey \cf4 PRIMARY\cf3  \cf5 KEY\cf3  (add_id, pub_id)\
+);\
+\
+\cf4 CREATE\cf3  \cf4 TABLE\cf3  project.publishes (\
+    pub_id \cf5 character\cf3  \cf5 varying\cf3 (6) \cf4 REFERENCES\cf3  project.publisher(pub_id),\
+    isbn \cf5 numeric\cf3 (13,0) \cf4 REFERENCES\cf3  project.book(isbn),\
+    \cf5 year\cf3  \cf5 numeric\cf3 (4,0),\
+    \cf4 CONSTRAINT\cf3  publishes_pkey \cf4 PRIMARY\cf3  \cf5 KEY\cf3  (pub_id, isbn)\
+);\
+\
+\cf4 CREATE\cf3  \cf4 TABLE\cf3  project.writes (\
+    auth_id \cf5 character\cf3  \cf5 varying\cf3 (6) \cf4 REFERENCES\cf3  project.author(auth_id),\
+    isbn \cf5 numeric\cf3 (13,0) \cf4 REFERENCES\cf3  project.book(isbn)\
+);\
+\
+\cf4 CREATE\cf3  \cf4 TABLE\cf3  project.bask_item (\
+    basket_id \cf5 numeric\cf3 (8,0) \cf4 REFERENCES\cf3  project.basket(basket_id),\
+    isbn \cf5 numeric\cf3 (13,0) \cf4 REFERENCES\cf3  project.book(isbn),\
+    quantity \cf5 integer\cf3 ,\
+    \cf4 CONSTRAINT\cf3  bask_item_pkey \cf4 PRIMARY\cf3  \cf5 KEY\cf3  (basket_id, isbn)\
+);\
+\
+\cf4 CREATE\cf3  \cf4 TABLE\cf3  project.bask_manage (\
+    user_name \cf5 character\cf3  \cf5 varying\cf3 (16) \cf4 REFERENCES\cf3  project.\cf4 user\cf3 (user_name),\
+    basket_id \cf5 numeric\cf3 (8,0) \cf4 REFERENCES\cf3  project.basket(basket_id),\
+    \cf4 CONSTRAINT\cf3  bask_manage_pkey \cf4 PRIMARY\cf3  \cf5 KEY\cf3  (user_name, basket_id)\
+);\
+\
+\cf4 CREATE\cf3  \cf4 TABLE\cf3  project.checkout (\
+    basket_id \cf5 numeric\cf3 (8,0) \cf4 REFERENCES\cf3  project.basket(basket_id),\
+    order_num \cf5 numeric\cf3 (8,0) \cf4 REFERENCES\cf3  project.\cf4 order\cf3 (order_num),\
+    \cf4 CONSTRAINT\cf3  checkout_pkey \cf4 PRIMARY\cf3  \cf5 KEY\cf3  (basket_id, order_num)\
+);}
