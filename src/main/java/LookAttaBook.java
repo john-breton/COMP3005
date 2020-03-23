@@ -1,9 +1,19 @@
 import javax.swing.*;
+import javax.swing.plaf.ColorUIResource;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+/**
+ * The LookAttaBook class represents the front-end for the LookInnaBook application.
+ * Users and admins interact with a GUI to register and login into their respective
+ * application screens.
+ *
+ * @author Ryan Godfrey, John Breton
+ * @version 1.0
+ */
 public class LookAttaBook extends LookForaBook implements ActionListener {
+    private static final ImageIcon WINDOW_ICON = new ImageIcon(new ImageIcon(Thread.currentThread().getContextClassLoader().getResource("logo.png")).getImage());
     final JFrame f = new JFrame("LookInnaBook");
     final Container c = f.getContentPane();
 
@@ -12,53 +22,77 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
     private final JPasswordField passwordField = new JPasswordField(15);
 
     public LookAttaBook() {
+        // If you want to disable dark mode, this is the code for it. You can just remove it.
+        // I haven't decided if it even looks good yet.
+        // I decided I don't like it.
+//        try {
+//            UIManager.setLookAndFeel("com.jtattoo.plaf.noire.NoireLookAndFeel");
+//        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException
+//                | UnsupportedLookAndFeelException e) {
+//            e.printStackTrace();
+//        }
+        f.setIconImage(WINDOW_ICON.getImage());
+        UIManager.getLookAndFeelDefaults().put("Button.focus", new ColorUIResource(new Color(0, 0, 0, 0)));
         loginScreen();
     }
 
     /**
-     * Displays a screen for users to login. VERY basic right now
+     * Displays a screen for users to login. Minimalistic by design.
      */
-    public void loginScreen() {
-        // clear GUI to load new contents
+    private void loginScreen() {
+        // Clear GUI to load new contents
         // seriously inefficient, but I'm lazy
+        // Nah this works well.
         f.setPreferredSize(new Dimension(300, 300));
         f.setLocationRelativeTo(null);
         c.removeAll();
         c.setLayout(new BoxLayout(c, BoxLayout.PAGE_AXIS));
 
-        // Login Page
-        JPanel mainLoginPage = new JPanel();
-        mainLoginPage.setLayout(new BoxLayout(mainLoginPage, BoxLayout.PAGE_AXIS));
-
+        /* Component declarations */
+        // JButtons
         JButton loginButton = new JButton("Login");
         JButton registerButton = new JButton("Register");
+
+        // JLabels
         JLabel usernameLabel = new JLabel("Username: ");
         JLabel passwordLabel = new JLabel("Password: ");
 
-        // username panel
+        // JPanels
+        JPanel mainLoginPage = new JPanel();
         JPanel usernamePanel = new JPanel();
+        JPanel passwordPanel = new JPanel();
+        JPanel loginPanel = new JPanel();
+
+
+        /* Component setup */
+        // JButton formatting
+        loginButton.setBackground(Color.WHITE);
+        registerButton.setBackground(Color.WHITE);
+
+        // Login Page
+        mainLoginPage.setLayout(new BoxLayout(mainLoginPage, BoxLayout.PAGE_AXIS));
+
+        // Username panel
         usernamePanel.setMaximumSize(new Dimension(300, 20));
         usernamePanel.add(usernameLabel);
         usernamePanel.add(usernameField);
 
-        // password panel
-        JPanel passwordPanel = new JPanel();
+        // Password panel
         passwordPanel.setMaximumSize(new Dimension(300, 20));
         passwordPanel.add(passwordLabel);
         passwordPanel.add(passwordField);
 
-        // login options
-        JPanel loginPanel = new JPanel();
+        // Login options
         loginPanel.setMinimumSize(new Dimension(300, 20));
         loginPanel.add(loginSuccess);
         loginPanel.add(registerButton);
         loginPanel.add(loginButton);
 
-        // setup ActionListeners
+        // Setup ActionListeners
         loginButton.addActionListener(this);
         registerButton.addActionListener(this);
 
-        // add to page
+        // Add to page
         mainLoginPage.add(Box.createVerticalGlue());
         mainLoginPage.add(usernamePanel);
         mainLoginPage.add(passwordPanel);
@@ -77,25 +111,22 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
      * Display the screen for registration of a new customer.
      */
     private void regScreen() {
-        // clear GUI in order to reload
+        // Clear GUI in order to reload
         // seriously inefficient, but I'm lazy
+        // Just tell them to get faster computers.
         f.setSize(new Dimension(600, 750));
         f.setLocationRelativeTo(null);
         c.removeAll();
 
-        // Registration Page
-        JPanel regPage = new JPanel();
-        regPage.setLayout(new GridBagLayout());
-        GridBagConstraints con = new GridBagConstraints();
-
-        // user info labels/ text fields
-        JLabel newUsernameLabel = new JLabel("*Username: ");
-        JLabel newPasswordLabel = new JLabel("*Password: ");
-        JLabel confirmPasswordLabel = new JLabel("*Confirm Password: ");
-        JLabel firstNameLabel = new JLabel("*First Name: ");
-        JLabel lastNameLabel = new JLabel("*Last Name: ");
-        JLabel emailLabel = new JLabel("*Email: ");
-
+        /* Component declarations */
+        // JTextFields
+        JTextField billStreetNumTF = new JTextField(20), shipStreetNumTF = new JTextField(20);
+        JTextField billStreetNameTF = new JTextField(), shipStreetNameTF = new JTextField();
+        JTextField billApartmentTF = new JTextField(), shipApartmentTF = new JTextField();
+        JTextField billCityTF = new JTextField(), shipCityTF = new JTextField();
+        JTextField billProvinceTF = new JTextField(), shipProvinceTF = new JTextField();
+        JTextField billCountryTF = new JTextField(), shipCountryTF = new JTextField();
+        JTextField billPostalCodeTF = new JTextField(), shipPostalCodeTF = new JTextField();
         JTextField newUsernameTF = new JTextField(20);
         JTextField newPasswordTF = new JTextField();
         JTextField confirmPasswordTF = new JTextField();
@@ -103,59 +134,71 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
         JTextField lastNameTF = new JTextField();
         JTextField emailTF = new JTextField();
 
-        // Shipping info labels/ text fields
-        JLabel shippingAddressLabel = new JLabel("Shipping Address: ");
+        // JLabels
+        // User info
+        JLabel newUsernameLabel = new JLabel("*Username: ");
+        JLabel newPasswordLabel = new JLabel("*Password: ");
+        JLabel confirmPasswordLabel = new JLabel("*Confirm Password: ");
+        JLabel firstNameLabel = new JLabel("*First Name: ");
+        JLabel lastNameLabel = new JLabel("*Last Name: ");
+        JLabel emailLabel = new JLabel("*Email: ");
+        // User shipping address info
+        JLabel shippingAddressLabel = new JLabel("Shipping Address");
         JLabel shippingStreetNumLabel = new JLabel("*Street Number: ");
         JLabel shippingStreetNameLabel = new JLabel("*Street Name: ");
         JLabel shippingApartmentLabel = new JLabel("Apartment: ");
         JLabel shippingCityLabel = new JLabel("*City: ");
         JLabel shippingProvinceLabel = new JLabel("*Province: ");
         JLabel shippingCountryLabel = new JLabel("*Country: ");
-        JLabel shippingPostalCodeLabel = new JLabel("*PostalCode: ");
-
-        JTextField shipStreetNumTF = new JTextField(20);
-        JTextField shipStreetNameTF = new JTextField();
-        JTextField shipApartmentTF = new JTextField();
-        JTextField shipCityTF = new JTextField();
-        JTextField shipProvinceTF = new JTextField();
-        JTextField shipCountryTF = new JTextField();
-        JTextField shipPostalCodeTF = new JTextField();
-
-        //Billing Info labels/ text fields
-        JCheckBox billingSameAsShipping = new JCheckBox("Billing Address is the same as Shipping Address");
-
-        JLabel billingAddressLabel = new JLabel("Billing Address: ");
-        JLabel billStreetNumLabel = new JLabel("Shipping Address: ");
+        JLabel shippingPostalCodeLabel = new JLabel("*Postal Code: ");
+        // User billing address info
+        JLabel billingAddressLabel = new JLabel("Billing Address");
+        JLabel billStreetNumLabel = new JLabel("Street Number: ");
         JLabel billStreetNameLabel = new JLabel("Street Name: ");
         JLabel billApartmentLabel = new JLabel("Apartment: ");
         JLabel billCityLabel = new JLabel("City: ");
         JLabel billProvinceLabel = new JLabel("Province: ");
         JLabel billCountryLabel = new JLabel("Country: ");
-        JLabel billPostalCodeLabel = new JLabel("PostalCode: ");
-
-        JTextField billStreetNumTF = new JTextField(20);
-        JTextField billStreetNameTF = new JTextField();
-        JTextField billApartmentTF = new JTextField();
-        JTextField billCityTF = new JTextField();
-        JTextField billProvinceTF = new JTextField();
-        JTextField billCountryTF = new JTextField();
-        JTextField billPostalCodeTF = new JTextField();
-
+        JLabel billPostalCodeLabel = new JLabel("Postal Code: ");
         // Welcome message
-        //TODO: Somehow center this damn message!
-        JPanel welcome = new JPanel();
-        welcome.setLayout(new BoxLayout(welcome, BoxLayout.PAGE_AXIS));
-
         JLabel newUserWelcome1 = new JLabel("Welcome to LookInnaBook!");
         JLabel newUserWelcome2 = new JLabel("Enter your information in the space provided below.");
         JLabel newUserWelcome3 = new JLabel("Required fields are indicated with a \"*\".");
 
+        // JCheckBox
+        JCheckBox billingSameAsShipping = new JCheckBox("Billing Address is the same as Shipping Address");
+
+        // JPanels
+        JPanel regPage = new JPanel();
+        JPanel welcome = new JPanel();
+        JPanel shipAdd = new JPanel();
+        JPanel billAdd = new JPanel();
+        JPanel infoPanel = new JPanel();
+
+        // JButton
+        JButton cancelReg = new JButton("Cancel Registration");
+        JButton submitReg = new JButton("Submit");
+
+
+        /* Component setup*/
+        // JButton formatting
+        cancelReg.setBackground(Color.WHITE);
+        submitReg.setBackground(Color.WHITE);
+
+        // Registration Page
+        regPage.setLayout(new GridBagLayout());
+        GridBagConstraints con = new GridBagConstraints();
+
+        // Welcome message
+        welcome.setLayout(new BoxLayout(welcome, BoxLayout.PAGE_AXIS));
         welcome.add(newUserWelcome1);
         welcome.add(newUserWelcome2);
         welcome.add(newUserWelcome3);
+        newUserWelcome1.setAlignmentX(JPanel.CENTER_ALIGNMENT);
+        newUserWelcome2.setAlignmentX(JPanel.CENTER_ALIGNMENT);
+        newUserWelcome3.setAlignmentX(JPanel.CENTER_ALIGNMENT);
 
         // Shipping Address Panel
-        JPanel shipAdd = new JPanel();
         shipAdd.setLayout(new GridLayout(0, 2));
         shipAdd.add(shippingAddressLabel);
         shipAdd.add(Box.createRigidArea(new Dimension(10, 10)));
@@ -176,7 +219,6 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
         shipAdd.setPreferredSize(new Dimension(400, 200));
 
         // Billing Address Panel
-        JPanel billAdd = new JPanel();
         billAdd.setLayout(new GridLayout(0, 2));
         billAdd.add(billingAddressLabel);
         billAdd.add(Box.createRigidArea(new Dimension(10, 10)));
@@ -195,7 +237,7 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
         billAdd.add(billPostalCodeLabel);
         billAdd.add(billPostalCodeTF);
         billAdd.setPreferredSize(new Dimension(400, 200));
-
+        // Disable the fields by default.
         billStreetNumTF.setEnabled(false);
         billStreetNameTF.setEnabled(false);
         billApartmentTF.setEnabled(false);
@@ -205,7 +247,6 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
         billPostalCodeTF.setEnabled(false);
 
         // Information Panel
-        JPanel infoPanel = new JPanel();
         infoPanel.setLayout(new GridLayout(0, 2));
         infoPanel.add(newUsernameLabel);
         infoPanel.add(newUsernameTF);
@@ -221,11 +262,7 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
         infoPanel.add(emailTF);
         infoPanel.setPreferredSize(new Dimension(400, 200));
 
-
-        JButton cancelReg = new JButton("Cancel Registration");
-        JButton submitReg = new JButton("Submit");
-
-        // add panels
+        // Add panels
         con.anchor = GridBagConstraints.LINE_START;
         con.fill = GridBagConstraints.HORIZONTAL;
         con.gridy = 0;
@@ -254,27 +291,19 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
         con.gridx = 2;
         regPage.add(submitReg, con);
 
-        // add action listeners
+        // Add action listeners
         cancelReg.addActionListener(this);
         submitReg.addActionListener(this);
+        // Changed this to a lambda and simplified the logic.
         billingSameAsShipping.addActionListener(e -> {
-            if (billingSameAsShipping.isSelected()) {
-                billStreetNumTF.setEnabled(false);
-                billStreetNameTF.setEnabled(false);
-                billApartmentTF.setEnabled(false);
-                billCityTF.setEnabled(false);
-                billProvinceTF.setEnabled(false);
-                billCountryTF.setEnabled(false);
-                billPostalCodeTF.setEnabled(false);
-            } else {
-                billStreetNumTF.setEnabled(true);
-                billStreetNameTF.setEnabled(true);
-                billApartmentTF.setEnabled(true);
-                billCityTF.setEnabled(true);
-                billProvinceTF.setEnabled(true);
-                billCountryTF.setEnabled(true);
-                billPostalCodeTF.setEnabled(true);
-            }
+            boolean sameAsBilling = !billingSameAsShipping.isSelected();
+            billStreetNumTF.setEnabled(sameAsBilling);
+            billStreetNameTF.setEnabled(sameAsBilling);
+            billApartmentTF.setEnabled(sameAsBilling);
+            billCityTF.setEnabled(sameAsBilling);
+            billProvinceTF.setEnabled(sameAsBilling);
+            billCountryTF.setEnabled(sameAsBilling);
+            billPostalCodeTF.setEnabled(sameAsBilling);
         });
 
         c.add(regPage);
@@ -300,27 +329,18 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
     /**
      * Implements ActionListeners for JButtons
      *
-     * @param e
+     * @param e The ActionEvent that was triggered via a JButton.
      */
     public void actionPerformed(ActionEvent e) {
         Object o = e.getSource();
 
         if (o instanceof JButton) {
             switch (((JButton) o).getText()) {
-                case "Login":
-                    login();
-                    break;
-                case "Register":
-                    regScreen();
-                    break;
-                case "Cancel Registration":
-                    loginScreen();
-                    break;
-                case "Submit":
-                    System.out.print("Submitted");
-                    break;
-                default:
-                    System.out.print("Error");
+                case "Login" -> login();
+                case "Register" -> regScreen();
+                case "Cancel Registration" -> loginScreen();
+                case "Submit" -> System.out.print("Submitted");
+                default -> System.out.print("Error");
             }
         }
     }
