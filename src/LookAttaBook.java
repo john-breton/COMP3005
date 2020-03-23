@@ -4,12 +4,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class LookAttaBook extends LookForaBook implements ActionListener {
-    JFrame f = new JFrame("LookInnaBook");
-    Container c = f.getContentPane();
+    final JFrame f = new JFrame("LookInnaBook");
+    final Container c = f.getContentPane();
 
-    private JLabel loginSuccess = new JLabel("");
-    private JTextField usernameField = new JTextField(15);
-    private JPasswordField passwordField = new JPasswordField(15);
+    private final JLabel loginSuccess = new JLabel("");
+    private final JTextField usernameField = new JTextField(15);
+    private final JPasswordField passwordField = new JPasswordField(15);
 
     public LookAttaBook() {
         loginScreen();
@@ -257,25 +257,23 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
         // add action listeners
         cancelReg.addActionListener(this);
         submitReg.addActionListener(this);
-        billingSameAsShipping.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                if (billingSameAsShipping.isSelected()) {
-                    billStreetNumTF.setEnabled(false);
-                    billStreetNameTF.setEnabled(false);
-                    billApartmentTF.setEnabled(false);
-                    billCityTF.setEnabled(false);
-                    billProvinceTF.setEnabled(false);
-                    billCountryTF.setEnabled(false);
-                    billPostalCodeTF.setEnabled(false);
-                } else {
-                    billStreetNumTF.setEnabled(true);
-                    billStreetNameTF.setEnabled(true);
-                    billApartmentTF.setEnabled(true);
-                    billCityTF.setEnabled(true);
-                    billProvinceTF.setEnabled(true);
-                    billCountryTF.setEnabled(true);
-                    billPostalCodeTF.setEnabled(true);
-                }
+        billingSameAsShipping.addActionListener(e -> {
+            if (billingSameAsShipping.isSelected()) {
+                billStreetNumTF.setEnabled(false);
+                billStreetNameTF.setEnabled(false);
+                billApartmentTF.setEnabled(false);
+                billCityTF.setEnabled(false);
+                billProvinceTF.setEnabled(false);
+                billCountryTF.setEnabled(false);
+                billPostalCodeTF.setEnabled(false);
+            } else {
+                billStreetNumTF.setEnabled(true);
+                billStreetNameTF.setEnabled(true);
+                billApartmentTF.setEnabled(true);
+                billCityTF.setEnabled(true);
+                billProvinceTF.setEnabled(true);
+                billCountryTF.setEnabled(true);
+                billPostalCodeTF.setEnabled(true);
             }
         });
 

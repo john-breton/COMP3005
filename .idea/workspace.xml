@@ -1,11 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="65bdfa8d-e32b-4f23-86f3-f40fc1bfc00d" name="Default Changelist" comment="" />
+    <list default="true" id="65bdfa8d-e32b-4f23-86f3-f40fc1bfc00d" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/1597632a-efbc-441f-a8cd-bf825856e3c7.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/1597632a-efbc-441f-a8cd-bf825856e3c7/storage_v2/_src_/database/new_database.Om3BCg.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/1597632a-efbc-441f-a8cd-bf825856e3c7/storage_v2/_src_/database/new_database.Om3BCg/schema/information_schema.FNRwLQ.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/1597632a-efbc-441f-a8cd-bf825856e3c7/storage_v2/_src_/database/new_database.Om3BCg/schema/pg_catalog.0S1ZNQ.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/1597632a-efbc-441f-a8cd-bf825856e3c7/storage_v2/_src_/database/new_database.Om3BCg/schema/public.abK9xQ.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/8efa8e11-47d9-4317-b807-c716c613a03c.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/8efa8e11-47d9-4317-b807-c716c613a03c.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/f8cf6ccf-805a-435d-a39e-618a8daba330.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/f8cf6ccf-805a-435d-a39e-618a8daba330/storage_v2/_src_/database/new_database.Om3BCg.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/f8cf6ccf-805a-435d-a39e-618a8daba330/storage_v2/_src_/database/new_database.Om3BCg/schema/information_schema.FNRwLQ.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/f8cf6ccf-805a-435d-a39e-618a8daba330/storage_v2/_src_/database/new_database.Om3BCg/schema/pg_catalog.0S1ZNQ.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/f8cf6ccf-805a-435d-a39e-618a8daba330/storage_v2/_src_/database/new_database.Om3BCg/schema/public.abK9xQ.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/f8cf6ccf-805a-435d-a39e-618a8daba330/storage_v2/_src_/database/postgres.edMnLQ.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/f8cf6ccf-805a-435d-a39e-618a8daba330/storage_v2/_src_/database/postgres.edMnLQ/schema/information_schema.FNRwLQ.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/f8cf6ccf-805a-435d-a39e-618a8daba330/storage_v2/_src_/database/postgres.edMnLQ/schema/pg_catalog.0S1ZNQ.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/f8cf6ccf-805a-435d-a39e-618a8daba330/storage_v2/_src_/database/postgres.edMnLQ/schema/public.abK9xQ.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/f8cf6ccf-805a-435d-a39e-618a8daba330/storage_v2/_src_/database/postgres.edMnLQ/schema/public.abK9xQ.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LookInnaBook.iml" beforeDir="false" afterPath="$PROJECT_DIR$/LookInnaBook.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/LookInnaBook/META-INF/LookInnaBook.kotlin_module" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/LookAttaBook.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/LookAttaBook.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/LookForaBook.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/LookForaBook.java" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="CoverageViewManager">
+    <option name="myElementSize" value="241" />
   </component>
   <component name="DatabaseLocalColorSettings">
     <colors>
@@ -77,12 +104,15 @@
   <component name="PropertiesComponent">
     <property name="DatabaseDriversLRU" value="postgresql" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="project.structure.last.edited" value="Project" />
+    <property name="last_opened_file_path" value="C:/Program Files/Java/jdk-13.0.2" />
+    <property name="project.structure.last.edited" value="Modules" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
     <property name="restartRequiresConfirmation" value="false" />
+    <property name="run.code.analysis.last.selected.profile" value="pProject Default" />
     <property name="settings.editor.selected.configurable" value="settings.github" />
   </component>
   <component name="RecentsManager">
@@ -119,6 +149,7 @@
       <updated>1584901197232</updated>
       <workItem from="1584901201837" duration="233000" />
       <workItem from="1584901441095" duration="27118000" />
+      <workItem from="1584983301001" duration="1686000" />
     </task>
     <servers />
   </component>
@@ -130,10 +161,11 @@
       <screen x="0" y="0" width="1680" height="1050" />
     </state>
     <state x="440" y="190" key="#Notifications/0.0.1680.1050@0.0.1680.1050" timestamp="1584903025931" />
-    <state x="440" y="190" key="#Project_Structure" timestamp="1584901416329">
-      <screen x="0" y="0" width="1680" height="1050" />
+    <state x="503" y="188" key="#Project_Structure" timestamp="1584983666942">
+      <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="440" y="190" key="#Project_Structure/0.0.1680.1050@0.0.1680.1050" timestamp="1584901416329" />
+    <state x="503" y="188" key="#Project_Structure/0.0.1920.1040@0.0.1920.1040" timestamp="1584983666942" />
     <state x="440" y="190" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1584931433326">
       <screen x="0" y="0" width="1680" height="1050" />
     </state>
@@ -142,33 +174,49 @@
       <screen x="0" y="0" width="1680" height="1050" />
     </state>
     <state x="542" y="199" key="#com.intellij.fileTypes.FileTypeChooser/0.0.1680.1050@0.0.1680.1050" timestamp="1584901370248" />
+    <state x="741" y="240" key="#com.intellij.openapi.roots.ui.configuration.libraryEditor.LibraryEditorDialog" timestamp="1584983664196">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="741" y="240" key="#com.intellij.openapi.roots.ui.configuration.libraryEditor.LibraryEditorDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1584983664196" />
     <state x="578" y="279" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog" timestamp="1584903061288">
       <screen x="0" y="0" width="1680" height="1050" />
     </state>
     <state x="578" y="279" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/0.0.1680.1050@0.0.1680.1050" timestamp="1584903061288" />
+    <state x="707" y="376" key="ANALYSIS_DLG_com.intellij.analysis.BaseAnalysisAction$1" timestamp="1584985005263">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="707" y="376" key="ANALYSIS_DLG_com.intellij.analysis.BaseAnalysisAction$1/0.0.1920.1040@0.0.1920.1040" timestamp="1584985005263" />
+    <state x="691" y="284" key="FileChooserDialogImpl" timestamp="1584983655027">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="691" y="284" key="FileChooserDialogImpl/0.0.1920.1040@0.0.1920.1040" timestamp="1584983655027" />
     <state x="643" y="448" key="Github.CreateGistDialog" timestamp="1584931614346">
       <screen x="0" y="0" width="1680" height="1050" />
     </state>
     <state x="643" y="448" key="Github.CreateGistDialog/0.0.1680.1050@0.0.1680.1050" timestamp="1584931614346" />
-    <state width="1638" height="137" key="GridCell.Tab.0.bottom" timestamp="1584931877091">
-      <screen x="0" y="0" width="1680" height="1050" />
+    <state width="1877" height="282" key="GridCell.Tab.0.bottom" timestamp="1584985128988">
+      <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state width="1638" height="137" key="GridCell.Tab.0.bottom/0.0.1680.1050@0.0.1680.1050" timestamp="1584931877091" />
+    <state width="1877" height="282" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1584985128988" />
     <state width="1638" height="137" key="GridCell.Tab.0.bottom/0.23.1680.1027@0.23.1680.1027" timestamp="1584918517283" />
-    <state width="1638" height="137" key="GridCell.Tab.0.center" timestamp="1584931877089">
-      <screen x="0" y="0" width="1680" height="1050" />
+    <state width="1877" height="282" key="GridCell.Tab.0.center" timestamp="1584985128988">
+      <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state width="1638" height="137" key="GridCell.Tab.0.center/0.0.1680.1050@0.0.1680.1050" timestamp="1584931877089" />
+    <state width="1877" height="282" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1584985128988" />
     <state width="1638" height="137" key="GridCell.Tab.0.center/0.23.1680.1027@0.23.1680.1027" timestamp="1584918517281" />
-    <state width="1638" height="137" key="GridCell.Tab.0.left" timestamp="1584931877089">
-      <screen x="0" y="0" width="1680" height="1050" />
+    <state width="1877" height="282" key="GridCell.Tab.0.left" timestamp="1584985128988">
+      <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state width="1638" height="137" key="GridCell.Tab.0.left/0.0.1680.1050@0.0.1680.1050" timestamp="1584931877089" />
+    <state width="1877" height="282" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1584985128988" />
     <state width="1638" height="137" key="GridCell.Tab.0.left/0.23.1680.1027@0.23.1680.1027" timestamp="1584918517280" />
-    <state width="1638" height="137" key="GridCell.Tab.0.right" timestamp="1584931877090">
-      <screen x="0" y="0" width="1680" height="1050" />
+    <state width="1877" height="282" key="GridCell.Tab.0.right" timestamp="1584985128988">
+      <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state width="1638" height="137" key="GridCell.Tab.0.right/0.0.1680.1050@0.0.1680.1050" timestamp="1584931877090" />
+    <state width="1877" height="282" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1584985128988" />
     <state width="1638" height="137" key="GridCell.Tab.0.right/0.23.1680.1027@0.23.1680.1027" timestamp="1584918517282" />
     <state x="328" y="106" key="SettingsEditor" timestamp="1584931757989">
       <screen x="0" y="0" width="1680" height="1050" />
@@ -186,5 +234,8 @@
       <screen x="0" y="0" width="1680" height="1050" />
     </state>
     <state x="421" y="250" width="837" height="550" key="find.popup/0.0.1680.1050@0.0.1680.1050" timestamp="1584907839118" />
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/COMP3005$LookInnaBook.ic" NAME="LookInnaBook Coverage Results" MODIFIED="1584985128910" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" />
   </component>
 </project>
