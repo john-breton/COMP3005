@@ -25,12 +25,12 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
         // If you want to disable dark mode, this is the code for it. You can just remove it.
         // I haven't decided if it even looks good yet.
         // I decided I don't like it.
-//        try {
-//            UIManager.setLookAndFeel("com.jtattoo.plaf.noire.NoireLookAndFeel");
-//        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException
-//                | UnsupportedLookAndFeelException e) {
-//            e.printStackTrace();
-//        }
+        /*try {
+            UIManager.setLookAndFeel("com.jtattoo.plaf.noire.NoireLookAndFeel");
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException
+                | UnsupportedLookAndFeelException e) {
+            e.printStackTrace();
+        }*/
         f.setIconImage(WINDOW_ICON.getImage());
         UIManager.getLookAndFeelDefaults().put("Button.focus", new ColorUIResource(new Color(0, 0, 0, 0)));
         loginScreen();
