@@ -272,9 +272,6 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
 
         con.anchor = GridBagConstraints.CENTER;
         regPage.add(welcome, con);
-        con.anchor = GridBagConstraints.LINE_END;
-
-        con.anchor = GridBagConstraints.LINE_START;
         con.gridy = 1;
         regPage.add(infoPanel, con);
         con.gridy = 2;
@@ -351,8 +348,14 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
      * @see super.lookForaLogin() for full implementation
      */
     private void login() {
-        if (super.lookForaLogin(usernameField.getText(), passwordField.getText()))
+        boolean[] validCred = super.lookForaLogin(usernameField.getText(), passwordField.getText());
+        if (validCred[0]) {
             loginSuccess.setText("Login successful! Redirecting you now...");
+            if(validCred[1]) {
+                adminScreen();
+                System.out.print("Hey Admin");
+            }else userScreen();
+        }
         else loginSuccess.setText("Login not successful. Please try again.");
     }
 }

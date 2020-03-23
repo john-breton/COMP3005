@@ -10,7 +10,6 @@ import java.sql.*;
  */
 public class LookForaBook {
 
-    private boolean userIsAdmin;
     // Just putting this here so we can change it when we test.
     private static final String USER = "ryan";
 
@@ -23,22 +22,25 @@ public class LookForaBook {
      * @param password The password that was entered.
      * @return True if the password matches the password stored for the given username, false otherwise.
      */
-    protected boolean lookForaLogin(String username, String password) {
+    protected boolean[] lookForaLogin(String username, String password) {
+        boolean[] returnArr = {false, false}; // [0] = active user, [1] = admin
+
         try (Connection connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/LookInnaBook", USER, "")) {
             Statement statement = connection.createStatement();
 
-            ResultSet result = statement.executeQuery("SELECT password from project.user where user_name = '" + username.toLowerCase().trim() + "'");
+            ResultSet result = statement.executeQuery("SELECT * from project.user LEFT OUTER JOIN project.librarian USING (user_name) where user_name = '" + username.toLowerCase().trim() + "'");
 
             while (result.next()) {
-                if (password.equals(result.getString("password")))
-                    return true;
+                returnArr[0] = password.equals(result.getString("password"));
+                if(returnArr[0])
+                    returnArr[1] = result.getString("salary") != null;
             }
-            return false;
+            return returnArr;
 
         } catch (SQLException e) {
             System.out.println(e);
             e.printStackTrace();
         }
-        return false;
+        return returnArr;
     }
 }
