@@ -49,6 +49,10 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
         f.setPreferredSize(new Dimension(300, 300));
         f.setLocationRelativeTo(null);
         c.removeAll();
+        usernameField.setText("");
+        passwordField.setText("");
+        loginSuccess.setText("");
+
         c.setLayout(new BoxLayout(c, BoxLayout.PAGE_AXIS));
 
         /* Component declarations */
@@ -295,6 +299,7 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
         // Add action listeners
         cancelReg.addActionListener(this);
         submitReg.addActionListener(this);
+
         // Changed this to a lambda and simplified the logic.
         billingSameAsShipping.addActionListener(e -> {
             boolean sameAsBilling = !billingSameAsShipping.isSelected();
@@ -327,37 +332,59 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
         f.setLocationRelativeTo(null);
         c.removeAll();
 
-        JLabel searchLabel = new JLabel("Search: ");
-        JTextField searchText = new JTextField();
-        JLabel cartLabel = new JLabel("Cart: ");
-        JScrollPane currentCart = new JScrollPane();
-        JLabel filterLabel = new JLabel("Sort by: ");
+        // Arrays
         String[] resultFilterArr = {"Price", "A-Z", "Z-A", "Year"};
         String[] searchFilterArr = {"Title", "Author", "Genre", "ISBN", "Publisher", "Year"};
-        JComboBox resultFilters = new JComboBox(resultFilterArr);
-        JComboBox searchFilters = new JComboBox(searchFilterArr);
-        JScrollPane searchResult = new JScrollPane();
+
+        // Dimensions
+        Dimension addRemoveButtonDimensions = new Dimension(25,25);
+        Dimension searchResultDimension = new Dimension(500, c.getHeight());
+        Dimension cartDimension = new Dimension(c.getWidth() - (int)searchResultDimension.getWidth(), c.getHeight());
+
+        // Panels and Panes
         JSplitPane userView = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true);
         JPanel searchAndResults = new JPanel();
         JPanel cartPanel = new JPanel();
-        JButton addToCart = new JButton("+");
-        JButton removeFromCart = new JButton("-");
+        JPanel pricePanel = new JPanel();
+        JPanel checkoutPanel = new JPanel();
+
+        // Labels
+        JLabel searchLabel = new JLabel("Search: ");
+        JLabel cartLabel = new JLabel("Cart: ");
+        JLabel filterLabel = new JLabel("Sort by: ");
         JLabel totalPrice = new JLabel("$0.00");
         JLabel totalPriceLabel = new JLabel("Total Price: ");
+
+        // Buttons
+        JButton addToCart = new JButton("+");
+        JButton removeFromCart = new JButton("-");
         JButton checkoutButton = new JButton("Checkout");
         JButton searchButton = new JButton("Search");
+        JButton logoutButton = new JButton("Logout");
+
+        // ActionListeners
+        addToCart.addActionListener(this);
+        removeFromCart.addActionListener(this);
+        checkoutButton.addActionListener(this);
+        searchButton.addActionListener(this);
+        logoutButton.addActionListener(this);
+
+        // Combo Boxes, ScrollPanes and Text Fields
+        JComboBox resultFilters = new JComboBox(resultFilterArr);
+        JComboBox searchFilters = new JComboBox(searchFilterArr);
+        JScrollPane currentCart = new JScrollPane();
+        JScrollPane searchResult = new JScrollPane();
+        JTextField searchText = new JTextField();
 
         // Price panel
-        JPanel pricePanel = new JPanel();
-        addToCart.setPreferredSize(new Dimension(25,25));
+        addToCart.setPreferredSize(addRemoveButtonDimensions);
         pricePanel.add(addToCart);
         pricePanel.add(totalPriceLabel);
         pricePanel.add(totalPrice);
-        removeFromCart.setPreferredSize(new Dimension(25,25));
+        removeFromCart.setPreferredSize(addRemoveButtonDimensions);
         pricePanel.add(removeFromCart);
 
         // Checkout Panel
-        JPanel checkoutPanel = new JPanel();
         checkoutPanel.setLayout(new BoxLayout(checkoutPanel, BoxLayout.PAGE_AXIS));
         checkoutPanel.add(pricePanel);
         checkoutButton.setAlignmentX(JPanel.CENTER_ALIGNMENT);
@@ -367,16 +394,23 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
         GridBagConstraints con = new GridBagConstraints();
 
         // setup left side of window
-        con.insets = new Insets(5, 5, 5, 0);
+        Insets leftEdge =  new Insets(5, 5, 5, 0);
+        Insets everythingElse = new Insets(5, 0, 5, 0);
+
+        con.insets = leftEdge;
         con.anchor = GridBagConstraints.LINE_START;
         con.weighty = 0.0;
         con.weightx = 0.0;
         con.gridx = 0;
         con.gridy = 0;
+        searchAndResults.add(logoutButton, con);
+
+        con.gridx = 0;
+        con.gridy = 1;
         searchLabel.setAlignmentX(JPanel.LEFT_ALIGNMENT);
         searchAndResults.add(searchLabel, con);
 
-        con.insets = new Insets(5, 0, 5, 0);
+        con.insets = everythingElse;
         con.gridx = 1;
         searchAndResults.add(searchFilters, con);
 
@@ -390,18 +424,18 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
         searchAndResults.add(searchButton, con);
 
         con.gridx = 0;
-        con.gridy = 1;
-        con.insets = new Insets(5, 5, 5, 0);
+        con.gridy = 2;
+        con.insets = leftEdge;
         con.fill = GridBagConstraints.NONE;
         filterLabel.setAlignmentX(JPanel.LEFT_ALIGNMENT);
         searchAndResults.add(filterLabel, con);
 
         con.gridx = 1;
-        con.insets = new Insets(5, 0, 5, 0);
+        con.insets = everythingElse;
         searchAndResults.add(resultFilters, con);
 
         con.gridx = 0;
-        con.gridy = 2;
+        con.gridy = 3;
         con.weighty = 1.0;
         con.weightx = 1.0;
         con.gridwidth = 4;
@@ -410,7 +444,7 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
         con.anchor = GridBagConstraints.CENTER;
         searchAndResults.add(searchResult, con);
 
-        searchAndResults.setMinimumSize(new Dimension(500, 800));
+        searchAndResults.setMinimumSize(searchResultDimension);
 
         // setup right side of window
         cartPanel.setLayout(new BorderLayout());
@@ -418,7 +452,7 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
         cartPanel.add(cartLabel, BorderLayout.PAGE_START);
         cartPanel.add(checkoutPanel, BorderLayout.PAGE_END);
         cartPanel.add(currentCart, BorderLayout.CENTER);
-        cartPanel.setPreferredSize(new Dimension(300, 800));
+        cartPanel.setPreferredSize(cartDimension);
 
         userView.resetToPreferredSizes();
         userView.setLeftComponent(searchAndResults);
@@ -441,8 +475,12 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
             switch (((JButton) o).getText()) {
                 case "Login" -> login();
                 case "Register" -> regScreen();
-                case "Cancel Registration" -> loginScreen();
-                case "Submit" -> System.out.print("Submitted");
+                case "Cancel Registration", "Logout" -> loginScreen();
+                case "Submit" -> System.out.println("Submitted");
+                case "+" -> System.out.println("Item Added");
+                case "-" -> System.out.println("Item removed");
+                case "Checkout" -> System.out.println("Checking-out");
+                case "Search" -> System.out.println("Searching");
                 default -> System.out.print("Error");
             }
         }
@@ -456,7 +494,6 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
     private void login() {
         boolean[] validCred = super.lookForaLogin(usernameField.getText(), passwordField.getText());
         if (validCred[0]) {
-            loginSuccess.setText("Login successful! Redirecting you now...");
             if(validCred[1]) {
                 adminScreen();
                 System.out.print("Hey Admin");
