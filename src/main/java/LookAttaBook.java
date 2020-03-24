@@ -93,6 +93,7 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
         loginPanel.add(loginSuccess);
         loginPanel.add(registerButton);
         loginPanel.add(loginButton);
+        loginPanel.add(lookupOrderButton);
 
         // Setup ActionListeners
         loginButton.addActionListener(this);
@@ -104,7 +105,6 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
         mainLoginPage.add(usernamePanel);
         mainLoginPage.add(passwordPanel);
         mainLoginPage.add(loginPanel);
-        mainLoginPage.add(lookupOrderButton);
 
         c.add(mainLoginPage);
 
