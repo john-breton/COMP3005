@@ -20,9 +20,60 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
     final JFrame f = new JFrame("LookInnaBook");
     final Container c = f.getContentPane();
 
+    // JComboBox Arrays
+    String[] resultFilterArr = {"Price", "A-Z", "Z-A", "Year"};
+    String[] searchFilterArr = {"Title", "Author", "Genre", "ISBN", "Publisher", "Year"};
+    String[] reportChoiceArr = {"Sales v Expense", "Sales per Genre", "Sales per Author", "Sales per Publisher", "Sales per Month", "Sales per Year", "Expense per Month", "Expense per Year"};
+
+    /* JComboBoxes */
+    // User
+    JComboBox<String> resultFilters = new JComboBox<>(resultFilterArr);
+    JComboBox<String> searchFilters = new JComboBox<>(searchFilterArr);
+    JComboBox<String> reportChoiceBox = new JComboBox<>(reportChoiceArr);
+
+    /* JLabels -- Global to update users */
+    // Login
     private final JLabel loginSuccess = new JLabel("");
+    // Registration
+    private final JLabel confirmRegistration = new JLabel(""); // TODO: add to regScreen()
+    // Admin
+    private final JLabel confirmNewBookAddition = new JLabel("");
+    // User
+    private final JLabel totalPrice = new JLabel("$0.00");
+
+    /* JTextFields -- Global in order for methods to access */
+    // Login
     private final JTextField usernameField = new JTextField(15);
     private final JPasswordField passwordField = new JPasswordField(15);
+    // Registration
+    private final JTextField billStreetNumTF = new JTextField(20), shipStreetNumTF = new JTextField(20);
+    private final JTextField billStreetNameTF = new JTextField(), shipStreetNameTF = new JTextField();
+    private final JTextField billApartmentTF = new JTextField(), shipApartmentTF = new JTextField();
+    private final JTextField billCityTF = new JTextField(), shipCityTF = new JTextField();
+    private final JTextField billProvinceTF = new JTextField(), shipProvinceTF = new JTextField();
+    private final JTextField billCountryTF = new JTextField(), shipCountryTF = new JTextField();
+    private final JTextField billPostalCodeTF = new JTextField(), shipPostalCodeTF = new JTextField();
+    private final JTextField newUsernameTF = new JTextField(20);
+    private final JTextField newPasswordTF = new JTextField();
+    private final JTextField confirmPasswordTF = new JTextField();
+    private final JTextField firstNameTF = new JTextField();
+    private final JTextField lastNameTF = new JTextField();
+    private final JTextField emailTF = new JTextField();
+    // Admin
+    private final JTextField newISBNTF = new JTextField(15);
+    private final JTextField newBookTitleTF = new JTextField(15);
+    private final JTextField newBookVersionTF = new JTextField(15);
+    private final JTextField newBookGenreTF = new JTextField(15);
+    private final JTextField newBookNumPagesTF = new JTextField(15);
+    private final JTextField newBookPriceTF = new JTextField(15);
+    private final JTextField newBookRoyaltyTF = new JTextField(15);
+    private final JTextField newBookStockTF = new JTextField(15);
+    private final JTextField newBookAuthorFNTF = new JTextField(15);
+    private final JTextField newBookAuthorLNTF = new JTextField(15);
+    private final JTextField newBookPublisherTF = new JTextField(15);
+    private final JTextField newBookYearTF = new JTextField(15);
+    // User
+    private final JTextField searchText = new JTextField();
 
     public LookAttaBook() {
         // If you want to disable dark mode, this is the code for it. You can just remove it.
@@ -126,19 +177,7 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
 
         /* Component declarations */
         // JTextFields
-        JTextField billStreetNumTF = new JTextField(20), shipStreetNumTF = new JTextField(20);
-        JTextField billStreetNameTF = new JTextField(), shipStreetNameTF = new JTextField();
-        JTextField billApartmentTF = new JTextField(), shipApartmentTF = new JTextField();
-        JTextField billCityTF = new JTextField(), shipCityTF = new JTextField();
-        JTextField billProvinceTF = new JTextField(), shipProvinceTF = new JTextField();
-        JTextField billCountryTF = new JTextField(), shipCountryTF = new JTextField();
-        JTextField billPostalCodeTF = new JTextField(), shipPostalCodeTF = new JTextField();
-        JTextField newUsernameTF = new JTextField(20);
-        JTextField newPasswordTF = new JTextField();
-        JTextField confirmPasswordTF = new JTextField();
-        JTextField firstNameTF = new JTextField();
-        JTextField lastNameTF = new JTextField();
-        JTextField emailTF = new JTextField();
+        // Fields
 
         // JLabels
         // User info
@@ -343,18 +382,7 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
         addBookButton.addActionListener(this);
 
         // JTextFields
-        JTextField newISBNTF = new JTextField(15);
-        JTextField newBookTitleTF = new JTextField(15);
-        JTextField newBookVersionTF = new JTextField(15);
-        JTextField newBookGenreTF = new JTextField(15);
-        JTextField newBookNumPagesTF = new JTextField(15);
-        JTextField newBookPriceTF = new JTextField(15);
-        JTextField newBookRoyaltyTF = new JTextField(15);
-        JTextField newBookStockTF = new JTextField(15);
-        JTextField newBookAuthorFNTF = new JTextField(15);
-        JTextField newBookAuthorLNTF = new JTextField(15);
-        JTextField newBookPublisherTF = new JTextField(15);
-        JTextField newBookYearTF = new JTextField(15);
+        // See Fields
 
         // JLabels
         JLabel newBookLabel = new JLabel("Enter Book Information: ");
@@ -371,11 +399,6 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
         JLabel newBookAuthorLNLabel = new JLabel("Last Name: ");
         JLabel newBookPublisherLabel = new JLabel("Publisher Name: ");
         JLabel newBookYearLabel = new JLabel("Year: ");
-        JLabel confirmNewBookAddition = new JLabel("");
-
-        // JComboBoxes & Arrays
-        String[] reportChoiceArr = {"Sales v Expense", "Sales per Genre", "Sales per Author", "Sales per Publisher", "Sales per Month", "Sales per Year", "Expense per Month", "Expense per Year"};
-        JComboBox reportChoiceBox = new JComboBox(reportChoiceArr);
 
         // Setup Tabbed Panes
         adminView.addTab("Add Stuff", null, newEntitiesPanel, "Add a new book or publisher");
@@ -521,11 +544,6 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
         f.setPreferredSize(new Dimension(798, 850));
         c.removeAll();
 
-        /* Attributes */
-        // Arrays
-        String[] resultFilterArr = {"Price", "A-Z", "Z-A", "Year"};
-        String[] searchFilterArr = {"Title", "Author", "Genre", "ISBN", "Publisher", "Year"};
-
         // Dimensions
         Dimension addRemoveButtonDimensions = new Dimension(25,25);
         Dimension searchResultDimension = new Dimension(500, c.getHeight());
@@ -543,7 +561,6 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
         JLabel searchLabel = new JLabel("Search: ");
         JLabel cartLabel = new JLabel("Cart: ");
         JLabel filterLabel = new JLabel("Sort by: ");
-        JLabel totalPrice = new JLabel("$0.00");
         JLabel totalPriceLabel = new JLabel("Total Price: ");
 
         // Buttons
@@ -560,12 +577,9 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
         searchButton.addActionListener(this);
         logoutButton.addActionListener(this);
 
-        // Combo Boxes, ScrollPanes and Text Fields
-        JComboBox resultFilters = new JComboBox(resultFilterArr);
-        JComboBox searchFilters = new JComboBox(searchFilterArr);
+        // ScrollPanes
         JScrollPane currentCart = new JScrollPane();
         JScrollPane searchResult = new JScrollPane();
-        JTextField searchText = new JTextField();
 
         /* Setup Panels */
         // Price panel
@@ -688,7 +702,7 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
      * @see super.lookForaLogin() for full implementation
      */
     private void login() {
-        boolean[] validCred = super.lookForaLogin(usernameField.getText(), passwordField.getText());
+        boolean[] validCred = super.lookForaLogin(usernameField.getText(), passwordField.getPassword());
         if (validCred[0]) {
             if(validCred[1]) {
                 adminScreenChoice();
@@ -705,7 +719,7 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
         JButton cancelButton = new JButton("Cancel");
 
         Object[] options = {logoutButton, cancelButton};
-        final JOptionPane areYouSure = new JOptionPane("Are you sure you want to logout?", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+        final JOptionPane areYouSure = new JOptionPane("Are you sure you want to logout?", JOptionPane.PLAIN_MESSAGE, JOptionPane.YES_NO_OPTION, null, options, options[0]);
         final JDialog dialog = areYouSure.createDialog("Logout");
         dialog.setContentPane(areYouSure);
         dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
@@ -714,7 +728,7 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
             loginScreen();
             dialog.setVisible(false);
         });
-        cancelButton.addActionListener(e -> {dialog.setVisible(false);});
+        cancelButton.addActionListener(e -> dialog.setVisible(false));
 
         dialog.pack();
         dialog.setLocationRelativeTo(null);
@@ -729,7 +743,7 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
         JButton adminButton = new JButton("Administrative View");
 
         Object[] options = {adminButton, userButton};
-        final JOptionPane screenChoice = new JOptionPane("Which screen would you like to be directed to?", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+        final JOptionPane screenChoice = new JOptionPane("Which screen would you like to be directed to?", JOptionPane.PLAIN_MESSAGE, JOptionPane.YES_NO_OPTION, null, options, options[0]);
         final JDialog dialog = screenChoice.createDialog("Admin");
         dialog.setContentPane(screenChoice);
         dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);

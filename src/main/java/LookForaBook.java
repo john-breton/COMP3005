@@ -22,7 +22,7 @@ public class LookForaBook {
      * @param password The password that was entered.
      * @return True if the password matches the password stored for the given username, false otherwise.
      */
-    protected boolean[] lookForaLogin(String username, String password) {
+    protected boolean[] lookForaLogin(String username, char[] password) {
         boolean[] returnArr = {false, false}; // [0] = active user, [1] = admin
 
         try (Connection connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/LookInnaBook", USER, "")) {
@@ -31,7 +31,7 @@ public class LookForaBook {
             ResultSet result = statement.executeQuery("SELECT * from project.user LEFT OUTER JOIN project.librarian USING (user_name) where user_name = '" + username.toLowerCase().trim() + "'");
 
             while (result.next()) {
-                returnArr[0] = password.equals(result.getString("password"));
+                returnArr[0] = String.valueOf(password).equals(result.getString("password"));
                 if(returnArr[0])
                     returnArr[1] = result.getString("salary") != null;
             }
