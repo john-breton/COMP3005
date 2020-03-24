@@ -55,17 +55,17 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
     private final JPasswordField passwordField = new JPasswordField(15);
     // Registration
     private final JTextField billStreetNumTF = new JTextField(20), shipStreetNumTF = new JTextField(20),
-        billStreetNameTF = new JTextField(), shipStreetNameTF = new JTextField(),
-        billApartmentTF = new JTextField(), shipApartmentTF = new JTextField(),
-        billCityTF = new JTextField(), shipCityTF = new JTextField(),
-        billCountryTF = new JTextField(), shipCountryTF = new JTextField(),
-        billPostalCodeTF = new JTextField(), shipPostalCodeTF = new JTextField(),
-        newUsernameTF = new JTextField(20),
-        newPasswordTF = new JTextField(),
-        confirmPasswordTF = new JTextField(),
-        firstNameTF = new JTextField(),
-        lastNameTF = new JTextField(),
-        emailTF = new JTextField();
+            billStreetNameTF = new JTextField(), shipStreetNameTF = new JTextField(),
+            billApartmentTF = new JTextField(), shipApartmentTF = new JTextField(),
+            billCityTF = new JTextField(), shipCityTF = new JTextField(),
+            billCountryTF = new JTextField(), shipCountryTF = new JTextField(),
+            billPostalCodeTF = new JTextField(), shipPostalCodeTF = new JTextField(),
+            newUsernameTF = new JTextField(20),
+            firstNameTF = new JTextField(),
+            lastNameTF = new JTextField(),
+            emailTF = new JTextField();
+    private final JPasswordField newPasswordTF = new JPasswordField(),
+            confirmPasswordTF = new JPasswordField();
     // Admin
         // Book
         private final JTextField newISBNTF = new JTextField(15),
@@ -94,14 +94,14 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
         // New User
         // Admin info
         private final JTextField newAdminUsernameTF = new JTextField(15),
-            newAdminPasswordTF = new JTextField(15),
-            confirmAdminPasswordTF = new JTextField(15),
             firstNameAdminTF = new JTextField(15),
             lastNameAdminTF = new JTextField(15),
             emailAdminTF = new JTextField(15),
-            salaryAdminTF = new JTextField(15),
+            salaryAdminTF = new JTextField(15);
+        private final JPasswordField newAdminPasswordTF = new JPasswordField(15),
+            confirmAdminPasswordTF = new JPasswordField(15);
         // Admin shipping address info (can be EMPTY)
-            shippingAdminStreetNumTF = new JTextField(15),
+        private final JTextField shippingAdminStreetNumTF = new JTextField(15),
             shippingAdminStreetNameTF = new JTextField(15),
             shippingAdminApartmentTF = new JTextField(15),
             shippingAdminCityTF =new JTextField(15),
