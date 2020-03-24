@@ -56,6 +56,7 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
         // JButtons
         JButton loginButton = new JButton("Login");
         JButton registerButton = new JButton("Register");
+        JButton lookupOrderButton = new JButton("Order Lookup");
 
         // JLabels
         JLabel usernameLabel = new JLabel("Username: ");
@@ -72,6 +73,7 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
         // JButton formatting
         loginButton.setBackground(Color.WHITE);
         registerButton.setBackground(Color.WHITE);
+        lookupOrderButton.setBackground(Color.WHITE);
 
         // Login Page
         mainLoginPage.setLayout(new BoxLayout(mainLoginPage, BoxLayout.PAGE_AXIS));
@@ -95,12 +97,14 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
         // Setup ActionListeners
         loginButton.addActionListener(this);
         registerButton.addActionListener(this);
+        lookupOrderButton.addActionListener(this);
 
         // Add to page
         mainLoginPage.add(Box.createVerticalGlue());
         mainLoginPage.add(usernamePanel);
         mainLoginPage.add(passwordPanel);
         mainLoginPage.add(loginPanel);
+        mainLoginPage.add(lookupOrderButton);
 
         c.add(mainLoginPage);
 
@@ -315,8 +319,199 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
      * SHOULD ALSO BE ABLE TO SIGN UP A NEW ADMIN
      */
     public void adminScreen() {
-        // Admin Page
-        // TODO: Setup Admin View
+        f.setPreferredSize(new Dimension(800, 800));
+        c.removeAll();
+
+        // Panels and JTabbedPanes
+        JPanel addNewBookPanel = new JPanel(new GridBagLayout());
+        JPanel addNewPublisherPanel = new JPanel();
+        JPanel editBookStockPanel = new JPanel();
+        JPanel reportPanel = new JPanel();
+        JPanel newUserPanel = new JPanel();
+        JTabbedPane adminView = new JTabbedPane();
+        JTabbedPane newEntitiesPanel = new JTabbedPane();
+
+        // JButtons
+        JButton logoutButton = new JButton("Logout");
+        JButton addBookButton = new JButton("Add Book");
+        JButton addPublisherButton = new JButton("Add Publisher");
+        JButton updateBookStockButton = new JButton("Update Stock");
+        JButton generateReport = new JButton("Generate Report");
+
+        // ActionListeners
+        logoutButton.addActionListener(this);
+        addBookButton.addActionListener(this);
+
+        // JTextFields
+        JTextField newISBNTF = new JTextField(15);
+        JTextField newBookTitleTF = new JTextField(15);
+        JTextField newBookVersionTF = new JTextField(15);
+        JTextField newBookGenreTF = new JTextField(15);
+        JTextField newBookNumPagesTF = new JTextField(15);
+        JTextField newBookPriceTF = new JTextField(15);
+        JTextField newBookRoyaltyTF = new JTextField(15);
+        JTextField newBookStockTF = new JTextField(15);
+        JTextField newBookAuthorFNTF = new JTextField(15);
+        JTextField newBookAuthorLNTF = new JTextField(15);
+        JTextField newBookPublisherTF = new JTextField(15);
+        JTextField newBookYearTF = new JTextField(15);
+
+        // JLabels
+        JLabel newBookLabel = new JLabel("Enter Book Information: ");
+        JLabel newISBNLabel = new JLabel("ISBN: ");
+        JLabel newBookTitleLabel = new JLabel("Title: ");
+        JLabel newBookVersionLabel = new JLabel("Version: ");
+        JLabel newBookGenreLabel = new JLabel("Genre: ");
+        JLabel newBookNumPagesLabel = new JLabel("Page Count: ");
+        JLabel newBookPriceLabel = new JLabel("Price");
+        JLabel newBookRoyaltyLabel = new JLabel("Royalty (%): ");
+        JLabel newBookStockLabel = new JLabel("Stock");
+        JLabel newBookAuthorLabel = new JLabel("Author: ");
+        JLabel newBookAuthorFNLabel = new JLabel("First Name: ");
+        JLabel newBookAuthorLNLabel = new JLabel("Last Name: ");
+        JLabel newBookPublisherLabel = new JLabel("Publisher Name: ");
+        JLabel newBookYearLabel = new JLabel("Year: ");
+        JLabel confirmNewBookAddition = new JLabel("");
+
+        // JComboBoxes & Arrays
+        String[] reportChoiceArr = {"Sales v Expense", "Sales per Genre", "Sales per Author", "Sales per Publisher", "Sales per Month", "Sales per Year", "Expense per Month", "Expense per Year"};
+        JComboBox reportChoiceBox = new JComboBox(reportChoiceArr);
+
+        // Setup Tabbed Panes
+        adminView.addTab("Add Stuff", null, newEntitiesPanel, "Add a new book or publisher");
+        adminView.addTab("Edit Stuff", null, editBookStockPanel, "Edit the stock of a book");
+        adminView.addTab("Reports", null, reportPanel, "Generate sales reports");
+        newEntitiesPanel.addTab("Add Book", null, addNewBookPanel, "Add a new book to inventory");
+        newEntitiesPanel.addTab("Add Publisher", null, addNewPublisherPanel, "Add a new publisher to database");
+        newEntitiesPanel.addTab("Add User", null, newUserPanel, "Add a new user to the database");
+
+        // Setup Add Book Pane
+        GridBagConstraints bookCon = new GridBagConstraints();
+        bookCon.gridx = 0;
+        bookCon.gridy = 0;
+        bookCon.weightx = 0.0;
+        bookCon.weightx = 0.0;
+        bookCon.anchor = GridBagConstraints.FIRST_LINE_START;
+        addNewBookPanel.add(logoutButton, bookCon);
+
+        bookCon.gridx = 5;
+        bookCon.anchor = GridBagConstraints.FIRST_LINE_END;
+        addNewBookPanel.add(addBookButton, bookCon);
+
+        bookCon.gridx = 1;
+        bookCon.gridy = 1;
+        bookCon.gridwidth = 3;
+        bookCon.anchor = GridBagConstraints.LINE_START;
+        addNewBookPanel.add(newBookLabel, bookCon);
+
+        bookCon.gridx = 1;
+        bookCon.gridy = 2;
+        bookCon.gridwidth = 1;
+        addNewBookPanel.add(newBookTitleLabel, bookCon);
+        bookCon.gridx = 2;
+        bookCon.gridwidth = 3;
+        addNewBookPanel.add(newBookTitleTF, bookCon);
+
+        bookCon.gridy = 3;
+        bookCon.gridx = 1;
+        bookCon.gridwidth = 1;
+        addNewBookPanel.add(newISBNLabel, bookCon);
+        bookCon.gridx = 2;
+        bookCon.gridwidth = 3;
+        addNewBookPanel.add(newISBNTF, bookCon);
+
+        bookCon.gridy = 4;
+        bookCon.gridx = 1;
+        bookCon.gridwidth = 1;
+        addNewBookPanel.add(newBookVersionLabel, bookCon);
+        bookCon.gridx = 2;
+        bookCon.gridwidth = 3;
+        addNewBookPanel.add(newBookVersionTF, bookCon);
+
+        bookCon.gridy = 5;
+        bookCon.gridx = 1;
+        bookCon.gridwidth = 1;
+        addNewBookPanel.add(newBookGenreLabel, bookCon);
+        bookCon.gridx = 2;
+        bookCon.gridwidth = 3;
+        addNewBookPanel.add(newBookGenreTF, bookCon);
+
+        bookCon.gridy = 6;
+        bookCon.gridx = 1;
+        bookCon.gridwidth = 1;
+        addNewBookPanel.add(newBookNumPagesLabel, bookCon);
+        bookCon.gridx = 2;
+        bookCon.gridwidth = 3;
+        addNewBookPanel.add(newBookNumPagesTF, bookCon);
+
+        bookCon.gridy = 7;
+        bookCon.gridx = 1;
+        bookCon.gridwidth = 1;
+        addNewBookPanel.add(newBookPriceLabel, bookCon);
+        bookCon.gridx = 2;
+        bookCon.gridwidth = 3;
+        addNewBookPanel.add(newBookPriceTF, bookCon);
+
+        bookCon.gridy = 8;
+        bookCon.gridx = 1;
+        bookCon.gridwidth = 1;
+        addNewBookPanel.add(newBookRoyaltyLabel, bookCon);
+        bookCon.gridx = 2;
+        bookCon.gridwidth = 3;
+        addNewBookPanel.add(newBookRoyaltyTF, bookCon);
+
+        bookCon.gridy = 9;
+        bookCon.gridx = 1;
+        bookCon.gridwidth = 1;
+        addNewBookPanel.add(newBookStockLabel, bookCon);
+        bookCon.gridx = 2;
+        bookCon.gridwidth = 3;
+        addNewBookPanel.add(newBookStockTF, bookCon);
+
+        bookCon.gridy = 10;
+        bookCon.gridx = 1;
+        bookCon.gridwidth = 1;
+        addNewBookPanel.add(newBookYearLabel, bookCon);
+        bookCon.gridx = 2;
+        bookCon.gridwidth = 3;
+        addNewBookPanel.add(newBookYearTF, bookCon);
+
+        bookCon.gridy = 11;
+        bookCon.gridx = 1;
+        bookCon.gridwidth = 3;
+        addNewBookPanel.add(newBookAuthorLabel, bookCon);
+
+        bookCon.gridwidth = 1;
+        bookCon.gridy = 12;
+        bookCon.gridx = 1;
+        addNewBookPanel.add(newBookAuthorFNLabel, bookCon);
+        bookCon.gridx = 2;
+        addNewBookPanel.add(newBookAuthorFNTF, bookCon);
+        bookCon.gridx = 3;
+        addNewBookPanel.add(newBookAuthorLNLabel, bookCon);
+        bookCon.gridx = 4;
+        addNewBookPanel.add(newBookAuthorLNTF, bookCon);
+
+
+        bookCon.gridy = 13;
+        bookCon.gridx = 1;
+        bookCon.gridwidth = 1;
+        addNewBookPanel.add(newBookPublisherLabel, bookCon);
+        bookCon.gridx = 2;
+        bookCon.gridwidth = 3;
+        addNewBookPanel.add(newBookPublisherTF, bookCon);
+
+        bookCon.gridwidth = 2;
+        bookCon.gridy = 0;
+        bookCon.gridx = 4;
+        bookCon.anchor = GridBagConstraints.LINE_END;
+        bookCon.fill = GridBagConstraints.HORIZONTAL;
+        confirmNewBookAddition.setAlignmentX(JPanel.RIGHT_ALIGNMENT);
+        addNewBookPanel.add(confirmNewBookAddition, bookCon);
+
+        c.add(adminView);
+        f.pack();
+        f.setLocationRelativeTo(null);
     }
 
     /**
@@ -480,7 +675,9 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
                 case "Checkout" -> System.out.println("Checking-out");
                 case "Search" -> System.out.println("Searching");
                 case "Logout" -> confirmLogout();
-                default -> System.out.print("Error");
+                case "Add Book" -> System.out.println("Book Added");
+                case "Order Lookup" -> System.out.println("Looking up order");
+                default -> System.out.println("Error");
             }
         }
     }
@@ -494,8 +691,7 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
         boolean[] validCred = super.lookForaLogin(usernameField.getText(), passwordField.getText());
         if (validCred[0]) {
             if(validCred[1]) {
-                adminScreen();
-                System.out.print("Hey Admin");
+                adminScreenChoice();
             }else userScreen();
         }
         else loginSuccess.setText("Login not successful. Please try again.");
@@ -519,6 +715,33 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
             dialog.setVisible(false);
         });
         cancelButton.addActionListener(e -> {dialog.setVisible(false);});
+
+        dialog.pack();
+        dialog.setLocationRelativeTo(null);
+        dialog.setVisible(true);
+    }
+
+    /**
+     * Gives the admin user the choice of where to go
+     */
+    private void adminScreenChoice(){
+        JButton userButton = new JButton("Customer View");
+        JButton adminButton = new JButton("Administrative View");
+
+        Object[] options = {adminButton, userButton};
+        final JOptionPane screenChoice = new JOptionPane("Which screen would you like to be directed to?", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+        final JDialog dialog = screenChoice.createDialog("Admin");
+        dialog.setContentPane(screenChoice);
+        dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+
+        userButton.addActionListener(e -> {
+            userScreen();
+            dialog.setVisible(false);
+        });
+        adminButton.addActionListener(e -> {
+            adminScreen();
+            dialog.setVisible(false);
+        });
 
         dialog.pack();
         dialog.setLocationRelativeTo(null);
