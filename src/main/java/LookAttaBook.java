@@ -24,12 +24,16 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
     String[] resultFilterArr = {"Price", "A-Z", "Z-A", "Year"};
     String[] searchFilterArr = {"Title", "Author", "Genre", "ISBN", "Publisher", "Year"};
     String[] reportChoiceArr = {"Sales v Expense", "Sales per Genre", "Sales per Author", "Sales per Publisher", "Sales per Month", "Sales per Year", "Expense per Month", "Expense per Year"};
+    String[] provincesArr = {"AB", "BC", "MB", "NB", "NL", "NS", "NT", "NU", "ON", "PE", "QC", "SK", "YT"};
 
     /* JComboBoxes */
     // User
     JComboBox<String> resultFilters = new JComboBox<>(resultFilterArr);
     JComboBox<String> searchFilters = new JComboBox<>(searchFilterArr);
     JComboBox<String> reportChoiceBox = new JComboBox<>(reportChoiceArr);
+    JComboBox<String> shipProvinceComboBox = new JComboBox<>(provincesArr);
+    JComboBox<String> billProvinceComboBox = new JComboBox<>(provincesArr);
+    JComboBox<String> pubProvinceComboBox = new JComboBox<>(provincesArr);
 
     /* JLabels -- Global to update users */
     // Login
@@ -51,7 +55,6 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
     private final JTextField billStreetNameTF = new JTextField(), shipStreetNameTF = new JTextField();
     private final JTextField billApartmentTF = new JTextField(), shipApartmentTF = new JTextField();
     private final JTextField billCityTF = new JTextField(), shipCityTF = new JTextField();
-    private final JTextField billProvinceTF = new JTextField(), shipProvinceTF = new JTextField();
     private final JTextField billCountryTF = new JTextField(), shipCountryTF = new JTextField();
     private final JTextField billPostalCodeTF = new JTextField(), shipPostalCodeTF = new JTextField();
     private final JTextField newUsernameTF = new JTextField(20);
@@ -61,18 +64,30 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
     private final JTextField lastNameTF = new JTextField();
     private final JTextField emailTF = new JTextField();
     // Admin
-    private final JTextField newISBNTF = new JTextField(15);
-    private final JTextField newBookTitleTF = new JTextField(15);
-    private final JTextField newBookVersionTF = new JTextField(15);
-    private final JTextField newBookGenreTF = new JTextField(15);
-    private final JTextField newBookNumPagesTF = new JTextField(15);
-    private final JTextField newBookPriceTF = new JTextField(15);
-    private final JTextField newBookRoyaltyTF = new JTextField(15);
-    private final JTextField newBookStockTF = new JTextField("0", 15);
-    private final JTextField newBookAuthorFNTF = new JTextField(15);
-    private final JTextField newBookAuthorLNTF = new JTextField(15);
-    private final JTextField newBookPublisherTF = new JTextField(15);
-    private final JTextField newBookYearTF = new JTextField(15);
+        // Book
+        private final JTextField newISBNTF = new JTextField(15);
+        private final JTextField newBookTitleTF = new JTextField(15);
+        private final JTextField newBookVersionTF = new JTextField(15);
+        private final JTextField newBookGenreTF = new JTextField(15);
+        private final JTextField newBookNumPagesTF = new JTextField(15);
+        private final JTextField newBookPriceTF = new JTextField(15);
+        private final JTextField newBookRoyaltyTF = new JTextField(15);
+        private final JTextField newBookStockTF = new JTextField("0", 15);
+        private final JTextField newBookAuthorFNTF = new JTextField(15);
+        private final JTextField newBookAuthorLNTF = new JTextField(15);
+        private final JTextField newBookPublisherTF = new JTextField(15);
+        private final JTextField newBookYearTF = new JTextField(15);
+        // Publisher
+        private final JTextField newPublisherNameTF = new JTextField(15);
+        private final JTextField newPublisherStreetNumTF = new JTextField(5);
+        private final JTextField newPublisherStreetNameTF = new JTextField(5);
+        private final JTextField newPublisherApartmentTF = new JTextField(5);
+        private final JTextField newPublisherCityTF = new JTextField(15);
+        private final JTextField newPublisherCountryTF = new JTextField(15);
+        private final JTextField newPublisherPostalCodeTF = new JTextField(15);
+        private final JTextField newPublisherEmailTF = new JTextField(15);
+        private final JTextField newPublisherPhoneTF = new JTextField(15);
+        private final JTextField newPublisherBankAccountTF = new JTextField(15);
     // User
     private final JTextField searchText = new JTextField();
 
@@ -173,7 +188,7 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
      */
     private void regScreen() {
         // Clear GUI in order to reload
-        f.setPreferredSize(new Dimension(600, 750));
+        f.setPreferredSize(new Dimension(600, 775));
         c.removeAll();
 
         /* Component declarations */
@@ -257,7 +272,7 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
         shipAdd.add(shippingCityLabel);
         shipAdd.add(shipCityTF);
         shipAdd.add(shippingProvinceLabel);
-        shipAdd.add(shipProvinceTF);
+        shipAdd.add(shipProvinceComboBox);
         shipAdd.add(shippingCountryLabel);
         shipAdd.add(shipCountryTF);
         shipAdd.add(shippingPostalCodeLabel);
@@ -277,7 +292,7 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
         billAdd.add(billCityLabel);
         billAdd.add(billCityTF);
         billAdd.add(billProvinceLabel);
-        billAdd.add(billProvinceTF);
+        billAdd.add(billProvinceComboBox);
         billAdd.add(billCountryLabel);
         billAdd.add(billCountryTF);
         billAdd.add(billPostalCodeLabel);
@@ -289,7 +304,7 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
         billStreetNameTF.setEnabled(false);
         billApartmentTF.setEnabled(false);
         billCityTF.setEnabled(false);
-        billProvinceTF.setEnabled(false);
+        billProvinceComboBox.setEnabled(false);
         billCountryTF.setEnabled(false);
         billPostalCodeTF.setEnabled(false);
 
@@ -344,7 +359,7 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
             billStreetNameTF.setEnabled(sameAsBilling);
             billApartmentTF.setEnabled(sameAsBilling);
             billCityTF.setEnabled(sameAsBilling);
-            billProvinceTF.setEnabled(sameAsBilling);
+            billProvinceComboBox.setEnabled(sameAsBilling);
             billCountryTF.setEnabled(sameAsBilling);
             billPostalCodeTF.setEnabled(sameAsBilling);
         });
@@ -385,11 +400,14 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
         // ActionListeners
         logoutAddBookButton.addActionListener(this);
         addBookButton.addActionListener(this);
+        logoutAddPublisherButton.addActionListener(this);
+        addPublisherButton.addActionListener(this);
 
         // JTextFields
         // See Fields
 
-        // JLabels
+        /* JLabels */
+        // addNewBook
         JLabel newBookLabel = new JLabel("Enter Book Information (required fields indicated by *): ");
         JLabel newISBNLabel = new JLabel("*ISBN: ");
         JLabel newBookTitleLabel = new JLabel("*Title: ");
@@ -405,6 +423,21 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
         JLabel newBookPublisherLabel = new JLabel("Publisher (be sure to add new publishers before adding books): ");
         JLabel newBookYearLabel = new JLabel("Year: ");
         JLabel accountingLabel = new JLabel("*Accounting: ");
+
+        // addNewPublisher
+        JLabel newPublisherLabel = new JLabel("Enter Publisher Information (required fields indicated by *): ");
+        JLabel newPublisherNameLabel = new JLabel("*Name: ");
+        JLabel newPublisherAddressLabel = new JLabel("*Address: ");
+        JLabel newPublisherStreetNumLabel = new JLabel("*Street Number:");
+        JLabel newPublisherStreetNameLabel = new JLabel("*Street Name:");
+        JLabel newPublisherApartmentLabel = new JLabel("Apartment:");
+        JLabel newPublisherCityLabel = new JLabel("*City: ");
+        JLabel newPublisherProvinceLabel = new JLabel("*Province: ");
+        JLabel newPublisherCountryLabel = new JLabel("*Country: ");
+        JLabel newPublisherPostalCodeLabel = new JLabel("*Postal Code: ");
+        JLabel newPublisherEmailLabel = new JLabel("*Email: ");
+        JLabel newPublisherPhoneLabel = new JLabel("Phone: ");
+        JLabel newPublisherBankAccountLabel = new JLabel("*Bank Account Number: ");
 
         // Setup addBookPanel
         {
@@ -533,72 +566,93 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
             Dimension spacer = new Dimension(15, 15);
             pubCon.gridx = 0;
             pubCon.gridy = 0;
+            pubCon.anchor = GridBagConstraints.FIRST_LINE_START;
             addNewPublisherPanel.add(logoutAddPublisherButton, pubCon);
 
-            pubCon.gridx = 5;
+            pubCon.gridx = 7;
             pubCon.anchor = GridBagConstraints.FIRST_LINE_END;
             addNewPublisherPanel.add(addPublisherButton, pubCon);
 
             pubCon.gridx = 1;
             pubCon.gridy = 1;
-            pubCon.gridwidth = 3;
+            pubCon.weightx = 1.0;
+            pubCon.gridwidth = 7;
             pubCon.anchor = GridBagConstraints.LINE_START;
-            addNewPublisherPanel.add(new JLabel(), pubCon);
+            pubCon.fill = GridBagConstraints.HORIZONTAL;
+            addNewPublisherPanel.add(newPublisherLabel, pubCon);
 
             pubCon.gridy = 2;
             pubCon.gridx = 1;
             pubCon.gridwidth = 1;
-            addNewPublisherPanel.add(new JLabel(), pubCon);
+            addNewPublisherPanel.add(newPublisherNameLabel, pubCon);
             pubCon.gridx = 2;
-            addNewPublisherPanel.add(new JTextField(15), pubCon);
-            pubCon.gridx = 3;
-            addNewPublisherPanel.add(new JLabel(), pubCon);
-            pubCon.gridx = 4;
-            addNewPublisherPanel.add(new JTextField(15), pubCon);
+            pubCon.gridwidth = 5;
+            addNewPublisherPanel.add(newPublisherNameTF, pubCon);
 
             pubCon.gridy = 3;
             pubCon.gridx = 1;
-            addNewPublisherPanel.add(new JLabel(), pubCon);
+            pubCon.gridwidth = 1;
+            addNewPublisherPanel.add(newPublisherEmailLabel, pubCon);
             pubCon.gridx = 2;
-            addNewPublisherPanel.add(new JTextField(15), pubCon);
-            pubCon.gridx = 3;
-            addNewPublisherPanel.add(new JLabel(), pubCon);
+            pubCon.gridwidth = 2;
+            addNewPublisherPanel.add(newPublisherEmailTF, pubCon);
             pubCon.gridx = 4;
-            addNewPublisherPanel.add(new JTextField(15), pubCon);
+            pubCon.gridwidth = 1;
+            addNewPublisherPanel.add(newPublisherPhoneLabel, pubCon);
+            pubCon.gridx = 5;
+            pubCon.gridwidth = 2;
+            addNewPublisherPanel.add(newPublisherPhoneTF, pubCon);
 
             pubCon.gridy = 4;
             pubCon.gridx = 1;
-            addNewPublisherPanel.add(new JLabel(), pubCon);
-            pubCon.gridx = 2;
-            addNewPublisherPanel.add(new JTextField(15), pubCon);
-            pubCon.gridx = 3;
-            addNewPublisherPanel.add(new JLabel(), pubCon);
-            pubCon.gridx = 4;
-            addNewPublisherPanel.add(new JTextField(15), pubCon);
+            addNewPublisherPanel.add(Box.createRigidArea(spacer), pubCon);
 
             pubCon.gridy = 5;
             pubCon.gridx = 1;
-            addNewPublisherPanel.add(new JLabel(), pubCon);
-            pubCon.gridx = 2;
-            addNewPublisherPanel.add(new JTextField(15), pubCon);
+            addNewPublisherPanel.add(newPublisherAddressLabel, pubCon);
 
             pubCon.gridy = 6;
             pubCon.gridx = 1;
-            addNewPublisherPanel.add(Box.createRigidArea(spacer), pubCon);
+            pubCon.gridwidth = 1;
+            addNewPublisherPanel.add(newPublisherStreetNumLabel, pubCon);
+            pubCon.gridx = 2;
+            addNewPublisherPanel.add(newPublisherStreetNumTF, pubCon);
+            pubCon.gridx = 3;
+            addNewPublisherPanel.add(newPublisherStreetNameLabel, pubCon);
+            pubCon.gridx = 4;
+            addNewPublisherPanel.add(newPublisherStreetNameTF, pubCon);
+            pubCon.gridx = 5;
+            addNewPublisherPanel.add(newPublisherApartmentLabel, pubCon);
+            pubCon.gridx = 6;
+            addNewPublisherPanel.add(newPublisherApartmentTF, pubCon);
 
             pubCon.gridy = 7;
             pubCon.gridx = 1;
-            addNewPublisherPanel.add(new JTextField(15), pubCon);
+            pubCon.gridwidth = 1;
+            addNewPublisherPanel.add(newPublisherCityLabel, pubCon);
+            pubCon.gridx = 2;
+            pubCon.gridwidth = 2;
+            addNewPublisherPanel.add(newPublisherCityTF, pubCon);
+            pubCon.gridx = 4;
+            pubCon.gridwidth = 1;
+            addNewPublisherPanel.add(newPublisherProvinceLabel, pubCon);
+            pubCon.gridx = 5;
+            pubCon.gridwidth = 2;
+            addNewPublisherPanel.add(pubProvinceComboBox, pubCon);
 
             pubCon.gridy = 8;
             pubCon.gridx = 1;
-            addNewPublisherPanel.add(new JLabel(), pubCon);
+            pubCon.gridwidth = 1;
+            addNewPublisherPanel.add(newPublisherCountryLabel, pubCon);
             pubCon.gridx = 2;
-            addNewPublisherPanel.add(new JTextField(15), pubCon);
-            pubCon.gridx = 3;
-            addNewPublisherPanel.add(new JLabel(), pubCon);
+            pubCon.gridwidth = 2;
+            addNewPublisherPanel.add(newPublisherCountryTF, pubCon);
             pubCon.gridx = 4;
-            addNewPublisherPanel.add(new JTextField(15), pubCon);
+            pubCon.gridwidth = 1;
+            addNewPublisherPanel.add(newPublisherPostalCodeLabel, pubCon);
+            pubCon.gridx = 5;
+            pubCon.gridwidth = 2;
+            addNewPublisherPanel.add(newPublisherPostalCodeTF, pubCon);
 
             pubCon.gridy = 9;
             pubCon.gridx = 1;
@@ -606,34 +660,15 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
 
             pubCon.gridy = 10;
             pubCon.gridx = 1;
-            addNewPublisherPanel.add(new JLabel(), pubCon);
-
-            pubCon.gridy = 11;
-            pubCon.gridx = 1;
-            addNewPublisherPanel.add(new JLabel(), pubCon);
-            pubCon.gridx = 2;
-            addNewPublisherPanel.add(new JTextField(15), pubCon);
+            pubCon.gridwidth = 2;
+            addNewPublisherPanel.add(newPublisherBankAccountLabel, pubCon);
             pubCon.gridx = 3;
-            addNewPublisherPanel.add(new JLabel(), pubCon);
-            pubCon.gridx = 4;
-            addNewPublisherPanel.add(new JTextField(15), pubCon);
-
-            pubCon.gridy = 12;
-            pubCon.gridx = 1;
-            addNewPublisherPanel.add(Box.createRigidArea(spacer), pubCon);
-
-            pubCon.gridy = 13;
             pubCon.gridwidth = 4;
-            addNewPublisherPanel.add(new JLabel(), pubCon);
-            pubCon.gridx = 2;
-            pubCon.gridy = 14;
-            pubCon.gridwidth = 3;
-            pubCon.fill = GridBagConstraints.HORIZONTAL;
-            addNewPublisherPanel.add(new JTextField(15), pubCon);
+            addNewPublisherPanel.add(newPublisherBankAccountTF, pubCon);
 
             pubCon.gridwidth = 2;
             pubCon.gridy = 1;
-            pubCon.gridx = 5;
+            pubCon.gridx = 7;
             pubCon.anchor = GridBagConstraints.LINE_END;
             confirmNewBookAddition.setAlignmentX(JPanel.RIGHT_ALIGNMENT);
             addNewPublisherPanel.add(confirmNewPublisherAddition, pubCon);
@@ -641,7 +676,7 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
             pubCon.gridy = 15; // shift everything to the top
             pubCon.gridx = 0;
             pubCon.weighty = 1.0;
-            pubCon.gridwidth = 6;
+            pubCon.gridwidth = 8;
             pubCon.anchor = GridBagConstraints.CENTER;
             pubCon.fill = GridBagConstraints.BOTH;
             Component glue = Box.createVerticalGlue();
@@ -815,6 +850,7 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
                 case "Logout" -> confirmLogout();
                 case "Add Book" -> confirmNewBookAddition.setText("New Book Added");
                 case "Order Lookup" -> System.out.println("Looking up order");
+                case "Add Publisher" -> confirmNewPublisherAddition.setText("New Publisher Added");
                 default -> System.out.println("Error");
             }
         }
