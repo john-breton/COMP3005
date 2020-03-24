@@ -46,7 +46,7 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
         // Clear GUI to load new contents
         // seriously inefficient, but I'm lazy
         // Nah this works well.
-        f.setPreferredSize(new Dimension(300, 300));
+        f.setPreferredSize(new Dimension(400, 400));
         f.setLocationRelativeTo(null);
         c.removeAll();
         usernameField.setText("");
@@ -313,6 +313,7 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
         });
 
         c.add(regPage);
+        f.pack();
     }
 
     /**
@@ -460,7 +461,7 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
 
 
         c.add(userView);
-
+        f.pack();
     }
 
     /**
