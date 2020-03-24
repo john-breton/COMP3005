@@ -44,9 +44,7 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
      */
     private void loginScreen() {
         // Clear GUI to load new contents
-        // seriously inefficient, but I'm lazy
-        // Nah this works well.
-        f.setPreferredSize(new Dimension(400, 400));
+        f.setPreferredSize(new Dimension(300, 300));
         f.setLocationRelativeTo(null);
         c.removeAll();
         usernameField.setText("");
@@ -120,10 +118,7 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
      */
     private void regScreen() {
         // Clear GUI in order to reload
-        // seriously inefficient, but I'm lazy
-        // Just tell them to get faster computers.
-        f.setSize(new Dimension(600, 750));
-        f.setLocationRelativeTo(null);
+        f.setPreferredSize(new Dimension(600, 750));
         c.removeAll();
 
         /* Component declarations */
@@ -245,6 +240,7 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
         billAdd.add(billPostalCodeLabel);
         billAdd.add(billPostalCodeTF);
         billAdd.setPreferredSize(new Dimension(400, 200));
+
         // Disable the fields by default.
         billStreetNumTF.setEnabled(false);
         billStreetNameTF.setEnabled(false);
@@ -299,8 +295,6 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
         // Add action listeners
         cancelReg.addActionListener(this);
         submitReg.addActionListener(this);
-
-        // Changed this to a lambda and simplified the logic.
         billingSameAsShipping.addActionListener(e -> {
             boolean sameAsBilling = !billingSameAsShipping.isSelected();
             billStreetNumTF.setEnabled(sameAsBilling);
@@ -314,6 +308,7 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
 
         c.add(regPage);
         f.pack();
+        f.setLocationRelativeTo(null);
     }
 
     /**
@@ -333,6 +328,7 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
         f.setLocationRelativeTo(null);
         c.removeAll();
 
+        /* Attributes */
         // Arrays
         String[] resultFilterArr = {"Price", "A-Z", "Z-A", "Year"};
         String[] searchFilterArr = {"Title", "Author", "Genre", "ISBN", "Publisher", "Year"};
@@ -342,6 +338,7 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
         Dimension searchResultDimension = new Dimension(500, c.getHeight());
         Dimension cartDimension = new Dimension(c.getWidth() - (int)searchResultDimension.getWidth(), c.getHeight());
 
+        /* Components */
         // Panels and Panes
         JSplitPane userView = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true);
         JPanel searchAndResults = new JPanel();
@@ -377,6 +374,7 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
         JScrollPane searchResult = new JScrollPane();
         JTextField searchText = new JTextField();
 
+        /* Setup Panels */
         // Price panel
         addToCart.setPreferredSize(addRemoveButtonDimensions);
         pricePanel.add(addToCart);
