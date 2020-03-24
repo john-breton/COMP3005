@@ -473,12 +473,13 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
             switch (((JButton) o).getText()) {
                 case "Login" -> login();
                 case "Register" -> regScreen();
-                case "Cancel Registration", "Logout" -> loginScreen();
+                case "Cancel Registration" -> loginScreen();
                 case "Submit" -> System.out.println("Submitted");
                 case "+" -> System.out.println("Item Added");
                 case "-" -> System.out.println("Item removed");
                 case "Checkout" -> System.out.println("Checking-out");
                 case "Search" -> System.out.println("Searching");
+                case "Logout" -> confirmLogout();
                 default -> System.out.print("Error");
             }
         }
@@ -498,5 +499,29 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
             }else userScreen();
         }
         else loginSuccess.setText("Login not successful. Please try again.");
+    }
+
+    /**
+     * Confirms that the user wishes to logout
+     */
+    private void confirmLogout(){
+        JButton logoutButton = new JButton("Logout");
+        JButton cancelButton = new JButton("Cancel");
+
+        Object[] options = {logoutButton, cancelButton};
+        final JOptionPane areYouSure = new JOptionPane("Are you sure you want to logout?", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+        final JDialog dialog = areYouSure.createDialog("Logout");
+        dialog.setContentPane(areYouSure);
+        dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+
+        logoutButton.addActionListener(e -> {
+            loginScreen();
+            dialog.setVisible(false);
+        });
+        cancelButton.addActionListener(e -> {dialog.setVisible(false);});
+
+        dialog.pack();
+        dialog.setLocationRelativeTo(null);
+        dialog.setVisible(true);
     }
 }
