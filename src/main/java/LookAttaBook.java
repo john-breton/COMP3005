@@ -45,7 +45,6 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
     private void loginScreen() {
         // Clear GUI to load new contents
         f.setPreferredSize(new Dimension(300, 300));
-        f.setLocationRelativeTo(null);
         c.removeAll();
         usernameField.setText("");
         passwordField.setText("");
@@ -324,8 +323,7 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
      * Display the screen for a user
      */
     public void userScreen() {
-        f.setMinimumSize(new Dimension(798, 850));
-        f.setLocationRelativeTo(null);
+        f.setPreferredSize(new Dimension(798, 850));
         c.removeAll();
 
         /* Attributes */
@@ -460,6 +458,7 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
 
         c.add(userView);
         f.pack();
+        f.setLocationRelativeTo(null);
     }
 
     /**
