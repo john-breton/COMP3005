@@ -419,36 +419,20 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
         f.setPreferredSize(new Dimension(800, 800));
         c.removeAll();
 
-        // Panels and JTabbedPanes
-        JPanel addNewBookPanel = addBook();
-        JPanel addNewPublisherPanel = addPublisher();
-        JPanel newUserPanel = addUser();
-        JPanel editBookStockPanel = new JPanel();
-        JPanel reportPanel = new JPanel();
+        /* JTabbedPanes */
         JTabbedPane adminView = new JTabbedPane();
         JTabbedPane newEntitiesPanel = new JTabbedPane(JTabbedPane.BOTTOM);
-
-        // JButtons
-        // editStuff
-        JButton updateBookStockButton = new JButton("Update Stock");
-        JButton generateReport = new JButton("Generate Report");
-
-        /* JCheckBoxes */
-
-        /* JTextFields */
-        // See Fields
-
-        /* JLabels */
-
-        /* ActionListeners */
+        JTabbedPane editEntitiesPanel = new JTabbedPane(JTabbedPane.BOTTOM);
 
         // Setup Tabbed Panes
         adminView.addTab("Add Stuff", null, newEntitiesPanel, "Add a new book or publisher");
-        adminView.addTab("Edit Stuff", null, editBookStockPanel, "Edit the stock of a book");
-        adminView.addTab("Reports", null, reportPanel, "Generate sales reports");
-        newEntitiesPanel.addTab("Add Book", null, addNewBookPanel, "Add a new book to inventory");
-        newEntitiesPanel.addTab("Add Publisher", null, addNewPublisherPanel, "Add a new publisher to database");
-        newEntitiesPanel.addTab("Add User", null, newUserPanel, "Add a new user to the database");
+        adminView.addTab("Edit Stuff", null, editEntitiesPanel, "Edit the stock of a book");
+        adminView.addTab("Reports", null, reportPanel(), "Generate sales reports");
+        newEntitiesPanel.addTab("Add Book", null, addBook(), "Add a new book to inventory");
+        newEntitiesPanel.addTab("Add Publisher", null, addPublisher(), "Add a new publisher to database");
+        newEntitiesPanel.addTab("Add Users", null, addUser(), "Add a new user to the database");
+        editEntitiesPanel.addTab("Edit Books", null, editBook(), "Edit properties of existing books");
+        editEntitiesPanel.addTab("Edit User", null, editUser(), "Edit properties of existing users");
 
         c.add(adminView);
         f.pack();
@@ -1056,6 +1040,50 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
         }
 
         return newUserPanel;
+    }
+
+    /**
+     * Creates the "Edit Book" tab for the "Edit Stuff" tab of the adminView
+     * TODO: editBook()
+     * @return editBookPanel for adminView
+     */
+    private JPanel editBook()
+    {
+        /* JButtons */
+        JButton updateBookStockButton = new JButton("Update Stock");
+
+        /* JLabels */
+
+        /* ActionListeners */
+
+        return new JPanel();
+    }
+
+    /**
+     * Creates the "Edit User" tab for the "Edit Stuff" tab of the adminView
+     * TODO: editUser()
+     * @return editUserPanel for adminView
+     */
+    private JPanel editUser()
+    {
+        return new JPanel();
+    }
+
+    /**
+     * Creates the "Reports" tab for the adminView
+     * TODO: reportPanel()
+     * @return reportPanel for adminView
+     */
+    private JPanel reportPanel()
+    {
+        /* JButtons */
+        JButton generateReport = new JButton("Generate Report");
+
+        /* JLabels */
+
+        /* ActionListeners */
+
+        return new JPanel();
     }
 
     /**
