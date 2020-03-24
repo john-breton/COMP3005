@@ -1,4 +1,5 @@
 import com.jtattoo.plaf.graphite.GraphiteInternalFrameTitlePane;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -414,264 +415,233 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
      * Display the screen for a librarian...possible to display an option for user screen? (maybe the librarian wants to shop ;) )
      * SHOULD ALSO BE ABLE TO SIGN UP A NEW ADMIN
      */
-    public void adminScreen() {
+    private void adminScreen() {
         f.setPreferredSize(new Dimension(800, 800));
         c.removeAll();
 
         // Panels and JTabbedPanes
-        JPanel addNewBookPanel = new JPanel(new GridBagLayout());
-        JPanel addNewPublisherPanel = new JPanel(new GridBagLayout());
-        JPanel newUserPanel = new JPanel(new GridBagLayout());
+        JPanel addNewBookPanel = addBook();
+        JPanel addNewPublisherPanel = addPublisher();
+        JPanel newUserPanel = addUser();
         JPanel editBookStockPanel = new JPanel();
         JPanel reportPanel = new JPanel();
         JTabbedPane adminView = new JTabbedPane();
         JTabbedPane newEntitiesPanel = new JTabbedPane(JTabbedPane.BOTTOM);
 
         // JButtons
-        // addStuff
-        JButton logoutAddBookButton = new JButton("Logout");
-        JButton addBookButton = new JButton("Add Book");
-        JButton logoutAddPublisherButton = new JButton("Logout");
-        JButton addPublisherButton = new JButton("Add Publisher");
-        JButton logoutAddUserButton = new JButton("Logout");
-        JButton addUserButton = new JButton("Add User");
         // editStuff
         JButton updateBookStockButton = new JButton("Update Stock");
         JButton generateReport = new JButton("Generate Report");
 
-        // JCheckBoxes
-        JCheckBox billingSameAsShipping = new JCheckBox("Billing Address is the same as Shipping Address");
-        billingSameAsShipping.setSelected(true); // selected by default
-        JCheckBox isUserAdminCB = new JCheckBox("Is the user an admin?");
+        /* JCheckBoxes */
 
-        // JTextFields
+        /* JTextFields */
         // See Fields
 
         /* JLabels */
-        // addNewBook
+
+        /* ActionListeners */
+
+        // Setup Tabbed Panes
+        adminView.addTab("Add Stuff", null, newEntitiesPanel, "Add a new book or publisher");
+        adminView.addTab("Edit Stuff", null, editBookStockPanel, "Edit the stock of a book");
+        adminView.addTab("Reports", null, reportPanel, "Generate sales reports");
+        newEntitiesPanel.addTab("Add Book", null, addNewBookPanel, "Add a new book to inventory");
+        newEntitiesPanel.addTab("Add Publisher", null, addNewPublisherPanel, "Add a new publisher to database");
+        newEntitiesPanel.addTab("Add User", null, newUserPanel, "Add a new user to the database");
+
+        c.add(adminView);
+        f.pack();
+        f.setLocationRelativeTo(null);
+    }
+
+    /**
+     * Creates the "Add Book" tab for the "Add Stuff" tab of the adminView
+     * @return addNewBookPanel for adminView
+     */
+    private JPanel addBook()
+    {
+        JPanel addNewBookPanel = new JPanel(new GridBagLayout());
+
+        /* JButtons */
+        JButton logoutAddBookButton = new JButton("Logout");
+        JButton addBookButton = new JButton("Add Book");
+
+        /* JLabels */
         JLabel newBookLabel = new JLabel("Enter Book Information (required fields indicated by *): "),
-        newISBNLabel = new JLabel("*ISBN: "),
-        newBookTitleLabel = new JLabel("*Title: "),
-        newBookVersionLabel = new JLabel("Version: "),
-        newBookGenreLabel = new JLabel("Genre: "),
-        newBookNumPagesLabel = new JLabel("Pg Count: "),
-        newBookPriceLabel = new JLabel("*Price:"),
-        newBookRoyaltyLabel = new JLabel("*Royalty (%): "),
-        newBookStockLabel = new JLabel("Stock:"),
-        newBookAuthorLabel = new JLabel("Author: "),
-        newBookAuthorFNLabel = new JLabel("First Name: "),
-        newBookAuthorLNLabel = new JLabel("Last Name: "),
-        newBookPublisherLabel = new JLabel("Publisher (be sure to add new publishers before adding books): "),
-        newBookYearLabel = new JLabel("Year: "),
-        accountingLabel = new JLabel("*Accounting: ");
+                newISBNLabel = new JLabel("*ISBN: "),
+                newBookTitleLabel = new JLabel("*Title: "),
+                newBookVersionLabel = new JLabel("Version: "),
+                newBookGenreLabel = new JLabel("Genre: "),
+                newBookNumPagesLabel = new JLabel("Pg Count: "),
+                newBookPriceLabel = new JLabel("*Price:"),
+                newBookRoyaltyLabel = new JLabel("*Royalty (%): "),
+                newBookStockLabel = new JLabel("Stock:"),
+                newBookAuthorLabel = new JLabel("Author: "),
+                newBookAuthorFNLabel = new JLabel("First Name: "),
+                newBookAuthorLNLabel = new JLabel("Last Name: "),
+                newBookPublisherLabel = new JLabel("Publisher (be sure to add new publishers before adding books): "),
+                newBookYearLabel = new JLabel("Year: "),
+                accountingLabel = new JLabel("*Accounting: ");
 
-        // addNewPublisher
-        JLabel newPublisherLabel = new JLabel("Enter Publisher Information (required fields indicated by *): "),
-        newPublisherNameLabel = new JLabel("*Name: "),
-        newPublisherAddressLabel = new JLabel("*Address: "),
-        newPublisherStreetNumLabel = new JLabel("*Street Number:"),
-        newPublisherStreetNameLabel = new JLabel("*Street Name:"),
-        newPublisherApartmentLabel = new JLabel("Apartment:"),
-        newPublisherCityLabel = new JLabel("*City: "),
-        newPublisherProvinceLabel = new JLabel("*Province: "),
-        newPublisherCountryLabel = new JLabel("*Country: "),
-        newPublisherPostalCodeLabel = new JLabel("*Postal Code: "),
-        newPublisherEmailLabel = new JLabel("*Email: "),
-        newPublisherPhoneLabel = new JLabel("Phone: "),
-        newPublisherBankAccountLabel = new JLabel("*Bank Account Number: ");
-
-        // addNewUser
-        // Admin info
-            JLabel newUserLoginCred = new JLabel("Login Credentials: ");
-            JLabel newUserDetailLabel = new JLabel("User Details: ");
-            JLabel newAdminUsernameLabel = new JLabel("*Username: ");
-            JLabel newAdminPasswordLabel = new JLabel("*Password: ");
-            JLabel confirmAdminPasswordLabel = new JLabel("*Confirm Password: ");
-            JLabel firstNameAdminLabel = new JLabel("*First Name: ");
-            JLabel lastNameAdminLabel = new JLabel("*Last Name: ");
-            JLabel emailAdminLabel = new JLabel("*Email: ");
-            JLabel salaryAdminLabel = new JLabel("Salary: ");
-        // Admin shipping address info (can be EMPTY)
-            JLabel shippingAdminAddressLabel = new JLabel("Shipping Address");
-            JLabel shippingAdminStreetNumLabel = new JLabel("*Street Number: ");
-            JLabel shippingAdminStreetNameLabel = new JLabel("*Street Name: ");
-            JLabel shippingAdminApartmentLabel = new JLabel("*Apartment: ");
-            JLabel shippingAdminCityLabel = new JLabel("*City: ");
-            JLabel shippingAdminProvinceLabel = new JLabel("*Province: ");
-            JLabel shippingAdminCountryLabel = new JLabel("*Country: ");
-            JLabel shippingAdminPostalCodeLabel = new JLabel("*Postal Code: ");
-        // Admin billing address info
-            JLabel billingAdminAddressLabel = new JLabel("Billing Address");
-            JLabel billAdminStreetNumLabel = new JLabel("Street Number: ");
-            JLabel billAdminStreetNameLabel = new JLabel("Street Name: ");
-            JLabel billAdminApartmentLabel = new JLabel("Apartment: ");
-            JLabel billAdminCityLabel = new JLabel("City: ");
-            JLabel billAdminProvinceLabel = new JLabel("Province: ");
-            JLabel billAdminCountryLabel = new JLabel("Country: ");
-            JLabel billAdminPostalCodeLabel = new JLabel("Postal Code: ");
-
-        // ActionListeners
+        /* ActionListeners */
         logoutAddBookButton.addActionListener(this);
         addBookButton.addActionListener(this);
-        logoutAddPublisherButton.addActionListener(this);
-        addPublisherButton.addActionListener(this);
-        logoutAddUserButton.addActionListener(this);
-        addUserButton.addActionListener(this);
-        billingSameAsShipping.addActionListener(e -> {
-            boolean sameAsBilling = !billingSameAsShipping.isSelected();
-            billAdminStreetNumTF.setEnabled(sameAsBilling);
-            billAdminStreetNameTF.setEnabled(sameAsBilling);
-            billAdminApartmentTF.setEnabled(sameAsBilling);
-            billAdminCityTF.setEnabled(sameAsBilling);
-            billAdminProvinceComboBox.setEnabled(sameAsBilling);
-            billAdminCountryTF.setEnabled(sameAsBilling);
-            billAdminPostalCodeTF.setEnabled(sameAsBilling);
-        });
-        isUserAdminCB.addActionListener(e -> {
-            boolean admin = isUserAdminCB.isSelected();
-            salaryAdminTF.setEnabled(admin);
-            if (admin) {
-                salaryAdminLabel.setText("*Salary: ");
-                shippingAdminStreetNumLabel.setText("Street Number: ");
-                shippingAdminStreetNameLabel.setText("Street Name: ");
-                shippingAdminApartmentLabel.setText("Apartment: ");
-                shippingAdminCityLabel.setText("City: ");
-                shippingAdminProvinceLabel.setText("Province: ");
-                shippingAdminCountryLabel.setText("Country: ");
-                shippingAdminPostalCodeLabel.setText("Postal Code: ");
-            }
-            else {
-                salaryAdminLabel.setText("Salary: ");
-                shippingAdminStreetNumLabel.setText("*Street Number: ");
-                shippingAdminStreetNameLabel.setText("*Street Name: ");
-                shippingAdminApartmentLabel.setText("*Apartment: ");
-                shippingAdminCityLabel.setText("*City: ");
-                shippingAdminProvinceLabel.setText("*Province: ");
-                shippingAdminCountryLabel.setText("*Country: ");
-                shippingAdminPostalCodeLabel.setText("*Postal Code: ");
-            }
-        });
 
         // Setup addBookPanel
         {
-        GridBagConstraints bookCon = new GridBagConstraints();
-        Dimension spacer = new Dimension(15, 15);
-        bookCon.gridx = 0;
-        bookCon.gridy = 0;
-        addNewBookPanel.add(logoutAddBookButton, bookCon);
+            GridBagConstraints bookCon = new GridBagConstraints();
+            Dimension spacer = new Dimension(15, 15);
+            bookCon.gridx = 0;
+            bookCon.gridy = 0;
+            addNewBookPanel.add(logoutAddBookButton, bookCon);
 
-        bookCon.gridx = 5;
-        bookCon.anchor = GridBagConstraints.FIRST_LINE_END;
-        addNewBookPanel.add(addBookButton, bookCon);
+            bookCon.gridx = 5;
+            bookCon.anchor = GridBagConstraints.FIRST_LINE_END;
+            addNewBookPanel.add(addBookButton, bookCon);
 
-        bookCon.gridx = 1;
-        bookCon.gridy = 1;
-        bookCon.gridwidth = 3;
-        bookCon.anchor = GridBagConstraints.LINE_START;
-        addNewBookPanel.add(newBookLabel, bookCon);
+            bookCon.gridx = 1;
+            bookCon.gridy = 1;
+            bookCon.gridwidth = 3;
+            bookCon.anchor = GridBagConstraints.LINE_START;
+            addNewBookPanel.add(newBookLabel, bookCon);
 
-        bookCon.gridy = 2;
-        bookCon.gridx = 1;
-        bookCon.gridwidth = 1;
-        addNewBookPanel.add(newBookTitleLabel, bookCon);
-        bookCon.gridx = 2;
-        addNewBookPanel.add(newBookTitleTF, bookCon);
-        bookCon.gridx = 3;
-        addNewBookPanel.add(newISBNLabel, bookCon);
-        bookCon.gridx = 4;
-        addNewBookPanel.add(newISBNTF, bookCon);
+            bookCon.gridy = 2;
+            bookCon.gridx = 1;
+            bookCon.gridwidth = 1;
+            addNewBookPanel.add(newBookTitleLabel, bookCon);
+            bookCon.gridx = 2;
+            addNewBookPanel.add(newBookTitleTF, bookCon);
+            bookCon.gridx = 3;
+            addNewBookPanel.add(newISBNLabel, bookCon);
+            bookCon.gridx = 4;
+            addNewBookPanel.add(newISBNTF, bookCon);
 
-        bookCon.gridy = 3;
-        bookCon.gridx = 1;
-        addNewBookPanel.add(newBookVersionLabel, bookCon);
-        bookCon.gridx = 2;
-        addNewBookPanel.add(newBookVersionTF, bookCon);
-        bookCon.gridx = 3;
-        addNewBookPanel.add(newBookNumPagesLabel, bookCon);
-        bookCon.gridx = 4;
-        addNewBookPanel.add(newBookNumPagesTF, bookCon);
+            bookCon.gridy = 3;
+            bookCon.gridx = 1;
+            addNewBookPanel.add(newBookVersionLabel, bookCon);
+            bookCon.gridx = 2;
+            addNewBookPanel.add(newBookVersionTF, bookCon);
+            bookCon.gridx = 3;
+            addNewBookPanel.add(newBookNumPagesLabel, bookCon);
+            bookCon.gridx = 4;
+            addNewBookPanel.add(newBookNumPagesTF, bookCon);
 
-        bookCon.gridy = 4;
-        bookCon.gridx = 1;
-        addNewBookPanel.add(newBookGenreLabel, bookCon);
-        bookCon.gridx = 2;
-        addNewBookPanel.add(newBookGenreTF, bookCon);
-        bookCon.gridx = 3;
-        addNewBookPanel.add(newBookStockLabel, bookCon);
-        bookCon.gridx = 4;
-        addNewBookPanel.add(newBookStockTF, bookCon);
+            bookCon.gridy = 4;
+            bookCon.gridx = 1;
+            addNewBookPanel.add(newBookGenreLabel, bookCon);
+            bookCon.gridx = 2;
+            addNewBookPanel.add(newBookGenreTF, bookCon);
+            bookCon.gridx = 3;
+            addNewBookPanel.add(newBookStockLabel, bookCon);
+            bookCon.gridx = 4;
+            addNewBookPanel.add(newBookStockTF, bookCon);
 
-        bookCon.gridy = 5;
-        bookCon.gridx = 1;
-        addNewBookPanel.add(newBookYearLabel, bookCon);
-        bookCon.gridx = 2;
-        addNewBookPanel.add(newBookYearTF, bookCon);
+            bookCon.gridy = 5;
+            bookCon.gridx = 1;
+            addNewBookPanel.add(newBookYearLabel, bookCon);
+            bookCon.gridx = 2;
+            addNewBookPanel.add(newBookYearTF, bookCon);
 
-        bookCon.gridy = 6;
-        bookCon.gridx = 1;
-        addNewBookPanel.add(Box.createRigidArea(spacer), bookCon);
+            bookCon.gridy = 6;
+            bookCon.gridx = 1;
+            addNewBookPanel.add(Box.createRigidArea(spacer), bookCon);
 
-        bookCon.gridy = 7;
-        bookCon.gridx = 1;
-        addNewBookPanel.add(accountingLabel, bookCon);
+            bookCon.gridy = 7;
+            bookCon.gridx = 1;
+            addNewBookPanel.add(accountingLabel, bookCon);
 
-        bookCon.gridy = 8;
-        bookCon.gridx = 1;
-        addNewBookPanel.add(newBookPriceLabel, bookCon);
-        bookCon.gridx = 2;
-        addNewBookPanel.add(newBookPriceTF, bookCon);
-        bookCon.gridx = 3;
-        addNewBookPanel.add(newBookRoyaltyLabel, bookCon);
-        bookCon.gridx = 4;
-        addNewBookPanel.add(newBookRoyaltyTF, bookCon);
+            bookCon.gridy = 8;
+            bookCon.gridx = 1;
+            addNewBookPanel.add(newBookPriceLabel, bookCon);
+            bookCon.gridx = 2;
+            addNewBookPanel.add(newBookPriceTF, bookCon);
+            bookCon.gridx = 3;
+            addNewBookPanel.add(newBookRoyaltyLabel, bookCon);
+            bookCon.gridx = 4;
+            addNewBookPanel.add(newBookRoyaltyTF, bookCon);
 
-        bookCon.gridy = 9;
-        bookCon.gridx = 1;
-        addNewBookPanel.add(Box.createRigidArea(spacer), bookCon);
+            bookCon.gridy = 9;
+            bookCon.gridx = 1;
+            addNewBookPanel.add(Box.createRigidArea(spacer), bookCon);
 
-        bookCon.gridy = 10;
-        bookCon.gridx = 1;
-        addNewBookPanel.add(newBookAuthorLabel, bookCon);
+            bookCon.gridy = 10;
+            bookCon.gridx = 1;
+            addNewBookPanel.add(newBookAuthorLabel, bookCon);
 
-        bookCon.gridy = 11;
-        bookCon.gridx = 1;
-        addNewBookPanel.add(newBookAuthorFNLabel, bookCon);
-        bookCon.gridx = 2;
-        addNewBookPanel.add(newBookAuthorFNTF, bookCon);
-        bookCon.gridx = 3;
-        addNewBookPanel.add(newBookAuthorLNLabel, bookCon);
-        bookCon.gridx = 4;
-        addNewBookPanel.add(newBookAuthorLNTF, bookCon);
+            bookCon.gridy = 11;
+            bookCon.gridx = 1;
+            addNewBookPanel.add(newBookAuthorFNLabel, bookCon);
+            bookCon.gridx = 2;
+            addNewBookPanel.add(newBookAuthorFNTF, bookCon);
+            bookCon.gridx = 3;
+            addNewBookPanel.add(newBookAuthorLNLabel, bookCon);
+            bookCon.gridx = 4;
+            addNewBookPanel.add(newBookAuthorLNTF, bookCon);
 
-        bookCon.gridy = 12;
-        bookCon.gridx = 1;
-        addNewBookPanel.add(Box.createRigidArea(spacer), bookCon);
+            bookCon.gridy = 12;
+            bookCon.gridx = 1;
+            addNewBookPanel.add(Box.createRigidArea(spacer), bookCon);
 
-        bookCon.gridy = 13;
-        bookCon.gridwidth = 4;
-        addNewBookPanel.add(newBookPublisherLabel, bookCon);
-        bookCon.gridx = 2;
-        bookCon.gridy = 14;
-        bookCon.gridwidth = 3;
-        bookCon.fill = GridBagConstraints.HORIZONTAL;
-        addNewBookPanel.add(newBookPublisherTF, bookCon);
+            bookCon.gridy = 13;
+            bookCon.gridwidth = 4;
+            addNewBookPanel.add(newBookPublisherLabel, bookCon);
+            bookCon.gridx = 2;
+            bookCon.gridy = 14;
+            bookCon.gridwidth = 3;
+            bookCon.fill = GridBagConstraints.HORIZONTAL;
+            addNewBookPanel.add(newBookPublisherTF, bookCon);
 
-        bookCon.gridwidth = 2;
-        bookCon.gridy = 1;
-        bookCon.gridx = 5;
-        bookCon.anchor = GridBagConstraints.LINE_END;
-        confirmNewBookAddition.setAlignmentX(JPanel.RIGHT_ALIGNMENT);
-        addNewBookPanel.add(confirmNewBookAddition, bookCon);
+            bookCon.gridwidth = 2;
+            bookCon.gridy = 1;
+            bookCon.gridx = 5;
+            bookCon.anchor = GridBagConstraints.LINE_END;
+            confirmNewBookAddition.setAlignmentX(JPanel.RIGHT_ALIGNMENT);
+            addNewBookPanel.add(confirmNewBookAddition, bookCon);
 
-        bookCon.gridy = 15; // shift everything to the top
-        bookCon.gridx = 0;
-        bookCon.weighty = 1.0;
-        bookCon.gridwidth = 6;
-        bookCon.anchor = GridBagConstraints.CENTER;
-        bookCon.fill = GridBagConstraints.BOTH;
-        Component glue = Box.createVerticalGlue();
-        addNewBookPanel.add(glue, bookCon);
+            bookCon.gridy = 15; // shift everything to the top
+            bookCon.gridx = 0;
+            bookCon.weighty = 1.0;
+            bookCon.gridwidth = 6;
+            bookCon.anchor = GridBagConstraints.CENTER;
+            bookCon.fill = GridBagConstraints.BOTH;
+            Component glue = Box.createVerticalGlue();
+            addNewBookPanel.add(glue, bookCon);
+        }
+
+        return addNewBookPanel;
     }
+
+    /**
+     * Creates the "Add Publisher" tab for the "Add Stuff" tab of the adminView
+     * @return addNewPublisherPanel for adminView
+     */
+    private JPanel addPublisher()
+    {
+        JPanel addNewPublisherPanel = new JPanel(new GridBagLayout());
+
+        /* JButtons */
+        JButton logoutAddPublisherButton = new JButton("Logout");
+        JButton addPublisherButton = new JButton("Add Publisher");
+
+        /* JLabels */
+        JLabel newPublisherLabel = new JLabel("Enter Publisher Information (required fields indicated by *): "),
+                newPublisherNameLabel = new JLabel("*Name: "),
+                newPublisherAddressLabel = new JLabel("*Address: "),
+                newPublisherStreetNumLabel = new JLabel("*Street Number:"),
+                newPublisherStreetNameLabel = new JLabel("*Street Name:"),
+                newPublisherApartmentLabel = new JLabel("Apartment:"),
+                newPublisherCityLabel = new JLabel("*City: "),
+                newPublisherProvinceLabel = new JLabel("*Province: "),
+                newPublisherCountryLabel = new JLabel("*Country: "),
+                newPublisherPostalCodeLabel = new JLabel("*Postal Code: "),
+                newPublisherEmailLabel = new JLabel("*Email: "),
+                newPublisherPhoneLabel = new JLabel("Phone: "),
+                newPublisherBankAccountLabel = new JLabel("*Bank Account Number: ");
+
+        /* ActionListeners */
+        logoutAddPublisherButton.addActionListener(this);
+        addPublisherButton.addActionListener(this);
 
         // Setup addPublisherPanel
         {
@@ -794,6 +764,94 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
             Component glue = Box.createVerticalGlue();
             addNewPublisherPanel.add(glue, pubCon);
         }
+
+        return addNewPublisherPanel;
+    }
+
+    /**
+     * Creates the "Add User" tab for the "Add Stuff" tab of the adminView
+     * @return addNewUserPanel for adminView
+     */
+    private JPanel addUser()
+    {
+        JPanel newUserPanel = new JPanel(new GridBagLayout());
+
+        /* JButtons */
+        JButton logoutAddUserButton = new JButton("Logout");
+        JButton addUserButton = new JButton("Add User");
+
+        /* JLabels */
+        // Admin info
+        JLabel newUserLoginCred = new JLabel("Login Credentials: ");
+        JLabel newUserDetailLabel = new JLabel("User Details: ");
+        JLabel newAdminUsernameLabel = new JLabel("*Username: ");
+        JLabel newAdminPasswordLabel = new JLabel("*Password: ");
+        JLabel confirmAdminPasswordLabel = new JLabel("*Confirm Password: ");
+        JLabel firstNameAdminLabel = new JLabel("*First Name: ");
+        JLabel lastNameAdminLabel = new JLabel("*Last Name: ");
+        JLabel emailAdminLabel = new JLabel("*Email: ");
+        JLabel salaryAdminLabel = new JLabel("Salary: ");
+        // Admin shipping address info (can be EMPTY)
+        JLabel shippingAdminAddressLabel = new JLabel("Shipping Address");
+        JLabel shippingAdminStreetNumLabel = new JLabel("*Street Number: ");
+        JLabel shippingAdminStreetNameLabel = new JLabel("*Street Name: ");
+        JLabel shippingAdminApartmentLabel = new JLabel("*Apartment: ");
+        JLabel shippingAdminCityLabel = new JLabel("*City: ");
+        JLabel shippingAdminProvinceLabel = new JLabel("*Province: ");
+        JLabel shippingAdminCountryLabel = new JLabel("*Country: ");
+        JLabel shippingAdminPostalCodeLabel = new JLabel("*Postal Code: ");
+        // Admin billing address info
+        JLabel billingAdminAddressLabel = new JLabel("Billing Address");
+        JLabel billAdminStreetNumLabel = new JLabel("Street Number: ");
+        JLabel billAdminStreetNameLabel = new JLabel("Street Name: ");
+        JLabel billAdminApartmentLabel = new JLabel("Apartment: ");
+        JLabel billAdminCityLabel = new JLabel("City: ");
+        JLabel billAdminProvinceLabel = new JLabel("Province: ");
+        JLabel billAdminCountryLabel = new JLabel("Country: ");
+        JLabel billAdminPostalCodeLabel = new JLabel("Postal Code: ");
+
+        /* JCheckBoxes */
+        JCheckBox billingSameAsShipping = new JCheckBox("Billing Address is the same as Shipping Address");
+        billingSameAsShipping.setSelected(true); // selected by default
+        JCheckBox isUserAdminCB = new JCheckBox("Is the user an admin?");
+
+        /* ActionListeners */
+        logoutAddUserButton.addActionListener(this);
+        addUserButton.addActionListener(this);
+        billingSameAsShipping.addActionListener(e -> {
+            boolean sameAsBilling = !billingSameAsShipping.isSelected();
+            billAdminStreetNumTF.setEnabled(sameAsBilling);
+            billAdminStreetNameTF.setEnabled(sameAsBilling);
+            billAdminApartmentTF.setEnabled(sameAsBilling);
+            billAdminCityTF.setEnabled(sameAsBilling);
+            billAdminProvinceComboBox.setEnabled(sameAsBilling);
+            billAdminCountryTF.setEnabled(sameAsBilling);
+            billAdminPostalCodeTF.setEnabled(sameAsBilling);
+        });
+        isUserAdminCB.addActionListener(e -> {
+            boolean admin = isUserAdminCB.isSelected();
+            salaryAdminTF.setEnabled(admin);
+            if (admin) {
+                salaryAdminLabel.setText("*Salary: ");
+                shippingAdminStreetNumLabel.setText("Street Number: ");
+                shippingAdminStreetNameLabel.setText("Street Name: ");
+                shippingAdminApartmentLabel.setText("Apartment: ");
+                shippingAdminCityLabel.setText("City: ");
+                shippingAdminProvinceLabel.setText("Province: ");
+                shippingAdminCountryLabel.setText("Country: ");
+                shippingAdminPostalCodeLabel.setText("Postal Code: ");
+            }
+            else {
+                salaryAdminLabel.setText("Salary: ");
+                shippingAdminStreetNumLabel.setText("*Street Number: ");
+                shippingAdminStreetNameLabel.setText("*Street Name: ");
+                shippingAdminApartmentLabel.setText("*Apartment: ");
+                shippingAdminCityLabel.setText("*City: ");
+                shippingAdminProvinceLabel.setText("*Province: ");
+                shippingAdminCountryLabel.setText("*Country: ");
+                shippingAdminPostalCodeLabel.setText("*Postal Code: ");
+            }
+        });
 
         // Setup newUserPanel
         {
@@ -997,23 +1055,13 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
             newUserPanel.add(glue, userCon);
         }
 
-        // Setup Tabbed Panes
-        adminView.addTab("Add Stuff", null, newEntitiesPanel, "Add a new book or publisher");
-        adminView.addTab("Edit Stuff", null, editBookStockPanel, "Edit the stock of a book");
-        adminView.addTab("Reports", null, reportPanel, "Generate sales reports");
-        newEntitiesPanel.addTab("Add Book", null, addNewBookPanel, "Add a new book to inventory");
-        newEntitiesPanel.addTab("Add Publisher", null, addNewPublisherPanel, "Add a new publisher to database");
-        newEntitiesPanel.addTab("Add User", null, newUserPanel, "Add a new user to the database");
-
-        c.add(adminView);
-        f.pack();
-        f.setLocationRelativeTo(null);
+        return newUserPanel;
     }
 
     /**
      * Display the screen for a user
      */
-    public void userScreen() {
+    private void userScreen() {
         f.setPreferredSize(new Dimension(798, 850));
         c.removeAll();
 
@@ -1177,7 +1225,7 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
      * @see super.lookForaLogin() for full implementation
      */
     private void login() {
-        boolean[] validCred = super.lookForaLogin(usernameField.getText(), passwordField.getPassword());
+        boolean[] validCred = lookForaLogin(usernameField.getText(), passwordField.getPassword());
         if (validCred[0]) {
             if(validCred[1]) {
                 adminScreenChoice();
