@@ -101,7 +101,6 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
             emailAdminTF = new JTextField(15),
             salaryAdminTF = new JTextField(15),
         // Admin shipping address info (can be EMPTY)
-            shippingAdminAddressTF = new JTextField(15),
             shippingAdminStreetNumTF = new JTextField(15),
             shippingAdminStreetNameTF = new JTextField(15),
             shippingAdminApartmentTF = new JTextField(15),
@@ -109,7 +108,6 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
             shippingAdminCountryTF = new JTextField(15),
             shippingAdminPostalCodeTF = new JTextField(15),
         // Admin billing address info
-            billingAdminAddressTF = new JTextField(15),
             billAdminStreetNumTF = new JTextField(15),
             billAdminStreetNameTF = new JTextField(15),
             billAdminApartmentTF = new JTextField(15),
@@ -850,7 +848,7 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
             userCon.gridwidth = 2;
             newUserPanel.add(newAdminPasswordTF, userCon);
             userCon.gridx = 5;
-            newUserPanel.add(confirmPasswordTF, userCon);
+            newUserPanel.add(confirmAdminPasswordTF, userCon);
 
             userCon.gridy = 4;
             userCon.gridx = 1;
