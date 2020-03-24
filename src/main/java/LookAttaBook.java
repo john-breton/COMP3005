@@ -313,7 +313,6 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
     /**
      * Display the screen for a librarian...possible to display an option for user screen? (maybe the librarian wants to shop ;) )
      * SHOULD ALSO BE ABLE TO SIGN UP A NEW ADMIN
-     *
      */
     public void adminScreen() {
         // Admin Page
