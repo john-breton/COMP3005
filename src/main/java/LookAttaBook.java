@@ -1,8 +1,4 @@
-import com.jtattoo.plaf.graphite.GraphiteInternalFrameTitlePane;
-import org.jetbrains.annotations.NotNull;
-
 import javax.swing.*;
-import javax.swing.border.Border;
 import javax.swing.plaf.ColorUIResource;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -68,8 +64,8 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
     private final JPasswordField newPasswordTF = new JPasswordField(),
             confirmPasswordTF = new JPasswordField();
     // Admin
-        // Book
-        private final JTextField newISBNTF = new JTextField(15),
+    // Book
+    private final JTextField newISBNTF = new JTextField(15),
             newBookTitleTF = new JTextField(15),
             newBookVersionTF = new JTextField(15),
             newBookGenreTF = new JTextField(15),
@@ -81,8 +77,8 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
             newBookAuthorLNTF = new JTextField(15),
             newBookPublisherTF = new JTextField(15),
             newBookYearTF = new JTextField(15);
-        // Publisher
-        private final JTextField newPublisherNameTF = new JTextField(15),
+    // Publisher
+    private final JTextField newPublisherNameTF = new JTextField(15),
             newPublisherStreetNumTF = new JTextField(5),
             newPublisherStreetNameTF = new JTextField(5),
             newPublisherApartmentTF = new JTextField(5),
@@ -92,24 +88,24 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
             newPublisherEmailTF = new JTextField(15),
             newPublisherPhoneTF = new JTextField(15),
             newPublisherBankAccountTF = new JTextField(15);
-        // New User
-        // Admin info
-        private final JTextField newAdminUsernameTF = new JTextField(15),
+    // New User
+    // Admin info
+    private final JTextField newAdminUsernameTF = new JTextField(15),
             firstNameAdminTF = new JTextField(15),
             lastNameAdminTF = new JTextField(15),
             emailAdminTF = new JTextField(15),
             salaryAdminTF = new JTextField(15);
-        private final JPasswordField newAdminPasswordTF = new JPasswordField(15),
+    private final JPasswordField newAdminPasswordTF = new JPasswordField(15),
             confirmAdminPasswordTF = new JPasswordField(15);
-        // Admin shipping address info (can be EMPTY)
-        private final JTextField shippingAdminStreetNumTF = new JTextField(15),
+    // Admin shipping address info (can be EMPTY)
+    private final JTextField shippingAdminStreetNumTF = new JTextField(15),
             shippingAdminStreetNameTF = new JTextField(15),
             shippingAdminApartmentTF = new JTextField(15),
-            shippingAdminCityTF =new JTextField(15),
+            shippingAdminCityTF = new JTextField(15),
             shippingAdminCountryTF = new JTextField(15),
             shippingAdminPostalCodeTF = new JTextField(15),
-        // Admin billing address info
-            billAdminStreetNumTF = new JTextField(15),
+    // Admin billing address info
+    billAdminStreetNumTF = new JTextField(15),
             billAdminStreetNameTF = new JTextField(15),
             billAdminApartmentTF = new JTextField(15),
             billAdminCityTF = new JTextField(15),
@@ -441,10 +437,10 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
 
     /**
      * Creates the "Add Book" tab for the "Add Stuff" tab of the adminView
+     *
      * @return addNewBookPanel for adminView
      */
-    private JPanel addBook()
-    {
+    private JPanel addBook() {
         JPanel addNewBookPanel = new JPanel(new GridBagLayout());
 
         /* JButtons */
@@ -598,10 +594,10 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
 
     /**
      * Creates the "Add Publisher" tab for the "Add Stuff" tab of the adminView
+     *
      * @return addNewPublisherPanel for adminView
      */
-    private JPanel addPublisher()
-    {
+    private JPanel addPublisher() {
         JPanel addNewPublisherPanel = new JPanel(new GridBagLayout());
 
         /* JButtons */
@@ -754,10 +750,10 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
 
     /**
      * Creates the "Add User" tab for the "Add Stuff" tab of the adminView
+     *
      * @return addNewUserPanel for adminView
      */
-    private JPanel addUser()
-    {
+    private JPanel addUser() {
         JPanel newUserPanel = new JPanel(new GridBagLayout());
 
         /* JButtons */
@@ -824,8 +820,7 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
                 shippingAdminProvinceLabel.setText("Province: ");
                 shippingAdminCountryLabel.setText("Country: ");
                 shippingAdminPostalCodeLabel.setText("Postal Code: ");
-            }
-            else {
+            } else {
                 salaryAdminLabel.setText("Salary: ");
                 shippingAdminStreetNumLabel.setText("*Street Number: ");
                 shippingAdminStreetNameLabel.setText("*Street Name: ");
@@ -1045,10 +1040,10 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
     /**
      * Creates the "Edit Book" tab for the "Edit Stuff" tab of the adminView
      * TODO: editBook()
+     *
      * @return editBookPanel for adminView
      */
-    private JPanel editBook()
-    {
+    private JPanel editBook() {
         /* JButtons */
         JButton updateBookStockButton = new JButton("Update Stock");
 
@@ -1062,20 +1057,20 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
     /**
      * Creates the "Edit User" tab for the "Edit Stuff" tab of the adminView
      * TODO: editUser()
+     *
      * @return editUserPanel for adminView
      */
-    private JPanel editUser()
-    {
+    private JPanel editUser() {
         return new JPanel();
     }
 
     /**
      * Creates the "Reports" tab for the adminView
      * TODO: reportPanel()
+     *
      * @return reportPanel for adminView
      */
-    private JPanel reportPanel()
-    {
+    private JPanel reportPanel() {
         /* JButtons */
         JButton generateReport = new JButton("Generate Report");
 
@@ -1094,9 +1089,9 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
         c.removeAll();
 
         // Dimensions
-        Dimension addRemoveButtonDimensions = new Dimension(25,25);
+        Dimension addRemoveButtonDimensions = new Dimension(25, 25);
         Dimension searchResultDimension = new Dimension(500, c.getHeight());
-        Dimension cartDimension = new Dimension(c.getWidth() - (int)searchResultDimension.getWidth(), c.getHeight());
+        Dimension cartDimension = new Dimension(c.getWidth() - (int) searchResultDimension.getWidth(), c.getHeight());
 
         /* Components */
         // Panels and Panes
@@ -1149,7 +1144,7 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
         GridBagConstraints con = new GridBagConstraints();
 
         // setup left side of window
-        Insets leftEdge =  new Insets(5, 5, 5, 0);
+        Insets leftEdge = new Insets(5, 5, 5, 0);
         Insets everythingElse = new Insets(5, 0, 5, 0);
 
         con.insets = leftEdge;
@@ -1255,17 +1250,16 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
     private void login() {
         boolean[] validCred = lookForaLogin(usernameField.getText(), passwordField.getPassword());
         if (validCred[0]) {
-            if(validCred[1]) {
+            if (validCred[1]) {
                 adminScreenChoice();
-            }else userScreen();
-        }
-        else loginSuccess.setText("Login not successful. Please try again.");
+            } else userScreen();
+        } else loginSuccess.setText("Login not successful. Please try again.");
     }
 
     /**
      * Confirms that the user wishes to logout
      */
-    private void confirmLogout(){
+    private void confirmLogout() {
         JButton logoutButton = new JButton("Logout");
         JButton cancelButton = new JButton("Cancel");
 
@@ -1289,7 +1283,7 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
     /**
      * Gives the admin user the choice of where to go
      */
-    private void adminScreenChoice(){
+    private void adminScreenChoice() {
         JButton userButton = new JButton("Customer View");
         JButton adminButton = new JButton("Administrative View");
 
