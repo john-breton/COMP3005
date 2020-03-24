@@ -1,4 +1,7 @@
+import com.jtattoo.plaf.graphite.GraphiteInternalFrameTitlePane;
+
 import javax.swing.*;
+import javax.swing.border.Border;
 import javax.swing.plaf.ColorUIResource;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -102,6 +105,7 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
 
         f.pack();
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        f.getRootPane().setDefaultButton(loginButton);
         f.setLocationRelativeTo(null);
         f.setVisible(true);
         f.setResizable(false);
@@ -319,8 +323,110 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
      * Display the screen for a user
      */
     public void userScreen() {
-        // User Page
-        // TODO: Setup User View
+        f.setMinimumSize(new Dimension(798, 850));
+        f.setLocationRelativeTo(null);
+        c.removeAll();
+
+        JLabel searchLabel = new JLabel("Search: ");
+        JTextField searchText = new JTextField();
+        JLabel cartLabel = new JLabel("Cart: ");
+        JScrollPane currentCart = new JScrollPane();
+        JLabel filterLabel = new JLabel("Sort by: ");
+        String[] resultFilterArr = {"Price", "A-Z", "Z-A", "Year"};
+        String[] searchFilterArr = {"Title", "Author", "Genre", "ISBN", "Publisher", "Year"};
+        JComboBox resultFilters = new JComboBox(resultFilterArr);
+        JComboBox searchFilters = new JComboBox(searchFilterArr);
+        JScrollPane searchResult = new JScrollPane();
+        JSplitPane userView = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true);
+        JPanel searchAndResults = new JPanel();
+        JPanel cartPanel = new JPanel();
+        JButton addToCart = new JButton("+");
+        JButton removeFromCart = new JButton("-");
+        JLabel totalPrice = new JLabel("$0.00");
+        JLabel totalPriceLabel = new JLabel("Total Price: ");
+        JButton checkoutButton = new JButton("Checkout");
+        JButton searchButton = new JButton("Search");
+
+        // Price panel
+        JPanel pricePanel = new JPanel();
+        addToCart.setPreferredSize(new Dimension(25,25));
+        pricePanel.add(addToCart);
+        pricePanel.add(totalPriceLabel);
+        pricePanel.add(totalPrice);
+        removeFromCart.setPreferredSize(new Dimension(25,25));
+        pricePanel.add(removeFromCart);
+
+        // Checkout Panel
+        JPanel checkoutPanel = new JPanel();
+        checkoutPanel.setLayout(new BoxLayout(checkoutPanel, BoxLayout.PAGE_AXIS));
+        checkoutPanel.add(pricePanel);
+        checkoutButton.setAlignmentX(JPanel.CENTER_ALIGNMENT);
+        checkoutPanel.add(checkoutButton);
+
+        searchAndResults.setLayout(new GridBagLayout());
+        GridBagConstraints con = new GridBagConstraints();
+
+        // setup left side of window
+        con.insets = new Insets(5, 5, 5, 0);
+        con.anchor = GridBagConstraints.LINE_START;
+        con.weighty = 0.0;
+        con.weightx = 0.0;
+        con.gridx = 0;
+        con.gridy = 0;
+        searchLabel.setAlignmentX(JPanel.LEFT_ALIGNMENT);
+        searchAndResults.add(searchLabel, con);
+
+        con.insets = new Insets(5, 0, 5, 0);
+        con.gridx = 1;
+        searchAndResults.add(searchFilters, con);
+
+        con.fill = GridBagConstraints.HORIZONTAL;
+        con.gridx = 2;
+        searchText.setPreferredSize(new Dimension(200, 20));
+        searchAndResults.add(searchText, con);
+
+        con.fill = GridBagConstraints.NONE;
+        con.gridx = 3;
+        searchAndResults.add(searchButton, con);
+
+        con.gridx = 0;
+        con.gridy = 1;
+        con.insets = new Insets(5, 5, 5, 0);
+        con.fill = GridBagConstraints.NONE;
+        filterLabel.setAlignmentX(JPanel.LEFT_ALIGNMENT);
+        searchAndResults.add(filterLabel, con);
+
+        con.gridx = 1;
+        con.insets = new Insets(5, 0, 5, 0);
+        searchAndResults.add(resultFilters, con);
+
+        con.gridx = 0;
+        con.gridy = 2;
+        con.weighty = 1.0;
+        con.weightx = 1.0;
+        con.gridwidth = 4;
+        con.insets = new Insets(5, 5, 5, 5);
+        con.fill = GridBagConstraints.BOTH;
+        con.anchor = GridBagConstraints.CENTER;
+        searchAndResults.add(searchResult, con);
+
+        searchAndResults.setMinimumSize(new Dimension(500, 800));
+
+        // setup right side of window
+        cartPanel.setLayout(new BorderLayout());
+        cartLabel.setAlignmentX(JPanel.LEFT_ALIGNMENT);
+        cartPanel.add(cartLabel, BorderLayout.PAGE_START);
+        cartPanel.add(checkoutPanel, BorderLayout.PAGE_END);
+        cartPanel.add(currentCart, BorderLayout.CENTER);
+        cartPanel.setPreferredSize(new Dimension(300, 800));
+
+        userView.resetToPreferredSizes();
+        userView.setLeftComponent(searchAndResults);
+        userView.setRightComponent(cartPanel);
+
+
+        c.add(userView);
+
     }
 
     /**
