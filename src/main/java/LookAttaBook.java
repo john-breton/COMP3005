@@ -36,15 +36,21 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
 
     /* JLabels -- Global to update users */
     // Login
-    private final JLabel loginSuccess = new JLabel("");
+    private final JLabel loginSuccess = new JLabel("", JLabel.CENTER);
     // Registration
-    private final JLabel confirmRegistration = new JLabel("");
+    private final JLabel confirmRegistration = new JLabel("", JLabel.CENTER),
+            registrationErrorLabel = new JLabel("", JLabel.CENTER);
     // Admin
-    private final JLabel confirmNewBookAddition = new JLabel("");
-    private final JLabel confirmNewPublisherAddition = new JLabel("");
-    private final JLabel confirmAdminReg = new JLabel("");
+    private final JLabel confirmNewBookAddition = new JLabel("", JLabel.CENTER),
+            confirmNewPublisherAddition = new JLabel("", JLabel.CENTER),
+            confirmAdminReg = new JLabel("", JLabel.CENTER),
+            addUserErrorLabel = new JLabel("", JLabel.CENTER),
+            addBookErrorLabel = new JLabel("", JLabel.CENTER),
+            addpublisherErrorLabel = new JLabel("", JLabel.CENTER),
+            editUserErrorLabel = new JLabel("", JLabel.CENTER),
+            editBookErrorLabel = new JLabel("", JLabel.CENTER);
     // User
-    private final JLabel totalPrice = new JLabel("$0.00");
+    private final JLabel totalPrice = new JLabel("$0.00", JLabel.CENTER);
 
     /* JTextFields -- Global in order for methods to access */
     // Login
@@ -476,7 +482,14 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
             bookCon.gridy = 0;
             addNewBookPanel.add(logoutAddBookButton, bookCon);
 
+            bookCon.gridx = 1;
+            bookCon.gridwidth = 4;
+            bookCon.anchor = GridBagConstraints.CENTER;
+            addBookErrorLabel.setForeground(Color.red);
+            addNewBookPanel.add(addBookErrorLabel, bookCon);
+
             bookCon.gridx = 5;
+            bookCon.gridwidth = 1;
             bookCon.anchor = GridBagConstraints.FIRST_LINE_END;
             addNewBookPanel.add(addBookButton, bookCon);
 
@@ -632,7 +645,14 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
             pubCon.anchor = GridBagConstraints.FIRST_LINE_START;
             addNewPublisherPanel.add(logoutAddPublisherButton, pubCon);
 
+            pubCon.gridx = 1;
+            pubCon.gridwidth = 6;
+            pubCon.anchor = GridBagConstraints.CENTER;
+            addpublisherErrorLabel.setForeground(Color.red);
+            addNewPublisherPanel.add(addpublisherErrorLabel, pubCon);
+
             pubCon.gridx = 7;
+            pubCon.gridwidth = 1;
             pubCon.anchor = GridBagConstraints.FIRST_LINE_END;
             addNewPublisherPanel.add(addPublisherButton, pubCon);
 
@@ -850,6 +870,11 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
             userCon.gridx = 0;
             userCon.anchor = GridBagConstraints.FIRST_LINE_START;
             newUserPanel.add(logoutAddUserButton, userCon);
+            userCon.gridx = 1;
+            userCon.gridwidth = 6;
+            userCon.anchor = GridBagConstraints.CENTER;
+            addUserErrorLabel.setForeground(Color.red);
+            newUserPanel.add(addUserErrorLabel, userCon);
             userCon.gridx = 7;
             userCon.gridwidth = 2;
             userCon.anchor = GridBagConstraints.FIRST_LINE_END;
@@ -1046,8 +1071,11 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
     private JPanel editBook() {
         /* JButtons */
         JButton updateBookStockButton = new JButton("Update Stock");
+        JButton logoutButton = new JButton("Logout");
+        JButton confirmButton = new JButton("Confirm");
 
         /* JLabels */
+        JLabel confirmEditLabel = new JLabel("Edit Accepted");
 
         /* ActionListeners */
 
