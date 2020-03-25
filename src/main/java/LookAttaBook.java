@@ -33,6 +33,8 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
     JComboBox<String> pubProvinceComboBox = new JComboBox<>(provincesArr);
     JComboBox<String> shippingAdminProvinceCB = new JComboBox<>(provincesArr);
     JComboBox<String> billAdminProvinceComboBox = new JComboBox<>(provincesArr);
+    JComboBox<String> editShippingProvinceCB = new JComboBox<>(provincesArr);
+    JComboBox<String> editBillProvinceComboBox = new JComboBox<>(provincesArr);
 
     /* JLabels -- Global to update users */
     // Login
@@ -48,7 +50,9 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
             addBookErrorLabel = new JLabel("", JLabel.CENTER),
             addpublisherErrorLabel = new JLabel("", JLabel.CENTER),
             editUserErrorLabel = new JLabel("", JLabel.CENTER),
-            editBookErrorLabel = new JLabel("", JLabel.CENTER);
+            editBookErrorLabel = new JLabel("", JLabel.CENTER),
+            confirmBookEditLabel = new JLabel("Edit Accepted", JLabel.CENTER),
+            confirmUserEditLabel = new JLabel("", JLabel.CENTER);
     // User
     private final JLabel totalPrice = new JLabel("$0.00", JLabel.CENTER);
 
@@ -69,8 +73,8 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
             emailTF = new JTextField();
     private final JPasswordField newPasswordTF = new JPasswordField(),
             confirmPasswordTF = new JPasswordField();
-    // Admin
-    // Book
+    // AdminScreen
+    // addBook
     private final JTextField newISBNTF = new JTextField(15),
             newBookTitleTF = new JTextField(15),
             newBookVersionTF = new JTextField(15),
@@ -83,7 +87,7 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
             newBookAuthorLNTF = new JTextField(15),
             newBookPublisherTF = new JTextField(15),
             newBookYearTF = new JTextField(15);
-    // Publisher
+    // addPublisher
     private final JTextField newPublisherNameTF = new JTextField(15),
             newPublisherStreetNumTF = new JTextField(5),
             newPublisherStreetNameTF = new JTextField(5),
@@ -94,7 +98,7 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
             newPublisherEmailTF = new JTextField(15),
             newPublisherPhoneTF = new JTextField(15),
             newPublisherBankAccountTF = new JTextField(15);
-    // New User
+    // addUser
     // Admin info
     private final JTextField newAdminUsernameTF = new JTextField(15),
             firstNameAdminTF = new JTextField(15),
@@ -117,8 +121,32 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
             billAdminCityTF = new JTextField(15),
             billAdminCountryTF = new JTextField(15),
             billAdminPostalCodeTF = new JTextField(15);
+    // editUser
+    private final JTextField editUsernameTF = new JTextField(15),
+            editFirstNameTF = new JTextField(15),
+            editLastNameTF = new JTextField(15),
+            editEmailTF = new JTextField(15),
+            editSalaryTF = new JTextField(15),
+            editPasswordTF = new JTextField(15),
+            confirmEditPasswordTF = new JTextField(15),
+            editUserSearchTF = new JTextField(15),
+    // Admin shipping address info (can be EMPTY)
+    editShippingStreetNumTF = new JTextField(15),
+            editShippingStreetNameTF = new JTextField(15),
+            editShippingApartmentTF = new JTextField(15),
+            editShippingCityTF = new JTextField(15),
+            editShippingCountryTF = new JTextField(15),
+            editShippingPostalCodeTF = new JTextField(15),
+    // Admin billing address info
+            editBillStreetNumTF = new JTextField(15),
+            editBillStreetNameTF = new JTextField(15),
+            editBillApartmentTF = new JTextField(15),
+            editBillCityTF = new JTextField(15),
+            editBillCountryTF = new JTextField(15),
+            editBillPostalCodeTF = new JTextField(15);
+
     // User
-    private final JTextField searchText = new JTextField();
+    private final JTextField userSearchTF = new JTextField();
 
     public LookAttaBook() {
         // If you want to disable dark mode, this is the code for it. You can just remove it.
@@ -1071,25 +1099,326 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
     private JPanel editBook() {
         /* JButtons */
         JButton updateBookStockButton = new JButton("Update Stock");
-        JButton logoutButton = new JButton("Logout");
-        JButton confirmButton = new JButton("Confirm");
-
-        /* JLabels */
-        JLabel confirmEditLabel = new JLabel("Edit Accepted");
-
-        /* ActionListeners */
-
         return new JPanel();
     }
 
     /**
      * Creates the "Edit User" tab for the "Edit Stuff" tab of the adminView
-     * TODO: editUser()
      *
      * @return editUserPanel for adminView
      */
     private JPanel editUser() {
-        return new JPanel();
+        JPanel editUserPanel = new JPanel(new GridBagLayout());
+
+        /* JButton */
+        JButton logoutButton = new JButton("Logout"),
+                confirmButton = new JButton("Edit User"),
+                searchButton = new JButton("Search Users");
+
+        /* JLabels */
+        // Search
+        JLabel searchUserLabel = new JLabel("Search Username:"),
+                editUserLabel = new JLabel("Edit:");
+        // User info
+        JLabel editUserLoginCredLabel = new JLabel("Login Credentials: ");
+        JLabel editUserDetailLabel = new JLabel("User Details: ");
+        JLabel editUsernameLabel = new JLabel("*Username: ");
+        JLabel editPasswordLabel = new JLabel("*Password: ");
+        JLabel editConfirmPasswordLabel = new JLabel("*Confirm Password: ");
+        JLabel editFirstNameLabel = new JLabel("*First Name: ");
+        JLabel editLastNameLabel = new JLabel("*Last Name: ");
+        JLabel editEmailLabel = new JLabel("*Email: ");
+        JLabel editSalaryLabel = new JLabel("Salary: ");
+        // Admin shipping address info (can be EMPTY)
+        JLabel editShippingAddressLabel = new JLabel("Shipping Address");
+        JLabel editShippingStreetNumLabel = new JLabel("*Street Number: ");
+        JLabel editShippingStreetNameLabel = new JLabel("*Street Name: ");
+        JLabel editShippingApartmentLabel = new JLabel("*Apartment: ");
+        JLabel editShippingCityLabel = new JLabel("*City: ");
+        JLabel editShippingProvinceLabel = new JLabel("*Province: ");
+        JLabel editShippingCountryLabel = new JLabel("*Country: ");
+        JLabel editShippingPostalCodeLabel = new JLabel("*Postal Code: ");
+        // Admin billing address info
+        JLabel editBillingAddressLabel = new JLabel("Billing Address");
+        JLabel editBillStreetNumLabel = new JLabel("Street Number: ");
+        JLabel editBillStreetNameLabel = new JLabel("Street Name: ");
+        JLabel editBillApartmentLabel = new JLabel("Apartment: ");
+        JLabel editBillCityLabel = new JLabel("City: ");
+        JLabel editBillProvinceLabel = new JLabel("Province: ");
+        JLabel editBillCountryLabel = new JLabel("Country: ");
+        JLabel editBillPostalCodeLabel = new JLabel("Postal Code: ");
+
+        /* JCheckBoxes */
+        JCheckBox billingSameAsShipping = new JCheckBox("Billing Address is the same as Shipping Address");
+        billingSameAsShipping.setSelected(true); // selected by default
+        JCheckBox isUserAdminCB = new JCheckBox("Is the user an admin?");
+
+        /* ActionListeners */
+        logoutButton.addActionListener(this);
+        confirmButton.addActionListener(this);
+        searchButton.addActionListener(this);
+        billingSameAsShipping.addActionListener(e -> {
+            boolean sameAsBilling = !billingSameAsShipping.isSelected();
+            editBillStreetNumTF.setEnabled(sameAsBilling);
+            editBillStreetNameTF.setEnabled(sameAsBilling);
+            editBillApartmentTF.setEnabled(sameAsBilling);
+            editBillCityTF.setEnabled(sameAsBilling);
+            editBillProvinceComboBox.setEnabled(sameAsBilling);
+            editBillCountryTF.setEnabled(sameAsBilling);
+            editBillPostalCodeTF.setEnabled(sameAsBilling);
+        });
+        isUserAdminCB.addActionListener(e -> {
+            boolean admin = isUserAdminCB.isSelected();
+            editSalaryTF.setEnabled(admin);
+            if (admin) {
+                editSalaryLabel.setText("*Salary: ");
+                editShippingStreetNumLabel.setText("Street Number: ");
+                editShippingStreetNameLabel.setText("Street Name: ");
+                editShippingApartmentLabel.setText("Apartment: ");
+                editShippingCityLabel.setText("City: ");
+                editShippingProvinceLabel.setText("Province: ");
+                editShippingCountryLabel.setText("Country: ");
+                editShippingPostalCodeLabel.setText("Postal Code: ");
+            } else {
+                editSalaryLabel.setText("Salary: ");
+                editShippingStreetNumLabel.setText("*Street Number: ");
+                editShippingStreetNameLabel.setText("*Street Name: ");
+                editShippingApartmentLabel.setText("*Apartment: ");
+                editShippingCityLabel.setText("*City: ");
+                editShippingProvinceLabel.setText("*Province: ");
+                editShippingCountryLabel.setText("*Country: ");
+                editShippingPostalCodeLabel.setText("*Postal Code: ");
+            }
+        });
+
+        // Setup editUserPanel
+        {
+            // Disable fields by default
+            editBillStreetNumTF.setEnabled(false);
+            editBillStreetNameTF.setEnabled(false);
+            editBillApartmentTF.setEnabled(false);
+            editBillCityTF.setEnabled(false);
+            editBillProvinceComboBox.setEnabled(false);
+            editBillCountryTF.setEnabled(false);
+            editBillPostalCodeTF.setEnabled(false);
+            editSalaryTF.setEnabled(false);
+
+            GridBagConstraints con = new GridBagConstraints();
+            Dimension spacer = new Dimension(35, 35);
+
+            con.gridy = 0;
+            con.gridx = 0;
+            con.anchor = GridBagConstraints.FIRST_LINE_START;
+            editUserPanel.add(logoutButton, con);
+            con.gridx = 1;
+            con.gridwidth = 6;
+            con.anchor = GridBagConstraints.CENTER;
+            editUserErrorLabel.setForeground(Color.red);
+            editUserPanel.add(editUserErrorLabel, con);
+            con.gridx = 7;
+            con.gridwidth = 2;
+            con.anchor = GridBagConstraints.FIRST_LINE_END;
+            editUserPanel.add(confirmButton, con);
+
+            con.gridy = 1;
+            con.gridx = 1;
+            con.gridwidth = 1;
+            con.weightx = 1.0;
+            con.anchor = GridBagConstraints.LINE_END;
+            con.fill = GridBagConstraints.HORIZONTAL;
+            editUserPanel.add(searchUserLabel, con);
+            con.gridwidth = 2;
+            con.gridx = 2;
+            editUserPanel.add(editUserSearchTF, con);
+            con.gridwidth = 1;
+            con.gridx = 4;
+            editUserPanel.add(searchButton, con);
+            con.gridx = 7;
+            editUserPanel.add(confirmUserEditLabel, con);
+
+            con.gridy = 2;
+            con.gridx = 1;
+            editUserPanel.add(Box.createRigidArea(spacer), con);
+
+            con.gridy = 3;
+            editUserPanel.add(editUserLabel, con);
+
+            con.gridy = 4;
+            con.gridx = 1;
+            con.gridwidth = 6;
+            con.anchor = GridBagConstraints.LINE_END;
+            con.fill = GridBagConstraints.HORIZONTAL;
+            editUserPanel.add(editUserLoginCredLabel, con);
+
+            con.gridy = 5;
+            con.gridx = 1;
+            editUserPanel.add(editUsernameLabel, con);
+            con.gridx = 4;
+            con.gridwidth = 2;
+            editUserPanel.add(isUserAdminCB, con);
+            con.gridx = 2;
+            editUserPanel.add(editUsernameTF, con);
+
+            con.gridy = 6;
+            con.gridx = 1;
+            con.gridwidth = 1;
+            editUserPanel.add(editPasswordLabel, con);
+            con.gridx = 4;
+            editUserPanel.add(editConfirmPasswordLabel, con);
+            con.gridx = 2;
+            con.gridwidth = 2;
+            editUserPanel.add(editPasswordTF, con);
+            con.gridx = 5;
+            editUserPanel.add(confirmEditPasswordTF, con);
+
+            con.gridy = 7;
+            con.gridx = 1;
+            editUserPanel.add(Box.createRigidArea(spacer), con);
+
+            con.gridy = 8;
+            con.gridx = 1;
+            con.gridwidth = 3;
+            editUserPanel.add(editUserDetailLabel, con);
+
+            con.gridy = 9;
+            con.gridx = 1;
+            con.gridwidth = 1;
+            editUserPanel.add(editFirstNameLabel, con);
+            con.gridx = 4;
+            editUserPanel.add(editLastNameLabel, con);
+            con.gridx = 2;
+            con.gridwidth = 2;
+            editUserPanel.add(editFirstNameTF, con);
+            con.gridx = 5;
+            editUserPanel.add(editLastNameTF, con);
+
+            con.gridy = 10;
+            con.gridx = 1;
+            con.gridwidth = 1;
+            editUserPanel.add(editEmailLabel, con);
+            con.gridx = 4;
+            editUserPanel.add(editSalaryLabel, con);
+            con.gridx = 2;
+            con.gridwidth = 2;
+            editUserPanel.add(editEmailTF, con);
+            con.gridx = 5;
+            editUserPanel.add(editSalaryTF, con);
+
+            con.gridy = 11;
+            con.gridx = 1;
+            editUserPanel.add(Box.createRigidArea(spacer), con);
+
+            con.gridy = 12;
+            con.gridx = 1;
+            con.gridwidth = 3;
+            editUserPanel.add(new JLabel("Address Information"), con);
+
+            con.gridy = 13;
+            con.gridx = 1;
+            con.gridwidth = 3;
+            editUserPanel.add(editShippingAddressLabel, con);
+
+            con.gridy = 14;
+            con.gridx = 1;
+            con.gridwidth = 1;
+            editUserPanel.add(editShippingStreetNumLabel, con);
+            con.gridx = 2;
+            editUserPanel.add(editShippingStreetNumTF, con);
+            con.gridx = 3;
+            editUserPanel.add(editShippingStreetNameLabel, con);
+            con.gridx = 4;
+            editUserPanel.add(editShippingStreetNameTF, con);
+            con.gridx = 5;
+            editUserPanel.add(editShippingApartmentLabel, con);
+            con.gridx = 6;
+            editUserPanel.add(editShippingApartmentTF, con);
+
+            con.gridy = 15;
+            con.gridx = 1;
+            con.gridwidth = 1;
+            editUserPanel.add(editShippingCityLabel, con);
+            con.gridx = 4;
+            editUserPanel.add(editShippingProvinceLabel, con);
+            con.gridx = 2;
+            con.gridwidth = 2;
+            editUserPanel.add(editShippingCityTF, con);
+            con.gridx = 5;
+            editUserPanel.add(editShippingProvinceCB, con);
+
+            con.gridy = 16;
+            con.gridx = 1;
+            con.gridwidth = 1;
+            editUserPanel.add(editShippingCountryLabel, con);
+            con.gridx = 4;
+            editUserPanel.add(editShippingPostalCodeLabel, con);
+            con.gridx = 2;
+            con.gridwidth = 2;
+            editUserPanel.add(editShippingCountryTF, con);
+            con.gridx = 5;
+            editUserPanel.add(editShippingPostalCodeTF, con);
+
+            con.gridy = 17;
+            con.gridx = 1;
+            editUserPanel.add(Box.createRigidArea(spacer), con);
+
+            con.gridy = 18;
+            con.gridx = 1;
+            con.gridwidth = 2;
+            editUserPanel.add(editBillingAddressLabel, con);
+            con.gridx = 3;
+            con.gridwidth = 4;
+            editUserPanel.add(billingSameAsShipping, con);
+
+            con.gridy = 19;
+            con.gridx = 1;
+            con.gridwidth = 1;
+            editUserPanel.add(editBillStreetNumLabel, con);
+            con.gridx = 2;
+            editUserPanel.add(editBillStreetNumTF, con);
+            con.gridx = 3;
+            editUserPanel.add(editBillStreetNameLabel, con);
+            con.gridx = 4;
+            editUserPanel.add(editBillStreetNameTF, con);
+            con.gridx = 5;
+            editUserPanel.add(editBillApartmentLabel, con);
+            con.gridx = 6;
+            editUserPanel.add(editBillApartmentTF, con);
+
+            con.gridy = 20;
+            con.gridx = 1;
+            con.gridwidth = 1;
+            editUserPanel.add(editBillCityLabel, con);
+            con.gridx = 4;
+            editUserPanel.add(editBillProvinceLabel, con);
+            con.gridx = 2;
+            con.gridwidth = 2;
+            editUserPanel.add(editBillCityTF, con);
+            con.gridx = 5;
+            editUserPanel.add(editBillProvinceComboBox, con);
+
+            con.gridy = 21;
+            con.gridx = 1;
+            con.gridwidth = 1;
+            editUserPanel.add(editBillCountryLabel, con);
+            con.gridx = 4;
+            editUserPanel.add(editBillPostalCodeLabel, con);
+            con.gridx = 2;
+            con.gridwidth = 2;
+            editUserPanel.add(editBillCountryTF, con);
+            con.gridx = 5;
+            editUserPanel.add(editBillPostalCodeTF, con);
+
+            con.gridy = 22; // shift everything to the top
+            con.gridx = 0;
+            con.weighty = 1.0;
+            con.gridwidth = 8;
+            con.anchor = GridBagConstraints.CENTER;
+            con.fill = GridBagConstraints.BOTH;
+            Component glue = Box.createVerticalGlue();
+            editUserPanel.add(glue, con);
+
+            return editUserPanel;
+        }
     }
 
     /**
@@ -1098,7 +1427,7 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
      *
      * @return reportPanel for adminView
      */
-    private JPanel reportPanel() {
+    private JPanel reportPanel () {
         /* JButtons */
         JButton generateReport = new JButton("Generate Report");
 
@@ -1112,7 +1441,7 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
     /**
      * Display the screen for a user
      */
-    private void userScreen() {
+    private void userScreen () {
         f.setPreferredSize(new Dimension(798, 850));
         c.removeAll();
 
@@ -1194,8 +1523,8 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
 
         con.fill = GridBagConstraints.HORIZONTAL;
         con.gridx = 2;
-        searchText.setPreferredSize(new Dimension(200, 20));
-        searchAndResults.add(searchText, con);
+        userSearchTF.setPreferredSize(new Dimension(200, 20));
+        searchAndResults.add(userSearchTF, con);
 
         con.fill = GridBagConstraints.NONE;
         con.gridx = 3;
@@ -1247,24 +1576,27 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
      *
      * @param e The ActionEvent that was triggered via a JButton.
      */
-    public void actionPerformed(ActionEvent e) {
+    public void actionPerformed (ActionEvent e){
         Object o = e.getSource();
 
         if (o instanceof JButton) {
             switch (((JButton) o).getText()) {
-                case "Login" -> login();
-                case "Register" -> regScreen();
-                case "Cancel Registration" -> loginScreen();
-                case "Submit" -> confirmRegistration.setText("Registration Successful");
-                case "+" -> System.out.println("Item Added");
-                case "-" -> System.out.println("Item removed");
-                case "Checkout" -> System.out.println("Checking-out");
-                case "Search" -> System.out.println("Searching");
-                case "Logout" -> confirmLogout();
-                case "Add Book" -> confirmNewBookAddition.setText("New Book Added");
-                case "Order Lookup" -> System.out.println("Looking up order");
-                case "Add Publisher" -> confirmNewPublisherAddition.setText("New Publisher Added");
-                case "Add User" -> confirmAdminReg.setText("New User Added");
+                case "Logout" -> confirmLogout(); // Anywhere and everywhere
+                case "Login" -> login(); // Login Screen
+                case "Register" -> regScreen(); // Login screen
+                case "Order Lookup" -> System.out.println("Looking up order"); // Login Screen
+                case "Cancel Registration" -> loginScreen(); // Registration screen
+                case "Submit" -> confirmRegistration.setText("Registration Successful"); // Registration screen
+                case "+" -> System.out.println("Item Added"); // User screen
+                case "-" -> System.out.println("Item removed"); // User screen
+                case "Checkout" -> System.out.println("Checking-out"); // User Screen
+                case "Search" -> System.out.println("Searching Books"); // User screen
+                case "Search Users" -> System.out.println("Searching Users"); // Admin Edit User Screen
+                case "Edit User" -> confirmUserEditLabel.setText("User Updated"); // Admin Edit User Screen
+                case "Search Books" -> System.out.println("Searching Books"); // Admin Edit Books Screen
+                case "Add Book" -> confirmNewBookAddition.setText("New Book Added"); // Admin Add Book Screen
+                case "Add Publisher" -> confirmNewPublisherAddition.setText("New Publisher Added"); // Admin Add Publisher Screen
+                case "Add User" -> confirmAdminReg.setText("New User Added"); // Admin Add User Screen
                 default -> System.out.println("Error");
             }
         }
@@ -1275,7 +1607,7 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
      *
      * @see super.lookForaLogin() for full implementation
      */
-    private void login() {
+    private void login () {
         boolean[] validCred = lookForaLogin(usernameField.getText(), passwordField.getPassword());
         if (validCred[0]) {
             if (validCred[1]) {
@@ -1287,7 +1619,7 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
     /**
      * Confirms that the user wishes to logout
      */
-    private void confirmLogout() {
+    private void confirmLogout () {
         JButton logoutButton = new JButton("Logout");
         JButton cancelButton = new JButton("Cancel");
 
@@ -1311,7 +1643,7 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
     /**
      * Gives the admin user the choice of where to go
      */
-    private void adminScreenChoice() {
+    private void adminScreenChoice () {
         JButton userButton = new JButton("Customer View");
         JButton adminButton = new JButton("Administrative View");
 
@@ -1334,4 +1666,5 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
         dialog.setLocationRelativeTo(null);
         dialog.setVisible(true);
     }
-}
+    }
+
