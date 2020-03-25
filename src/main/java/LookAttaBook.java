@@ -51,8 +51,8 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
             addpublisherErrorLabel = new JLabel("", JLabel.CENTER),
             editUserErrorLabel = new JLabel("", JLabel.CENTER),
             confirmUserEditLabel = new JLabel("", JLabel.CENTER),
-            editBookErrorLabel = new JLabel("Error Error Error", JLabel.CENTER),
-            confirmBookEditLabel = new JLabel("Edit Accepted", JLabel.CENTER);
+            editBookErrorLabel = new JLabel("", JLabel.CENTER),
+            confirmBookEditLabel = new JLabel("", JLabel.CENTER);
     // User
     private final JLabel totalPrice = new JLabel("$0.00", JLabel.CENTER);
 
@@ -153,7 +153,7 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
             editShippingCountryTF = new JTextField(15),
             editShippingPostalCodeTF = new JTextField(15),
     // Admin billing address info
-            editBillStreetNumTF = new JTextField(15),
+    editBillStreetNumTF = new JTextField(15),
             editBillStreetNameTF = new JTextField(15),
             editBillApartmentTF = new JTextField(15),
             editBillCityTF = new JTextField(15),
@@ -464,6 +464,18 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
         f.setPreferredSize(new Dimension(800, 800));
         c.removeAll();
 
+        /* JMenu Setup */
+        JMenuBar adminMenuBar = new JMenuBar();
+        JMenu adminMenu = new JMenu("Admin");
+        JMenuItem switchToUserScreen = new JMenuItem("Switch to User View");
+        JMenuItem logoutMenuItem = new JMenuItem("Logout");
+        adminMenuBar.add(adminMenu);
+        adminMenu.add(switchToUserScreen);
+        adminMenu.addSeparator();
+        adminMenu.add(logoutMenuItem);
+        switchToUserScreen.addActionListener(this);
+        logoutMenuItem.addActionListener(this);
+
         /* JTabbedPanes */
         JTabbedPane adminView = new JTabbedPane();
         JTabbedPane newEntitiesPanel = new JTabbedPane(JTabbedPane.BOTTOM);
@@ -480,6 +492,141 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
         editEntitiesPanel.addTab("Edit User", null, editUser(), "Edit properties of existing users");
 
         c.add(adminView);
+        f.setJMenuBar(adminMenuBar);
+        f.pack();
+        f.setLocationRelativeTo(null);
+    }
+
+    /**
+     * Display the screen for a user
+     */
+    private void userScreen() {
+        f.setPreferredSize(new Dimension(798, 850));
+        f.getJMenuBar().setVisible(false);
+        c.removeAll();
+
+        // Dimensions
+        Dimension addRemoveButtonDimensions = new Dimension(25, 25);
+        Dimension searchResultDimension = new Dimension(500, c.getHeight());
+        Dimension cartDimension = new Dimension(c.getWidth() - (int) searchResultDimension.getWidth(), c.getHeight());
+
+        /* Components */
+        // Panels and Panes
+        JSplitPane userView = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true);
+        JPanel searchAndResults = new JPanel();
+        JPanel cartPanel = new JPanel();
+        JPanel pricePanel = new JPanel();
+        JPanel checkoutPanel = new JPanel();
+
+        // Labels
+        JLabel searchLabel = new JLabel("Search: ");
+        JLabel cartLabel = new JLabel("Cart: ");
+        JLabel filterLabel = new JLabel("Sort by: ");
+        JLabel totalPriceLabel = new JLabel("Total Price: ");
+
+        // Buttons
+        JButton addToCart = new JButton("+");
+        JButton removeFromCart = new JButton("-");
+        JButton checkoutButton = new JButton("Checkout");
+        JButton searchButton = new JButton("Search");
+        JButton logoutButton = new JButton("Logout");
+
+        // ActionListeners
+        addToCart.addActionListener(this);
+        removeFromCart.addActionListener(this);
+        checkoutButton.addActionListener(this);
+        searchButton.addActionListener(this);
+        logoutButton.addActionListener(this);
+
+        // ScrollPanes
+        JScrollPane currentCart = new JScrollPane();
+        JScrollPane searchResult = new JScrollPane();
+
+        /* Setup Panels */
+        // Price panel
+        addToCart.setPreferredSize(addRemoveButtonDimensions);
+        pricePanel.add(addToCart);
+        pricePanel.add(totalPriceLabel);
+        pricePanel.add(totalPrice);
+        removeFromCart.setPreferredSize(addRemoveButtonDimensions);
+        pricePanel.add(removeFromCart);
+
+        // Checkout Panel
+        checkoutPanel.setLayout(new BoxLayout(checkoutPanel, BoxLayout.PAGE_AXIS));
+        checkoutPanel.add(pricePanel);
+        checkoutButton.setAlignmentX(JPanel.CENTER_ALIGNMENT);
+        checkoutPanel.add(checkoutButton);
+
+        searchAndResults.setLayout(new GridBagLayout());
+        GridBagConstraints con = new GridBagConstraints();
+
+        // setup left side of window
+        Insets leftEdge = new Insets(5, 5, 5, 0);
+        Insets everythingElse = new Insets(5, 0, 5, 0);
+
+        con.insets = leftEdge;
+        con.anchor = GridBagConstraints.LINE_START;
+        con.weighty = 0.0;
+        con.weightx = 0.0;
+        con.gridx = 0;
+        con.gridy = 0;
+        searchAndResults.add(logoutButton, con);
+
+        con.gridx = 0;
+        con.gridy = 1;
+        searchLabel.setAlignmentX(JPanel.LEFT_ALIGNMENT);
+        searchAndResults.add(searchLabel, con);
+
+        con.insets = everythingElse;
+        con.gridx = 1;
+        searchAndResults.add(searchFilters, con);
+
+        con.fill = GridBagConstraints.HORIZONTAL;
+        con.gridx = 2;
+        userSearchTF.setPreferredSize(new Dimension(200, 20));
+        searchAndResults.add(userSearchTF, con);
+
+        con.fill = GridBagConstraints.NONE;
+        con.gridx = 3;
+        searchAndResults.add(searchButton, con);
+
+        con.gridx = 0;
+        con.gridy = 2;
+        con.insets = leftEdge;
+        con.fill = GridBagConstraints.NONE;
+        filterLabel.setAlignmentX(JPanel.LEFT_ALIGNMENT);
+        searchAndResults.add(filterLabel, con);
+
+        con.gridx = 1;
+        con.insets = everythingElse;
+        searchAndResults.add(resultFilters, con);
+
+        con.gridx = 0;
+        con.gridy = 3;
+        con.weighty = 1.0;
+        con.weightx = 1.0;
+        con.gridwidth = 4;
+        con.insets = new Insets(5, 5, 5, 5);
+        con.fill = GridBagConstraints.BOTH;
+        con.anchor = GridBagConstraints.CENTER;
+        searchAndResults.add(searchResult, con);
+
+        searchAndResults.setMinimumSize(searchResultDimension);
+
+        // setup right side of window
+        cartPanel.setLayout(new BorderLayout());
+        cartLabel.setAlignmentX(JPanel.LEFT_ALIGNMENT);
+        cartPanel.add(cartLabel, BorderLayout.PAGE_START);
+        cartPanel.add(checkoutPanel, BorderLayout.PAGE_END);
+        cartPanel.add(currentCart, BorderLayout.CENTER);
+        cartPanel.setPreferredSize(cartDimension);
+
+        userView.resetToPreferredSizes();
+        userView.setLeftComponent(searchAndResults);
+        userView.setRightComponent(cartPanel);
+
+
+        c.add(userView);
         f.pack();
         f.setLocationRelativeTo(null);
     }
@@ -1129,7 +1276,7 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
                 editBookPriceLabel = new JLabel("*Price:"),
                 editBookRoyaltyLabel = new JLabel("*Royalty (%): "),
                 editBookStockLabel = new JLabel("Stock:"),
-                editBookAuthorLabel =  new JLabel("Author: "),
+                editBookAuthorLabel = new JLabel("Author: "),
                 editBookAuthorFNLabel = new JLabel("First Name: "),
                 editBookAuthorLNLabel = new JLabel("Last Name: "),
                 editBookPublisherLabel = new JLabel("Publisher (be sure to add new publishers before editing books): "),
@@ -1609,7 +1756,7 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
      *
      * @return reportPanel for adminView
      */
-    private JPanel reportPanel () {
+    private JPanel reportPanel() {
         /* JButtons */
         JButton generateReport = new JButton("Generate Report");
 
@@ -1621,144 +1768,11 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
     }
 
     /**
-     * Display the screen for a user
-     */
-    private void userScreen () {
-        f.setPreferredSize(new Dimension(798, 850));
-        c.removeAll();
-
-        // Dimensions
-        Dimension addRemoveButtonDimensions = new Dimension(25, 25);
-        Dimension searchResultDimension = new Dimension(500, c.getHeight());
-        Dimension cartDimension = new Dimension(c.getWidth() - (int) searchResultDimension.getWidth(), c.getHeight());
-
-        /* Components */
-        // Panels and Panes
-        JSplitPane userView = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true);
-        JPanel searchAndResults = new JPanel();
-        JPanel cartPanel = new JPanel();
-        JPanel pricePanel = new JPanel();
-        JPanel checkoutPanel = new JPanel();
-
-        // Labels
-        JLabel searchLabel = new JLabel("Search: ");
-        JLabel cartLabel = new JLabel("Cart: ");
-        JLabel filterLabel = new JLabel("Sort by: ");
-        JLabel totalPriceLabel = new JLabel("Total Price: ");
-
-        // Buttons
-        JButton addToCart = new JButton("+");
-        JButton removeFromCart = new JButton("-");
-        JButton checkoutButton = new JButton("Checkout");
-        JButton searchButton = new JButton("Search");
-        JButton logoutButton = new JButton("Logout");
-
-        // ActionListeners
-        addToCart.addActionListener(this);
-        removeFromCart.addActionListener(this);
-        checkoutButton.addActionListener(this);
-        searchButton.addActionListener(this);
-        logoutButton.addActionListener(this);
-
-        // ScrollPanes
-        JScrollPane currentCart = new JScrollPane();
-        JScrollPane searchResult = new JScrollPane();
-
-        /* Setup Panels */
-        // Price panel
-        addToCart.setPreferredSize(addRemoveButtonDimensions);
-        pricePanel.add(addToCart);
-        pricePanel.add(totalPriceLabel);
-        pricePanel.add(totalPrice);
-        removeFromCart.setPreferredSize(addRemoveButtonDimensions);
-        pricePanel.add(removeFromCart);
-
-        // Checkout Panel
-        checkoutPanel.setLayout(new BoxLayout(checkoutPanel, BoxLayout.PAGE_AXIS));
-        checkoutPanel.add(pricePanel);
-        checkoutButton.setAlignmentX(JPanel.CENTER_ALIGNMENT);
-        checkoutPanel.add(checkoutButton);
-
-        searchAndResults.setLayout(new GridBagLayout());
-        GridBagConstraints con = new GridBagConstraints();
-
-        // setup left side of window
-        Insets leftEdge = new Insets(5, 5, 5, 0);
-        Insets everythingElse = new Insets(5, 0, 5, 0);
-
-        con.insets = leftEdge;
-        con.anchor = GridBagConstraints.LINE_START;
-        con.weighty = 0.0;
-        con.weightx = 0.0;
-        con.gridx = 0;
-        con.gridy = 0;
-        searchAndResults.add(logoutButton, con);
-
-        con.gridx = 0;
-        con.gridy = 1;
-        searchLabel.setAlignmentX(JPanel.LEFT_ALIGNMENT);
-        searchAndResults.add(searchLabel, con);
-
-        con.insets = everythingElse;
-        con.gridx = 1;
-        searchAndResults.add(searchFilters, con);
-
-        con.fill = GridBagConstraints.HORIZONTAL;
-        con.gridx = 2;
-        userSearchTF.setPreferredSize(new Dimension(200, 20));
-        searchAndResults.add(userSearchTF, con);
-
-        con.fill = GridBagConstraints.NONE;
-        con.gridx = 3;
-        searchAndResults.add(searchButton, con);
-
-        con.gridx = 0;
-        con.gridy = 2;
-        con.insets = leftEdge;
-        con.fill = GridBagConstraints.NONE;
-        filterLabel.setAlignmentX(JPanel.LEFT_ALIGNMENT);
-        searchAndResults.add(filterLabel, con);
-
-        con.gridx = 1;
-        con.insets = everythingElse;
-        searchAndResults.add(resultFilters, con);
-
-        con.gridx = 0;
-        con.gridy = 3;
-        con.weighty = 1.0;
-        con.weightx = 1.0;
-        con.gridwidth = 4;
-        con.insets = new Insets(5, 5, 5, 5);
-        con.fill = GridBagConstraints.BOTH;
-        con.anchor = GridBagConstraints.CENTER;
-        searchAndResults.add(searchResult, con);
-
-        searchAndResults.setMinimumSize(searchResultDimension);
-
-        // setup right side of window
-        cartPanel.setLayout(new BorderLayout());
-        cartLabel.setAlignmentX(JPanel.LEFT_ALIGNMENT);
-        cartPanel.add(cartLabel, BorderLayout.PAGE_START);
-        cartPanel.add(checkoutPanel, BorderLayout.PAGE_END);
-        cartPanel.add(currentCart, BorderLayout.CENTER);
-        cartPanel.setPreferredSize(cartDimension);
-
-        userView.resetToPreferredSizes();
-        userView.setLeftComponent(searchAndResults);
-        userView.setRightComponent(cartPanel);
-
-
-        c.add(userView);
-        f.pack();
-        f.setLocationRelativeTo(null);
-    }
-
-    /**
      * Implements ActionListeners for JButtons
      *
      * @param e The ActionEvent that was triggered via a JButton.
      */
-    public void actionPerformed (ActionEvent e){
+    public void actionPerformed(ActionEvent e) {
         Object o = e.getSource();
 
         if (o instanceof JButton) {
@@ -1776,10 +1790,18 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
                 case "Search Users" -> System.out.println("Searching Users"); // Admin Edit User Screen
                 case "Update User" -> confirmUserEditLabel.setText("User Updated"); // Admin Edit User Screen
                 case "Search Books" -> System.out.println("Searching Books"); // Admin Edit Books Screen
-                case "Update Book" -> System.out.println("Book Updated"); // Admin Edit Books Screen
+                case "Update Book" -> confirmBookEditLabel.setText("Book Updated"); // Admin Edit Books Screen
                 case "Add Book" -> confirmNewBookAddition.setText("New Book Added"); // Admin Add Book Screen
                 case "Add Publisher" -> confirmNewPublisherAddition.setText("New Publisher Added"); // Admin Add Publisher Screen
                 case "Add User" -> confirmAdminReg.setText("New User Added"); // Admin Add User Screen
+                default -> System.out.println("Error");
+            }
+        }
+
+        if (o instanceof JMenuItem) {
+            switch (((JMenuItem) o).getText()) {
+                case "Logout" -> confirmLogout(); // Anywhere and everywhere
+                case "Switch to User View" -> confirmViewSwitch();
                 default -> System.out.println("Error");
             }
         }
@@ -1790,7 +1812,7 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
      *
      * @see super.lookForaLogin() for full implementation
      */
-    private void login () {
+    private void login() {
         boolean[] validCred = lookForaLogin(usernameField.getText(), passwordField.getPassword());
         if (validCred[0]) {
             if (validCred[1]) {
@@ -1802,12 +1824,12 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
     /**
      * Confirms that the user wishes to logout
      */
-    private void confirmLogout () {
+    private void confirmLogout() {
         JButton logoutButton = new JButton("Logout");
         JButton cancelButton = new JButton("Cancel");
 
         Object[] options = {logoutButton, cancelButton};
-        final JOptionPane areYouSure = new JOptionPane("Are you sure you want to logout?", JOptionPane.PLAIN_MESSAGE, JOptionPane.YES_NO_OPTION, null, options, options[0]);
+        final JOptionPane areYouSure = new JOptionPane("Are you sure you want to logout?", JOptionPane.PLAIN_MESSAGE, JOptionPane.YES_NO_OPTION, null, options, options[1]);
         final JDialog dialog = areYouSure.createDialog("Logout");
         dialog.setContentPane(areYouSure);
         dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
@@ -1826,7 +1848,7 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
     /**
      * Gives the admin user the choice of where to go
      */
-    private void adminScreenChoice () {
+    private void adminScreenChoice() {
         JButton userButton = new JButton("Customer View");
         JButton adminButton = new JButton("Administrative View");
 
@@ -1849,5 +1871,29 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
         dialog.setLocationRelativeTo(null);
         dialog.setVisible(true);
     }
-    }
 
+    /**
+     *  Confirms the admin wants to exit the admin view
+     */
+    private void confirmViewSwitch()
+    {
+        JButton cancelButton = new JButton("Cancel");
+        JButton userButton = new JButton("Customer View");
+
+        Object[] options = {userButton, cancelButton};
+        final JOptionPane screenChoice = new JOptionPane("Are you sure you wish to change views?\nYou cannot switch back without logging out.", JOptionPane.PLAIN_MESSAGE, JOptionPane.YES_NO_OPTION, null, options, options[1]);
+        final JDialog dialog = screenChoice.createDialog("Admin");
+        dialog.setContentPane(screenChoice);
+        dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+
+        userButton.addActionListener(e -> {
+            userScreen();
+            dialog.setVisible(false);
+        });
+        cancelButton.addActionListener(e -> { dialog.setVisible(false); });
+
+        dialog.pack();
+        dialog.setLocationRelativeTo(null);
+        dialog.setVisible(true);
+    }
+}
