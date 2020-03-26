@@ -19,14 +19,13 @@ public class LookForaBook {
     // Just putting this here so we can change it when we test.
     private static final String USER = "ryan";
     private static Statement statement = null;
-    private static final String DATABASE = "lookinnabook";
+    private static final String DATABASE = "LookInnaBook";
 
     protected LookForaBook(){
         try {
-            Connection connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/LookInnaBook", USER, "");
+            Connection connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/" + DATABASE, USER, "");
             statement = connection.createStatement();
         }catch (SQLException e) {
-            System.out.println(e.toString());
             e.printStackTrace();
         }
     }
@@ -68,8 +67,8 @@ public class LookForaBook {
      * @return True if the insertion was successful, false otherwise.
      */
     protected boolean registerNewUser(String username, String password, String first_name, String last_name, String email, int shippingAdd, int billingAdd) {
-        try (Connection connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/" + DATABASE, USER, "")) {
-            connection.createStatement().execute("INSERT into project.user values ('" + username + "', '" + password + "', '" + first_name + "', '" + last_name + "', '" + email + "', '" + shippingAdd + "', '" + billingAdd + "')");
+        try {
+            statement.execute("INSERT into project.user values ('" + username + "', '" + password + "', '" + first_name + "', '" + last_name + "', '" + email + "', '" + shippingAdd + "', '" + billingAdd + "')");
             return true;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -83,8 +82,8 @@ public class LookForaBook {
      * @return The total number of addresses currently stored, as an int.
      */
     protected int countAddresses() {
-        try (Connection connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/" + DATABASE, USER, "")) {
-            ResultSet result = connection.createStatement().executeQuery("SELECT COUNT(*) from project.address");
+        try {
+            ResultSet result = statement.executeQuery("SELECT COUNT(*) from project.address");
             result.next();
             return Integer.parseInt(result.getString("count"));
         } catch (SQLException e) {
@@ -107,8 +106,8 @@ public class LookForaBook {
      * @return True if the insertion was successful, false otherwise.
      */
     protected boolean addAddress(int addID, String streetNum, String streetName, String apartment, String city, String province, String country, String postalCode) {
-        try (Connection connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/" + DATABASE, USER, "")) {
-            connection.createStatement().execute("INSERT into project.address values ('" + addID + "', '" + streetNum + "', '" + streetName + "', '" + apartment + "', '" + city + "', '" + province + "', '" + country + "', '" + postalCode + "')");
+        try {
+            statement.execute("INSERT into project.address values ('" + addID + "', '" + streetNum + "', '" + streetName + "', '" + apartment + "', '" + city + "', '" + province + "', '" + country + "', '" + postalCode + "')");
             return true;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -126,8 +125,8 @@ public class LookForaBook {
      * @return True if the insertion was successful, false otherwise.
      */
     protected boolean addHasAdd(String username, int addID, boolean isShipping, boolean isBilling) {
-        try (Connection connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/" + DATABASE, USER, "")) {
-            connection.createStatement().execute("INSERT into project.hasadd values ('" + username + "', '" + addID + "', '" + isShipping + "', '" + isBilling + "')");
+        try {
+            statement.execute("INSERT into project.hasadd values ('" + username + "', '" + addID + "', '" + isShipping + "', '" + isBilling + "')");
             return true;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -142,8 +141,8 @@ public class LookForaBook {
      * @return ArrayList of user credentials from the database. [0] = username, [1] = password, [2] = first name, [3] = last name, [4] = email, [5] = salary, [6] = shippingID, [7] = billingID
      * null if no user found.
      */
-    protected ArrayList lookForaUser(String username) {
-        ArrayList userCred = new ArrayList<>();
+    protected ArrayList<Object> lookForaUser(String username) {
+        ArrayList<Object> userCred = new ArrayList<>();
         ArrayList<String> addresses = new ArrayList<>(); // extract addresses
 
         int rowCount = 0;
@@ -193,8 +192,8 @@ public class LookForaBook {
      * @param addID Address ID number
      * @return An ArrayList of address info. [0] = street num, [1] = street name, [2] = apartment, [3] = city, [4] = province, [5] = country, [6] = postal code, [7] = isShipping, [8] = isBilling
      */
-    private ArrayList lookForanAddress(String username, String addID){
-        ArrayList addInfo = new ArrayList<>();
+    private ArrayList<Object> lookForanAddress(String username, String addID){
+        ArrayList<Object> addInfo = new ArrayList<>();
         int rowCount = 0;
 
         try{
@@ -242,7 +241,7 @@ public class LookForaBook {
      * @param billAdd The billing address ID that was found and passed via lookForaUser
      * @return ArrayList of the updated user credentials (or added credentials but we don't want this), null otherwise
      */
-    protected boolean updateUser(String username, String password, String firstName, String lastName, String email, String salary, ArrayList shippAdd, ArrayList billAdd){
+    protected boolean updateUser(String username, String password, String firstName, String lastName, String email, String salary, ArrayList<Object> shippAdd, ArrayList<Object> billAdd){
         try {
 
             int rowsAffected = statement.executeUpdate("INSERT INTO project.user " +
@@ -265,7 +264,6 @@ public class LookForaBook {
             }
 
         } catch (SQLException e) {
-            System.out.println(e);
             e.printStackTrace();
         }
 

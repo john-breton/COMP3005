@@ -2545,7 +2545,7 @@ public class LookAttaBook extends LookForaBook implements ActionListener, Change
      * and correctly adjusts checkboxes
      */
     private void fetchEditUserData(){
-        ArrayList update = lookForaUser(editUserSearchTF.getText());
+        ArrayList<Object> update = lookForaUser(editUserSearchTF.getText());
         if(update == null || update.size() == 0){
             editUserErrorLabel.setText("User Not Found");
         } else if ((String)update.get(0) == "-1"){
