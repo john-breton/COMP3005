@@ -23,7 +23,7 @@ import java.util.ArrayList;
  * @version 1.0
  */
 public class LookAttaBook extends LookForaBook implements ActionListener, ChangeListener {
-    private static final ImageIcon WINDOW_ICON = new ImageIcon(new ImageIcon(Thread.currentThread().getContextClassLoader().getResource("logo.png")).getImage());
+    private static final ImageIcon WINDOW_ICON = new ImageIcon(new ImageIcon(Objects.requireNonNull(Thread.currentThread().getContextClassLoader().getResource("logo.png"))).getImage());
     final JFrame f = new JFrame("LookInnaBook");
     final Container c = f.getContentPane();
 
@@ -49,8 +49,8 @@ public class LookAttaBook extends LookForaBook implements ActionListener, Change
             checkoutBillingProvinceCB = new JComboBox<>(provincesArr);
 
     /* JCheckBoxes */
-    JCheckBox editBillingSameAsShipping = new JCheckBox("Billing Address is the same as Shipping Address");
-    JCheckBox isUserAdminCB = new JCheckBox("Is the user an admin?");
+    final JCheckBox editBillingSameAsShipping = new JCheckBox("Billing Address is the same as Shipping Address");
+    final JCheckBox isUserAdminCB = new JCheckBox("Is the user an admin?");
 
     /* JLabels -- Global to update users */
     // Login
@@ -2629,7 +2629,7 @@ public class LookAttaBook extends LookForaBook implements ActionListener, Change
         ArrayList<Object> update = lookForaUser(editUserSearchTF.getText());
         if(update == null || update.size() == 0){
             editUserErrorLabel.setText("User Not Found");
-        } else if ((String)update.get(0) == "-1"){
+        } else if (update.get(0).equals("-1")){
             editUserErrorLabel.setText("Big boy error...contact someone");
         } else {
             editUserErrorLabel.setText(""); // reset errors
