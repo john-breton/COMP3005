@@ -4,6 +4,7 @@ import javax.swing.plaf.ColorUIResource;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Objects;
 
 /**
  * The LookAttaBook class represents the front-end for the LookInnaBook application.
@@ -14,7 +15,7 @@ import java.awt.event.ActionListener;
  * @version 1.0
  */
 public class LookAttaBook extends LookForaBook implements ActionListener {
-    private static final ImageIcon WINDOW_ICON = new ImageIcon(new ImageIcon(Thread.currentThread().getContextClassLoader().getResource("logo.png")).getImage());
+    private static final ImageIcon WINDOW_ICON = new ImageIcon(new ImageIcon(Objects.requireNonNull(Thread.currentThread().getContextClassLoader().getResource("logo.png"))).getImage());
     final JFrame f = new JFrame("LookInnaBook");
     final Container c = f.getContentPane();
 
@@ -132,7 +133,7 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
             shippingAdminCountryTF = new JTextField(15),
             shippingAdminPostalCodeTF = new JTextField(15),
     // Admin billing address info
-            billAdminStreetNumTF = new JTextField(15),
+    billAdminStreetNumTF = new JTextField(15),
             billAdminStreetNameTF = new JTextField(15),
             billAdminApartmentTF = new JTextField(15),
             billAdminCityTF = new JTextField(15),
@@ -996,8 +997,7 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
      * <p>
      * TODO: lookupOrderScreen()
      */
-    private void lookupOrderScreen()
-    {
+    private void lookupOrderScreen() {
         // Clear GUI in order to reload
         f.setPreferredSize(new Dimension(400, 200));
         if (f.getJMenuBar() != null) f.getJMenuBar().setVisible(false);
@@ -2270,7 +2270,7 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
      * Attempts to register a user.
      *
      * @return True if registration was successful, false otherwise.
-     * @see super.registerNewUser for further implementation.
+     * @see super.registerNewUser, super.addHasAdd, super.addAddress, super.countAddresses for further implementation.
      */
     private boolean register() {
         // Check for a valid username.
@@ -2293,11 +2293,11 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
             confirmRegistration.setText("Registration Failed. Please enter both a first and last name.");
             return false;
         }
-        if (!check(firstNameTF.getText())) {
+        if (check(firstNameTF.getText())) {
             confirmRegistration.setText("Registration Failed. First names cannot contain numerical values.");
             return false;
         }
-        if (!check(lastNameTF.getText())) {
+        if (check(lastNameTF.getText())) {
             confirmRegistration.setText("Registration Failed. Last names cannot contain numerical values.");
             return false;
         }
@@ -2337,11 +2337,11 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
             return false;
         }
         // Cities
-        if (!check(shipCityTF.getText())) {
+        if (check(shipCityTF.getText())) {
             confirmRegistration.setText("Registration Failed. Shipping city cannot contain numerical values.");
             return false;
         }
-        if (!check(billCityTF.getText())) {
+        if (check(billCityTF.getText())) {
             confirmRegistration.setText("Registration Failed. Billing city cannot contain numerical values.");
             return false;
         }
@@ -2354,11 +2354,11 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
             return false;
         }
         // Countries
-        if (!check(shipCountryTF.getText())) {
+        if (check(shipCountryTF.getText())) {
             confirmRegistration.setText("Registration Failed. Shipping country cannot contain numerical values.");
             return false;
         }
-        if (!check(billCountryTF.getText())) {
+        if (check(billCountryTF.getText())) {
             confirmRegistration.setText("Registration Failed. Billing country cannot contain numerical values.");
             return false;
         }
@@ -2383,14 +2383,14 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
         // Find out the number of addresses currently being stored (used for id numbers).
         int addCount = countAddresses();
         // Setup ID numbers temporarily
-        int shipAdd = addCount, billAdd = addCount;
+        int billAdd = addCount;
 
         if (!sameShipAndBill) {
             billAdd = addCount + 1;
         }
 
         // Attempt to add the user to the database.
-        if (registerNewUser(newUsernameTF.getText(), new String(newPasswordTF.getPassword()), firstNameTF.getText(), lastNameTF.getText(), emailTF.getText(), shipAdd, billAdd)) {
+        if (registerNewUser(newUsernameTF.getText(), new String(newPasswordTF.getPassword()), firstNameTF.getText(), lastNameTF.getText(), emailTF.getText(), addCount, billAdd)) {
             confirmRegistration.setText("Registration Successful");
         } else {
             confirmRegistration.setText("Registration Failed. A user with that username is already registered in the system. Please try again.");
@@ -2399,18 +2399,18 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
 
         /* If we get here, the following insertion methods will not fail. */
         // Add the shipping address.
-        addAddress(addCount, shipStreetNumTF.getText(), shipStreetNameTF.getText(), shipApartmentTF.getText(), shipCityTF.getText(), shipProvinceComboBox.getSelectedItem().toString(), shipCountryTF.getText(), shipPostalCodeTF.getText());
+        addAddress(addCount, shipStreetNumTF.getText(), shipStreetNameTF.getText(), shipApartmentTF.getText(), shipCityTF.getText(), Objects.requireNonNull(shipProvinceComboBox.getSelectedItem()).toString(), shipCountryTF.getText(), shipPostalCodeTF.getText());
         if (!sameShipAndBill) {
             // Need to add the billing address as a separate address.
-            addAddress(addCount + 1, billStreetNumTF.getText(), billStreetNameTF.getText(), billApartmentTF.getText(), billCityTF.getText(), billProvinceComboBox.getSelectedItem().toString(), billCountryTF.getText(), billPostalCodeTF.getText());
+            addAddress(addCount + 1, billStreetNumTF.getText(), billStreetNameTF.getText(), billApartmentTF.getText(), billCityTF.getText(), Objects.requireNonNull(billProvinceComboBox.getSelectedItem()).toString(), billCountryTF.getText(), billPostalCodeTF.getText());
         }
 
         // Create the hasAdd relations
-        if (billAdd != shipAdd) {
-            addHasAdd(newUsernameTF.getText(), shipAdd, true, false);
+        if (billAdd != addCount) {
+            addHasAdd(newUsernameTF.getText(), addCount, true, false);
             addHasAdd(newUsernameTF.getText(), billAdd, false, true);
         } else {
-            addHasAdd(newUsernameTF.getText(), shipAdd, true, true);
+            addHasAdd(newUsernameTF.getText(), addCount, true, true);
         }
         // Done.
         return true;
@@ -2418,21 +2418,22 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
 
     /**
      * Checks if a String contains only unicode letters.
+     *
      * @param s The String to be checked
      * @return True if the String contains only unicode letters, false otherwise.
      */
-    boolean check(String s) {
+    private boolean check(String s) {
         if (s == null) {
-            return false;
+            return true;
         }
 
         int len = s.length();
         for (int i = 0; i < len; i++) {
-            if ((Character.isLetter(s.charAt(i)) == false)) {
-                return false;
+            if ((!Character.isLetter(s.charAt(i)))) {
+                return true;
             }
         }
-        return true;
+        return false;
     }
 
     /**
