@@ -60,12 +60,17 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
     // User
     private final JLabel totalPrice = new JLabel("$0.00", JLabel.CENTER);
     // Checkout
-    private final JLabel checkoutTotalPriceValueLabel = new JLabel("$$$$$$$$$", JLabel.CENTER),
-            checkoutUsernameLabel = new JLabel("Username's Cart "),
-            checkoutNameField = new JLabel("User's Name"),
-            checkoutEmailConfirm = new JLabel("User's Email "),
-            checkoutSuccessLabel = new JLabel("Checkout Completed", JLabel.CENTER),
-            checkoutErrorLabel = new JLabel("There was an error", JLabel.CENTER);
+    private final JLabel checkoutTotalPriceValueLabel = new JLabel("$0.00", JLabel.CENTER),
+            checkoutUsernameLabel = new JLabel(""),
+            checkoutNameField = new JLabel(""),
+            checkoutEmailConfirm = new JLabel(""),
+            checkoutSuccessLabel = new JLabel("", JLabel.CENTER),
+            checkoutErrorLabel = new JLabel("", JLabel.CENTER);
+    // Order Lookup
+    private final JLabel trackingNumber = new JLabel("123456789101112"),
+            dateOrderPlaced = new JLabel("March 25, 2020"),
+            userNameOrder = new JLabel("User's Username"),
+            orderStatus = new JLabel("TBH Dont know where it is");
 
     /* JTextFields -- Global in order for methods to access */
     // Login
@@ -127,7 +132,7 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
             shippingAdminCountryTF = new JTextField(15),
             shippingAdminPostalCodeTF = new JTextField(15),
     // Admin billing address info
-    billAdminStreetNumTF = new JTextField(15),
+            billAdminStreetNumTF = new JTextField(15),
             billAdminStreetNameTF = new JTextField(15),
             billAdminApartmentTF = new JTextField(15),
             billAdminCityTF = new JTextField(15),
@@ -187,6 +192,8 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
             checkoutBillingCityTF = new JTextField(15),
             checkoutBillingCountryTF = new JTextField(15),
             checkoutBillingPostalCodeTF = new JTextField(15);
+    // Order Lookup
+    private final JTextField orderNumber = new JTextField();
 
     public LookAttaBook() {
         // If you want to disable dark mode, this is the code for it. You can just remove it.
@@ -199,7 +206,7 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
             e.printStackTrace();
         }*/
         f.setIconImage(WINDOW_ICON.getImage());
-        UIManager.getLookAndFeelDefaults().put("Button.focus", new ColorUIResource(new Color(0, 0, 0, 0)));
+        UIManager.getLookAndFeelDefaults().put("Button.focus", new ColorUIResource(new Color(100, 0, 0, 0)));
         loginScreen();
     }
 
@@ -989,8 +996,76 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
      * <p>
      * TODO: lookupOrderScreen()
      */
-    private void lookupOrderScreen() {
+    private void lookupOrderScreen()
+    {
+        // Clear GUI in order to reload
+        f.setPreferredSize(new Dimension(400, 200));
+        if (f.getJMenuBar() != null) f.getJMenuBar().setVisible(false);
+        c.removeAll();
 
+        /* JPanels */
+        JPanel orderScreen = new JPanel(new GridBagLayout());
+        orderScreen.setBorder(new EmptyBorder(10, 10, 10, 10));
+
+        /* JButtons */
+        JButton cancelLookup = new JButton("Cancel Lookup");
+        JButton lookupOrder = new JButton("Lookup Order");
+
+        /* JLabels */
+        JLabel orderNumberLabel = new JLabel("Order Number: ");
+        JLabel trackingNumberLabel = new JLabel("Tracking Number: ");
+        JLabel dateOrderPlacedLabel = new JLabel("Date Placed: ");
+        JLabel userNameOrderLabel = new JLabel("Order Owner: ");
+        JLabel orderStatustatusLabel = new JLabel("Status: ");
+
+        /* ActionListeners */
+        cancelLookup.addActionListener(this);
+        lookupOrder.addActionListener(this);
+
+        // Setup Panel
+        GridBagConstraints con = new GridBagConstraints();
+        con.gridy = 0;
+        con.gridx = 0;
+        con.gridwidth = 1;
+        con.fill = GridBagConstraints.HORIZONTAL;
+        con.anchor = GridBagConstraints.LINE_START;
+        orderScreen.add(cancelLookup, con);
+        con.gridx = 1;
+        orderScreen.add(lookupOrder, con);
+
+        con.gridy = 1;
+        con.gridx = 0;
+        orderScreen.add(orderNumberLabel, con);
+        con.gridx = 1;
+        orderScreen.add(orderNumber, con);
+
+        con.gridy = 2;
+        con.gridx = 0;
+        orderScreen.add(trackingNumberLabel, con);
+        con.gridx = 1;
+        orderScreen.add(trackingNumber, con);
+
+        con.gridy = 3;
+        con.gridx = 0;
+        orderScreen.add(dateOrderPlacedLabel, con);
+        con.gridx = 1;
+        orderScreen.add(dateOrderPlaced, con);
+
+        con.gridy = 4;
+        con.gridx = 0;
+        orderScreen.add(userNameOrderLabel, con);
+        con.gridx = 1;
+        orderScreen.add(userNameOrder, con);
+
+        con.gridy = 5;
+        con.gridx = 0;
+        orderScreen.add(orderStatustatusLabel, con);
+        con.gridx = 1;
+        orderScreen.add(orderStatus, con);
+
+        c.add(orderScreen);
+        f.pack();
+        f.setLocationRelativeTo(null);
     }
 
     /**
@@ -2125,8 +2200,14 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
      * @return reportPanel for adminView
      */
     private JPanel reportPanel() {
+        JPanel generateReportPanel = new JPanel(new GridBagLayout());
+        JScrollPane reportContainer = new JScrollPane();
+
         /* JButtons */
         JButton generateReport = new JButton("Generate Report");
+        JButton logout = new JButton("Logout");
+
+
 
         /* JLabels */
 
@@ -2149,7 +2230,7 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
                 case "Logout" -> confirmLogout(); // Anywhere and everywhere
                 case "Login" -> login(); // Login Screen
                 case "Register" -> regScreen(); // Login screen
-                case "Order Lookup" -> System.out.println("Looking up order"); // Login Screen
+                case "Order Lookup" -> lookupOrderScreen(); // Login Screen
                 case "Cancel Registration", "Proceed to Login" -> loginScreen(); // Registration screen
                 case "Submit" -> {
                     if (register()) {
@@ -2170,6 +2251,8 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
                 case "Add User" -> confirmAdminReg.setText("New User Added"); // Admin Add User Screen
                 case "Cancel Checkout" -> userScreen(); // checkoutScreen
                 case "Confirm Order" -> System.out.println("Order Submitted"); // checkoutScreen
+                case "Cancel Lookup" -> loginScreen();
+                case "Lookup Order" -> System.out.println("Looking up order");
                 default -> System.out.println("Error");
             }
         }
