@@ -2363,6 +2363,7 @@ public class LookAttaBook extends LookForaBook implements ActionListener, Change
      * @see super.registerNewUser, super.addHasAdd, super.addAddress, super.countAddresses for further implementation.
      */
     private boolean register() {
+        confirmRegistration.setForeground(Color.red);
         // Check for a valid username.
         if (newUsernameTF.getText().length() == 0) {
             confirmRegistration.setText("Registration Failed. Please provide a username.");
@@ -2400,6 +2401,14 @@ public class LookAttaBook extends LookForaBook implements ActionListener, Change
 
         // Check each of the address fields :(
         // Street Numbers
+        if (shipStreetNumTF.getText().length() == 0) {
+            confirmRegistration.setText("Registration Failed. Shipping street number cannot be empty.");
+            return false;
+        }
+        if (!sameShipAndBill && billStreetNumTF.getText().length() == 0) {
+            confirmRegistration.setText("Registration Failed. Billing street number cannot be empty.");
+            return false;
+        }
         try {
             Double.parseDouble(shipStreetNumTF.getText());
             if (!sameShipAndBill) {
@@ -2409,14 +2418,7 @@ public class LookAttaBook extends LookForaBook implements ActionListener, Change
             confirmRegistration.setText("Registration Failed. Street numbers cannot contain letters.");
             return false;
         }
-        if (shipStreetNumTF.getText().length() == 0) {
-            confirmRegistration.setText("Registration Failed. Shipping street number cannot be empty.");
-            return false;
-        }
-        if (!sameShipAndBill && billStreetNumTF.getText().length() == 0) {
-            confirmRegistration.setText("Registration Failed. Billing street number cannot be empty.");
-            return false;
-        }
+
         // Street Names
         if (shipStreetNameTF.getText().length() == 0) {
             confirmRegistration.setText("Registration Failed. Shipping street name cannot be empty.");
@@ -2462,11 +2464,11 @@ public class LookAttaBook extends LookForaBook implements ActionListener, Change
         }
         // Postal Code
         if (shipPostalCodeTF.getText().length() == 0) {
-            confirmRegistration.setText("Registration Failed. Shipping country cannot be empty.");
+            confirmRegistration.setText("Registration Failed. Shipping postal code cannot be empty.");
             return false;
         }
         if (!sameShipAndBill && billPostalCodeTF.getText().length() == 0) {
-            confirmRegistration.setText("Registration Failed. Billing country cannot be empty.");
+            confirmRegistration.setText("Registration Failed. Billing postal code cannot be empty.");
             return false;
         }
 
@@ -2482,6 +2484,7 @@ public class LookAttaBook extends LookForaBook implements ActionListener, Change
         // Attempt to add the user to the database.
         if (registerNewUser(newUsernameTF.getText(), new String(newPasswordTF.getPassword()), firstNameTF.getText(), lastNameTF.getText(), emailTF.getText(), addCount, billAdd)) {
             confirmRegistration.setText("Registration Successful");
+            confirmRegistration.setForeground(Color.BLACK);
         } else {
             confirmRegistration.setText("Registration Failed. A user with that username is already registered in the system. Please try again.");
             return false;
