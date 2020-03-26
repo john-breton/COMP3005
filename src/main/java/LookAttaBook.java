@@ -2380,16 +2380,40 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
             return false;
         }
 
-        // Attempt to add
+        // Find out the number of addresses currently being stored (used for id numbers).
+        int addCount = countAddresses();
+        // Setup ID numbers temporarily
+        int shipAdd = addCount, billAdd = addCount;
+
+        if (!sameShipAndBill) {
+            billAdd = addCount + 1;
+        }
 
         // Attempt to add the user to the database.
         if (registerNewUser(newUsernameTF.getText(), new String(newPasswordTF.getPassword()), firstNameTF.getText(), lastNameTF.getText(), emailTF.getText(), shipAdd, billAdd)) {
             confirmRegistration.setText("Registration Successful");
-            return true;
         } else {
             confirmRegistration.setText("Registration Failed. A user with that username is already registered in the system. Please try again.");
             return false;
         }
+
+        /* If we get here, the following insertion methods will not fail. */
+        // Add the shipping address.
+        addAddress(addCount, shipStreetNumTF.getText(), shipStreetNameTF.getText(), shipApartmentTF.getText(), shipCityTF.getText(), shipProvinceComboBox.getSelectedItem().toString(), shipCountryTF.getText(), shipPostalCodeTF.getText());
+        if (!sameShipAndBill) {
+            // Need to add the billing address as a separate address.
+            addAddress(addCount + 1, billStreetNumTF.getText(), billStreetNameTF.getText(), billApartmentTF.getText(), billCityTF.getText(), billProvinceComboBox.getSelectedItem().toString(), billCountryTF.getText(), billPostalCodeTF.getText());
+        }
+
+        // Create the hasAdd relations
+        if (billAdd != shipAdd) {
+            addHasAdd(newUsernameTF.getText(), shipAdd, true, false);
+            addHasAdd(newUsernameTF.getText(), billAdd, false, true);
+        } else {
+            addHasAdd(newUsernameTF.getText(), shipAdd, true, true);
+        }
+        // Done.
+        return true;
     }
 
     /**
