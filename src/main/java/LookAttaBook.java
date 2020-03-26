@@ -90,13 +90,13 @@ public class LookAttaBook extends LookForaBook implements ActionListener, Change
     private final JTextField usernameField = new JTextField(15);
     private final JPasswordField passwordField = new JPasswordField(15);
     // Registration
-    private final JTextField billStreetNumTF = new JTextField(20), shipStreetNumTF = new JTextField(20),
+    private final JTextField billStreetNumTF = new JTextField(), shipStreetNumTF = new JTextField(),
             billStreetNameTF = new JTextField(), shipStreetNameTF = new JTextField(),
-            billApartmentTF = new JTextField(), shipApartmentTF = new JTextField(),
+            billApartmentTF = new JTextField(10), shipApartmentTF = new JTextField(),
             billCityTF = new JTextField(), shipCityTF = new JTextField(),
             billCountryTF = new JTextField(), shipCountryTF = new JTextField(),
             billPostalCodeTF = new JTextField(), shipPostalCodeTF = new JTextField(),
-            newUsernameTF = new JTextField(20),
+            newUsernameTF = new JTextField(),
             firstNameTF = new JTextField(),
             lastNameTF = new JTextField(),
             emailTF = new JTextField();
@@ -309,7 +309,7 @@ public class LookAttaBook extends LookForaBook implements ActionListener, Change
      */
     private void regScreen() {
         // Clear GUI in order to reload
-        f.setPreferredSize(new Dimension(600, 800));
+        f.setPreferredSize(new Dimension(700, 550));
         if (f.getJMenuBar() != null) f.getJMenuBar().setVisible(false);
         c.removeAll();
 
@@ -321,44 +321,44 @@ public class LookAttaBook extends LookForaBook implements ActionListener, Change
         // User info
         JLabel newUsernameLabel = new JLabel("*Username: ");
         JLabel newPasswordLabel = new JLabel("*Password: ");
-        JLabel confirmPasswordLabel = new JLabel("*Confirm Password: ");
+        JLabel confirmPasswordLabel = new JLabel("*Confirm Password: ", JLabel.RIGHT);
         JLabel firstNameLabel = new JLabel("*First Name: ");
-        JLabel lastNameLabel = new JLabel("*Last Name: ");
+        JLabel lastNameLabel = new JLabel("*Last Name: ", JLabel.RIGHT);
         JLabel emailLabel = new JLabel("*Email: ");
         // User shipping address info
         JLabel shippingAddressLabel = new JLabel("Shipping Address");
         JLabel shippingStreetNumLabel = new JLabel("*Street Number: ");
-        JLabel shippingStreetNameLabel = new JLabel("*Street Name: ");
-        JLabel shippingApartmentLabel = new JLabel("Apartment: ");
+        JLabel shippingStreetNameLabel = new JLabel("*Street Name: ", JLabel.RIGHT);
+        JLabel shippingApartmentLabel = new JLabel("Apartment: ", JLabel.RIGHT);
         JLabel shippingCityLabel = new JLabel("*City: ");
-        JLabel shippingProvinceLabel = new JLabel("*Province: ");
+        JLabel shippingProvinceLabel = new JLabel("*Province: ", JLabel.RIGHT);
         JLabel shippingCountryLabel = new JLabel("*Country: ");
-        JLabel shippingPostalCodeLabel = new JLabel("*Postal Code: ");
+        JLabel shippingPostalCodeLabel = new JLabel("*Postal Code: ", JLabel.RIGHT);
         // User billing address info
         JLabel billingAddressLabel = new JLabel("Billing Address");
         JLabel billStreetNumLabel = new JLabel("Street Number: ");
-        JLabel billStreetNameLabel = new JLabel("Street Name: ");
-        JLabel billApartmentLabel = new JLabel("Apartment: ");
+        JLabel billStreetNameLabel = new JLabel("Street Name: ", JLabel.RIGHT);
+        JLabel billApartmentLabel = new JLabel("Apartment: ", JLabel.RIGHT);
         JLabel billCityLabel = new JLabel("City: ");
-        JLabel billProvinceLabel = new JLabel("Province: ");
+        JLabel billProvinceLabel = new JLabel("Province: ", JLabel.RIGHT);
         JLabel billCountryLabel = new JLabel("Country: ");
-        JLabel billPostalCodeLabel = new JLabel("Postal Code: ");
+        JLabel billPostalCodeLabel = new JLabel("Postal Code: ", JLabel.RIGHT);
         // Welcome message
-        JLabel newUserWelcome1 = new JLabel("Welcome to LookInnaBook!");
-        JLabel newUserWelcome2 = new JLabel("Enter your information in the space provided below.");
-        JLabel newUserWelcome3 = new JLabel("Required fields are indicated with a \"*\".");
+        JLabel newUserWelcome1 = new JLabel("Welcome to LookInnaBook!", JLabel.CENTER);
+        JLabel newUserWelcome2 = new JLabel("Enter your information in the space provided below.", JLabel.CENTER);
+        JLabel newUserWelcome3 = new JLabel("Required fields are indicated with a \"*\".", JLabel.CENTER);
 
         // JPanels
-        JPanel regPage = new JPanel();
-        JPanel welcome = new JPanel();
-        JPanel shipAdd = new JPanel();
-        JPanel billAdd = new JPanel();
-        JPanel infoPanel = new JPanel();
-        JPanel regLabel = new JPanel();
+        JPanel regPage = new JPanel(new GridBagLayout());
+        regPage.setBorder(new EmptyBorder(15,15,15,15));
+        JPanel buttons = new JPanel();
+        buttons.setAlignmentX(JPanel.CENTER_ALIGNMENT);
 
         // JButton
         JButton cancelReg = new JButton("Cancel Registration");
         JButton submitReg = new JButton("Submit");
+        buttons.add(cancelReg);
+        buttons.add(submitReg);
 
 
         /* Component setup*/
@@ -366,65 +366,8 @@ public class LookAttaBook extends LookForaBook implements ActionListener, Change
         cancelReg.setBackground(Color.WHITE);
         submitReg.setBackground(Color.WHITE);
 
-        // Registration Page
-        regPage.setLayout(new GridBagLayout());
-        GridBagConstraints con = new GridBagConstraints();
-
-        // Welcome message
-        welcome.setLayout(new BoxLayout(welcome, BoxLayout.PAGE_AXIS));
-        welcome.add(newUserWelcome1);
-        welcome.add(newUserWelcome2);
-        welcome.add(newUserWelcome3);
-        newUserWelcome1.setAlignmentX(JPanel.CENTER_ALIGNMENT);
-        newUserWelcome2.setAlignmentX(JPanel.CENTER_ALIGNMENT);
-        newUserWelcome3.setAlignmentX(JPanel.CENTER_ALIGNMENT);
-
-        // Success Message
-        regLabel.setLayout(new BoxLayout(regLabel, BoxLayout.PAGE_AXIS));
-        regLabel.add(confirmRegistration);
-        confirmRegistration.setAlignmentX(JPanel.CENTER_ALIGNMENT);
-
-        // Shipping Address Panel
-        shipAdd.setLayout(new GridLayout(0, 2));
-        shipAdd.add(shippingAddressLabel);
-        shipAdd.add(Box.createRigidArea(new Dimension(10, 10)));
-        shipAdd.add(shippingStreetNumLabel);
-        shipAdd.add(shipStreetNumTF);
-        shipAdd.add(shippingStreetNameLabel);
-        shipAdd.add(shipStreetNameTF);
-        shipAdd.add(shippingApartmentLabel);
-        shipAdd.add(shipApartmentTF);
-        shipAdd.add(shippingCityLabel);
-        shipAdd.add(shipCityTF);
-        shipAdd.add(shippingProvinceLabel);
-        shipAdd.add(shipProvinceComboBox);
-        shipAdd.add(shippingCountryLabel);
-        shipAdd.add(shipCountryTF);
-        shipAdd.add(shippingPostalCodeLabel);
-        shipAdd.add(shipPostalCodeTF);
-        shipAdd.setPreferredSize(new Dimension(400, 200));
-
-        // Billing Address Panel
-        billAdd.setLayout(new GridLayout(0, 2));
-        billAdd.add(billingAddressLabel);
-        billAdd.add(Box.createRigidArea(new Dimension(10, 10)));
-        billAdd.add(billStreetNumLabel);
-        billAdd.add(billStreetNumTF);
-        billAdd.add(billStreetNameLabel);
-        billAdd.add(billStreetNameTF);
-        billAdd.add(billApartmentLabel);
-        billAdd.add(billApartmentTF);
-        billAdd.add(billCityLabel);
-        billAdd.add(billCityTF);
-        billAdd.add(billProvinceLabel);
-        billAdd.add(billProvinceComboBox);
-        billAdd.add(billCountryLabel);
-        billAdd.add(billCountryTF);
-        billAdd.add(billPostalCodeLabel);
-        billAdd.add(billPostalCodeTF);
-        billAdd.setPreferredSize(new Dimension(400, 200));
-
         // Disable the fields by default.
+        billingSameAsShipping.setSelected(true);
         billStreetNumTF.setEnabled(false);
         billStreetNameTF.setEnabled(false);
         billApartmentTF.setEnabled(false);
@@ -433,61 +376,10 @@ public class LookAttaBook extends LookForaBook implements ActionListener, Change
         billCountryTF.setEnabled(false);
         billPostalCodeTF.setEnabled(false);
 
-        // Information Panel
-        infoPanel.setLayout(new GridLayout(0, 2));
-        infoPanel.add(newUsernameLabel);
-        infoPanel.add(newUsernameTF);
-        infoPanel.add(newPasswordLabel);
-        infoPanel.add(newPasswordTF);
-        infoPanel.add(confirmPasswordLabel);
-        infoPanel.add(confirmPasswordTF);
-        infoPanel.add(firstNameLabel);
-        infoPanel.add(firstNameTF);
-        infoPanel.add(lastNameLabel);
-        infoPanel.add(lastNameTF);
-        infoPanel.add(emailLabel);
-        infoPanel.add(emailTF);
-        infoPanel.setPreferredSize(new Dimension(400, 200));
-
-        // Add panels
-        con.anchor = GridBagConstraints.LINE_START;
-        con.fill = GridBagConstraints.HORIZONTAL;
-        con.gridy = 0;
-        con.gridx = 1;
-        con.gridwidth = 2;
-        con.insets = new Insets(5, 0, 5, 0);
-
-        con.anchor = GridBagConstraints.CENTER;
-        regPage.add(welcome, con);
-        con.gridy = 1;
-        regPage.add(infoPanel, con);
-
-        con.gridy = 2;
-        regPage.add(shipAdd, con);
-
-        con.gridy = 3;
-        billingSameAsShipping.setSelected(true);
-        regPage.add(billingSameAsShipping, con);
-
-        con.gridy = 4;
-        regPage.add(billAdd, con);
-
-        con.gridy = 5;
-        con.gridx = 1;
-        con.gridwidth = 1;
-        regPage.add(cancelReg, con);
-        con.gridx = 2;
-        regPage.add(submitReg, con);
-
-        con.gridy = 6;
-        con.gridx = 0;
-        con.gridwidth = 8;
-        regPage.add(regLabel, con);
-
         // Add action listeners
         cancelReg.addActionListener(this);
         submitReg.addActionListener(this);
-        billingSameAsShipping.addActionListener(e -> {
+        billingSameAsShipping.addChangeListener(e -> {
             boolean sameAsBilling = !billingSameAsShipping.isSelected();
             billStreetNumTF.setEnabled(sameAsBilling);
             billStreetNameTF.setEnabled(sameAsBilling);
@@ -497,6 +389,192 @@ public class LookAttaBook extends LookForaBook implements ActionListener, Change
             billCountryTF.setEnabled(sameAsBilling);
             billPostalCodeTF.setEnabled(sameAsBilling);
         });
+
+        // Setup Registration Panel
+        {
+            GridBagConstraints con = new GridBagConstraints();
+            Dimension spacer = new Dimension(35, 35);
+            con.gridy = 0;
+            con.gridx = 0;
+            con.gridwidth = 6;
+            con.fill = GridBagConstraints.HORIZONTAL;
+            con.anchor = GridBagConstraints.CENTER;
+            regPage.add(newUserWelcome1, con);
+
+            con.gridy = 1;
+            regPage.add(newUserWelcome2, con);
+
+            con.gridy = 2;
+            regPage.add(newUserWelcome3, con);
+
+            con.gridy = 3;
+            con.gridx = 0;
+            con.weightx = 1.0;
+            con.gridwidth = 2;
+            con.anchor = GridBagConstraints.LINE_START;
+            regPage.add(new JLabel("Login Credentials"), con);
+
+            con.gridy = 4;
+            con.gridx = 0;
+            con.gridwidth = 1;
+            regPage.add(newUsernameLabel, con);
+            con.gridx = 1;
+            con.gridwidth = 2;
+            regPage.add(newUsernameTF, con);
+
+            con.gridy = 5;
+            con.gridx = 0;
+            con.gridwidth = 1;
+            regPage.add(newPasswordLabel, con);
+            con.gridx = 3;
+            regPage.add(confirmPasswordLabel, con);
+            con.gridx = 1;
+            con.gridwidth = 2;
+            regPage.add(newPasswordTF, con);
+            con.gridx = 4;
+            regPage.add(confirmPasswordTF, con);
+
+            con.gridy = 6;
+            con.gridx = 0;
+            con.gridwidth = 1;
+            regPage.add(firstNameLabel, con);
+            con.gridx = 3;
+            regPage.add(lastNameLabel, con);
+            con.gridx = 1;
+            con.gridwidth = 2;
+            regPage.add(firstNameTF, con);
+            con.gridx = 4;
+            regPage.add(lastNameTF, con);
+
+            con.gridy = 7;
+            con.gridx = 0;
+            con.gridwidth = 1;
+            regPage.add(emailLabel, con);
+            con.gridx = 1;
+            con.gridwidth = 2;
+            regPage.add(emailTF, con);
+
+            con.gridy = 8;
+            con.gridx = 0;
+            con.gridwidth = 1;
+            regPage.add(Box.createRigidArea(spacer), con);
+
+            con.gridy = 9;
+            con.gridx = 0;
+            con.gridwidth = 3;
+            regPage.add(shippingAddressLabel, con);
+
+            con.gridy = 10;
+            con.gridx = 0;
+            con.gridwidth = 1;
+            regPage.add(shippingStreetNumLabel, con);
+            con.gridx = 1;
+            regPage.add(shipStreetNumTF, con);
+            con.gridx = 2;
+            regPage.add(shippingStreetNameLabel, con);
+            con.gridx = 3;
+            regPage.add(shipStreetNameTF, con);
+            con.gridx = 4;
+            regPage.add(shippingApartmentLabel, con);
+            con.gridx = 5;
+            regPage.add(shipApartmentTF, con);
+
+            con.gridy = 11;
+            con.gridx = 0;
+            con.gridwidth = 1;
+            regPage.add(shippingCityLabel, con);
+            con.gridx = 3;
+            regPage.add(shippingProvinceLabel, con);
+            con.gridx = 1;
+            con.gridwidth = 2;
+            regPage.add(shipCityTF, con);
+            con.gridx = 4;
+            con.gridwidth = 1;
+            regPage.add(shipProvinceComboBox, con);
+
+            con.gridy = 12;
+            con.gridx = 0;
+            con.gridwidth = 1;
+            regPage.add(shippingCountryLabel, con);
+            con.gridx = 3;
+            regPage.add(shippingPostalCodeLabel, con);
+            con.gridx = 1;
+            con.gridwidth = 2;
+            regPage.add(shipCountryTF, con);
+            con.gridx = 4;
+            regPage.add(shipPostalCodeTF, con);
+
+            con.gridy = 13;
+            con.gridx = 0;
+            con.gridwidth = 1;
+            regPage.add(Box.createRigidArea(spacer), con);
+
+            con.gridy = 14;
+            con.gridx = 0;
+            con.gridwidth = 3;
+            regPage.add(billingAddressLabel, con);
+            con.gridx = 1;
+            regPage.add(billingSameAsShipping,con);
+
+            con.gridy = 15;
+            con.gridx = 0;
+            con.gridwidth = 1;
+            regPage.add(billStreetNumLabel, con);
+            con.gridx = 1;
+            regPage.add(billStreetNumTF, con);
+            con.gridx = 2;
+            regPage.add(billStreetNameLabel, con);
+            con.gridx = 3;
+            regPage.add(billStreetNameTF, con);
+            con.gridx = 4;
+            regPage.add(billApartmentLabel, con);
+            con.gridx = 5;
+            regPage.add(billApartmentTF, con);
+
+            con.gridy = 16;
+            con.gridx = 0;
+            con.gridwidth = 1;
+            regPage.add(billCityLabel, con);
+            con.gridx = 3;
+            regPage.add(billProvinceLabel, con);
+            con.gridx = 1;
+            con.gridwidth = 2;
+            regPage.add(billCityTF, con);
+            con.gridx = 4;
+            con.gridwidth = 1;
+            regPage.add(billProvinceComboBox, con);
+
+            con.gridy = 17;
+            con.gridx = 0;
+            con.gridwidth = 1;
+            regPage.add(billCountryLabel, con);
+            con.gridx = 3;
+            regPage.add(billPostalCodeLabel, con);
+            con.gridx = 1;
+            con.gridwidth = 2;
+            regPage.add(billCountryTF, con);
+            con.gridx = 4;
+            regPage.add(billPostalCodeTF, con);
+
+            con.gridy = 18;
+            con.gridx = 0;
+            con.gridwidth = 6;
+            regPage.add(buttons, con);
+
+            con.gridy = 19;
+            con.gridx = 0;
+            con.gridwidth = 6;
+            regPage.add(confirmRegistration, con);
+
+            con.gridy = 19; // shift everything to the top
+            con.gridx = 0;
+            con.weighty = 1.0;
+            con.gridwidth = 6;
+            con.anchor = GridBagConstraints.CENTER;
+            con.fill = GridBagConstraints.BOTH;
+            Component glue = Box.createVerticalGlue();
+            regPage.add(glue, con);
+        }
 
         c.add(regPage);
         f.pack();
@@ -1460,7 +1538,7 @@ public class LookAttaBook extends LookForaBook implements ActionListener, Change
         /* ActionListeners */
         logoutAddUserButton.addActionListener(this);
         addUserButton.addActionListener(this);
-        billingSameAsShipping.addActionListener(e -> {
+        billingSameAsShipping.addChangeListener(e -> {
             boolean sameAsBilling = !billingSameAsShipping.isSelected();
             billAdminStreetNumTF.setEnabled(sameAsBilling);
             billAdminStreetNameTF.setEnabled(sameAsBilling);
@@ -1470,7 +1548,7 @@ public class LookAttaBook extends LookForaBook implements ActionListener, Change
             billAdminCountryTF.setEnabled(sameAsBilling);
             billAdminPostalCodeTF.setEnabled(sameAsBilling);
         });
-        isUserAdminCB.addActionListener(e -> {
+        isUserAdminCB.addChangeListener(e -> {
             boolean admin = isUserAdminCB.isSelected();
             salaryAdminTF.setEnabled(admin);
             if (admin) {
