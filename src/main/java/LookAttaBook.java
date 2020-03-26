@@ -11,6 +11,7 @@ import javax.swing.plaf.ColorUIResource;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Objects;
 import java.util.ArrayList;
 
 /**
@@ -144,7 +145,7 @@ public class LookAttaBook extends LookForaBook implements ActionListener, Change
             shippingAdminCountryTF = new JTextField(15),
             shippingAdminPostalCodeTF = new JTextField(15),
     // Admin billing address info
-            billAdminStreetNumTF = new JTextField(15),
+    billAdminStreetNumTF = new JTextField(15),
             billAdminStreetNameTF = new JTextField(15),
             billAdminApartmentTF = new JTextField(15),
             billAdminCityTF = new JTextField(15),
@@ -1008,7 +1009,7 @@ public class LookAttaBook extends LookForaBook implements ActionListener, Change
     /**
      * Creates the "Lookup Order" interface for the loginScreen
      * Finds a current order
-     *
+     * <p>
      */
     private void lookupOrderScreen() {
         // Clear GUI in order to reload
@@ -2278,6 +2279,176 @@ public class LookAttaBook extends LookForaBook implements ActionListener, Change
     }
 
     /**
+     * Attempts to register a user.
+     *
+     * @return True if registration was successful, false otherwise.
+     * @see super.registerNewUser, super.addHasAdd, super.addAddress, super.countAddresses for further implementation.
+     */
+    private boolean register() {
+        // Check for a valid username.
+        if (newUsernameTF.getText().length() == 0) {
+            confirmRegistration.setText("Registration Failed. Please provide a username.");
+            return false;
+        }
+        // Check for a valid password.
+        if (newPasswordTF.getPassword().length == 0 || confirmPasswordTF.getPassword().length == 0) {
+            confirmRegistration.setText("Registration Failed. Please provide and confirm a password.");
+            return false;
+        }
+        // Check to see if the password matches the confirm password textfield.
+        if (!(new String(confirmPasswordTF.getPassword()).equals(new String(newPasswordTF.getPassword())))) {
+            confirmRegistration.setText("Registration Failed. Passwords do not match.");
+            return false;
+        }
+        // Check to see if the names contain any numbers/are empty.
+        if (firstNameTF.getText().length() == 0 || lastNameTF.getText().length() == 0) {
+            confirmRegistration.setText("Registration Failed. Please enter both a first and last name.");
+            return false;
+        }
+        if (check(firstNameTF.getText())) {
+            confirmRegistration.setText("Registration Failed. First names cannot contain numerical values.");
+            return false;
+        }
+        if (check(lastNameTF.getText())) {
+            confirmRegistration.setText("Registration Failed. Last names cannot contain numerical values.");
+            return false;
+        }
+        // Ensure the email field is not empty.
+        if (emailTF.getText().length() == 0) {
+            confirmRegistration.setText("Registration Failed. Email cannot be blank.");
+            return false;
+        }
+        boolean sameShipAndBill = billingSameAsShipping.isSelected();
+
+        // Check each of the address fields :(
+        // Street Numbers
+        try {
+            Double.parseDouble(shipStreetNumTF.getText());
+            if (!sameShipAndBill) {
+                Double.parseDouble(billStreetNumTF.getText());
+            }
+        } catch (NumberFormatException ex) {
+            confirmRegistration.setText("Registration Failed. Street numbers cannot contain letters.");
+            return false;
+        }
+        if (shipStreetNumTF.getText().length() == 0) {
+            confirmRegistration.setText("Registration Failed. Shipping street number cannot be empty.");
+            return false;
+        }
+        if (!sameShipAndBill && billStreetNumTF.getText().length() == 0) {
+            confirmRegistration.setText("Registration Failed. Billing street number cannot be empty.");
+            return false;
+        }
+        // Street Names
+        if (shipStreetNameTF.getText().length() == 0) {
+            confirmRegistration.setText("Registration Failed. Shipping street name cannot be empty.");
+            return false;
+        }
+        if (!sameShipAndBill && billStreetNameTF.getText().length() == 0) {
+            confirmRegistration.setText("Registration Failed. Billing street name cannot be empty.");
+            return false;
+        }
+        // Cities
+        if (check(shipCityTF.getText())) {
+            confirmRegistration.setText("Registration Failed. Shipping city cannot contain numerical values.");
+            return false;
+        }
+        if (check(billCityTF.getText())) {
+            confirmRegistration.setText("Registration Failed. Billing city cannot contain numerical values.");
+            return false;
+        }
+        if (shipCityTF.getText().length() == 0) {
+            confirmRegistration.setText("Registration Failed. Shipping city name cannot be empty.");
+            return false;
+        }
+        if (!sameShipAndBill && billCityTF.getText().length() == 0) {
+            confirmRegistration.setText("Registration Failed. Billing city name cannot be empty.");
+            return false;
+        }
+        // Countries
+        if (check(shipCountryTF.getText())) {
+            confirmRegistration.setText("Registration Failed. Shipping country cannot contain numerical values.");
+            return false;
+        }
+        if (check(billCountryTF.getText())) {
+            confirmRegistration.setText("Registration Failed. Billing country cannot contain numerical values.");
+            return false;
+        }
+        if (shipCountryTF.getText().length() == 0) {
+            confirmRegistration.setText("Registration Failed. Shipping country cannot be empty.");
+            return false;
+        }
+        if (!sameShipAndBill && billCountryTF.getText().length() == 0) {
+            confirmRegistration.setText("Registration Failed. Billing country cannot be empty.");
+            return false;
+        }
+        // Postal Code
+        if (shipPostalCodeTF.getText().length() == 0) {
+            confirmRegistration.setText("Registration Failed. Shipping country cannot be empty.");
+            return false;
+        }
+        if (!sameShipAndBill && billPostalCodeTF.getText().length() == 0) {
+            confirmRegistration.setText("Registration Failed. Billing country cannot be empty.");
+            return false;
+        }
+
+        // Find out the number of addresses currently being stored (used for id numbers).
+        int addCount = countAddresses();
+        // Setup ID numbers temporarily
+        int billAdd = addCount;
+
+        if (!sameShipAndBill) {
+            billAdd = addCount + 1;
+        }
+
+        // Attempt to add the user to the database.
+        if (registerNewUser(newUsernameTF.getText(), new String(newPasswordTF.getPassword()), firstNameTF.getText(), lastNameTF.getText(), emailTF.getText(), addCount, billAdd)) {
+            confirmRegistration.setText("Registration Successful");
+        } else {
+            confirmRegistration.setText("Registration Failed. A user with that username is already registered in the system. Please try again.");
+            return false;
+        }
+
+        /* If we get here, the following insertion methods will not fail. */
+        // Add the shipping address.
+        addAddress(addCount, shipStreetNumTF.getText(), shipStreetNameTF.getText(), shipApartmentTF.getText(), shipCityTF.getText(), Objects.requireNonNull(shipProvinceComboBox.getSelectedItem()).toString(), shipCountryTF.getText(), shipPostalCodeTF.getText());
+        if (!sameShipAndBill) {
+            // Need to add the billing address as a separate address.
+            addAddress(addCount + 1, billStreetNumTF.getText(), billStreetNameTF.getText(), billApartmentTF.getText(), billCityTF.getText(), Objects.requireNonNull(billProvinceComboBox.getSelectedItem()).toString(), billCountryTF.getText(), billPostalCodeTF.getText());
+        }
+
+        // Create the hasAdd relations
+        if (billAdd != addCount) {
+            addHasAdd(newUsernameTF.getText(), addCount, true, false);
+            addHasAdd(newUsernameTF.getText(), billAdd, false, true);
+        } else {
+            addHasAdd(newUsernameTF.getText(), addCount, true, true);
+        }
+        // Done.
+        return true;
+    }
+
+    /**
+     * Checks if a String contains only unicode letters.
+     *
+     * @param s The String to be checked
+     * @return True if the String contains only unicode letters, false otherwise.
+     */
+    private boolean check(String s) {
+        if (s == null) {
+            return true;
+        }
+
+        int len = s.length();
+        for (int i = 0; i < len; i++) {
+            if ((!Character.isLetter(s.charAt(i)))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Checks the username/ password combo. Currently only informs user if successful via JLabel
      *
      * @see super.lookForaLogin() for full implementation
@@ -2300,6 +2471,7 @@ public class LookAttaBook extends LookForaBook implements ActionListener, Change
 
         Object[] options = {logoutButton, cancelButton};
         final JOptionPane areYouSure = new JOptionPane("Are you sure you want to logout?", JOptionPane.PLAIN_MESSAGE, JOptionPane.YES_NO_OPTION, null, options, options[1]);
+        areYouSure.setIcon(WINDOW_ICON);
         final JDialog dialog = areYouSure.createDialog("Logout");
         dialog.setContentPane(areYouSure);
         dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);

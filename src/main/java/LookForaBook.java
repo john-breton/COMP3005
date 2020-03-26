@@ -84,7 +84,7 @@ public class LookForaBook {
      */
     protected int countAddresses() {
         try (Connection connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/" + DATABASE, USER, "")) {
-            ResultSet result =  connection.createStatement().executeQuery("SELECT COUNT(*) from project.address");
+            ResultSet result = connection.createStatement().executeQuery("SELECT COUNT(*) from project.address");
             result.next();
             return Integer.parseInt(result.getString("count"));
         } catch (SQLException e) {
@@ -96,14 +96,14 @@ public class LookForaBook {
     /**
      * Add an address into the database.
      *
-     * @param addID
-     * @param streetNum
-     * @param streetName
-     * @param apartment
-     * @param city
-     * @param province
-     * @param country
-     * @param postalCode
+     * @param addID      The id number associated with the address.
+     * @param streetNum  The street number of the address.
+     * @param streetName The street name of the address.
+     * @param apartment  The apartment number of the address (can be null).
+     * @param city       The city of the address.
+     * @param province   The province of the address.
+     * @param country    The country of the address.
+     * @param postalCode The postal code of the address.
      * @return True if the insertion was successful, false otherwise.
      */
     protected boolean addAddress(int addID, String streetNum, String streetName, String apartment, String city, String province, String country, String postalCode) {
@@ -117,11 +117,13 @@ public class LookForaBook {
     }
 
     /**
+     * Add a hasAdd relation into the database.
      *
-     * @param username
-     * @param addID
-     * @param isShipping
-     * @param isBilling
+     * @param username   The username associated with the address.
+     * @param addID      The id number associated with the address.
+     * @param isShipping True if the address is a shipping address, false otherwise.
+     * @param isBilling  True if the address is a shipping address, false otherwise.
+     * @return True if the insertion was successful, false otherwise.
      */
     protected boolean addHasAdd(String username, int addID, boolean isShipping, boolean isBilling) {
         try (Connection connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/" + DATABASE, USER, "")) {
@@ -221,8 +223,7 @@ public class LookForaBook {
             System.out.println("Houston, we gotta problem in lookForanAddress");
             return addInfo;
 
-        }catch (SQLException e){
-            System.out.println(e.toString());
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return addInfo;
