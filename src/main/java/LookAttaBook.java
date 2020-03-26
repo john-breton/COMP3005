@@ -84,6 +84,7 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
             emailTF = new JTextField();
     private final JPasswordField newPasswordTF = new JPasswordField(),
             confirmPasswordTF = new JPasswordField();
+    private final JCheckBox billingSameAsShipping = new JCheckBox("Billing Address is the same as Shipping Address");
     // AdminScreen
     // addBook
     private final JTextField newISBNTF = new JTextField(15),
@@ -154,14 +155,14 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
             confirmEditPasswordTF = new JTextField(15),
             editUserSearchTF = new JTextField(15),
     // Admin shipping address info (can be EMPTY)
-            editShippingStreetNumTF = new JTextField(15),
+    editShippingStreetNumTF = new JTextField(15),
             editShippingStreetNameTF = new JTextField(15),
             editShippingApartmentTF = new JTextField(15),
             editShippingCityTF = new JTextField(15),
             editShippingCountryTF = new JTextField(15),
             editShippingPostalCodeTF = new JTextField(15),
     // Admin billing address info
-            editBillStreetNumTF = new JTextField(15),
+    editBillStreetNumTF = new JTextField(15),
             editBillStreetNameTF = new JTextField(15),
             editBillApartmentTF = new JTextField(15),
             editBillCityTF = new JTextField(15),
@@ -177,7 +178,7 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
             checkoutCountryTF = new JTextField(15),
             checkoutPostalCodeTF = new JTextField(15),
     //  checkout Billing info
-            checkoutCreditCardNumTF = new JTextField(15),
+    checkoutCreditCardNumTF = new JTextField(15),
             checkoutCreditCardExpTF = new JTextField(5),
             checkoutCreditCardCVVTF = new JTextField(5),
             checkoutBillingStreetNumTF = new JTextField(5),
@@ -323,9 +324,6 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
         JLabel newUserWelcome1 = new JLabel("Welcome to LookInnaBook!");
         JLabel newUserWelcome2 = new JLabel("Enter your information in the space provided below.");
         JLabel newUserWelcome3 = new JLabel("Required fields are indicated with a \"*\".");
-
-        // JCheckBox
-        JCheckBox billingSameAsShipping = new JCheckBox("Billing Address is the same as Shipping Address");
 
         // JPanels
         JPanel regPage = new JPanel();
@@ -661,11 +659,10 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
      * Creates the "Checkout" interface for the userScreen
      * Accepts new shipping and billing addresses
      * Accepts credit card details
-     *
+     * <p>
      * TODO: Possibly add a cart view during checkout, but we could also not...
      */
-    private void checkoutScreen()
-    {
+    private void checkoutScreen() {
         // Clear GUI in order to reload
         f.setPreferredSize(new Dimension(800, 800));
         if (f.getJMenuBar() != null) f.getJMenuBar().setVisible(false);
@@ -678,7 +675,7 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
 
         /* Panel */
         final GridBagLayout layout = new GridBagLayout();
-        JPanel checkoutPanel = new JPanel(layout){
+        JPanel checkoutPanel = new JPanel(layout) {
             // This will paint grid lines on the layout
             /*@Override
             public void paint(Graphics g)
@@ -978,7 +975,7 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
             con.gridx = 6;
             checkoutPanel.add(Box.createGlue(), con);
 
-            checkoutPanel.setBorder(new EmptyBorder(10,10,10,10));
+            checkoutPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
 
             c.add(checkoutPanel);
             f.pack();
@@ -989,12 +986,10 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
     /**
      * Creates the "Lookup Order" interface for the loginScreen
      * Finds a current order
-     *
+     * <p>
      * TODO: lookupOrderScreen()
-     *
      */
-    private void lookupOrderScreen()
-    {
+    private void lookupOrderScreen() {
 
     }
 
@@ -2156,7 +2151,12 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
                 case "Register" -> regScreen(); // Login screen
                 case "Order Lookup" -> System.out.println("Looking up order"); // Login Screen
                 case "Cancel Registration", "Proceed to Login" -> loginScreen(); // Registration screen
-                case "Submit" -> {confirmRegistration.setText("Registration Successful"); ((JButton) o).setText("Proceed to Login");} // Registration screen
+                case "Submit" -> {
+                    if (register()) {
+                        confirmRegistration.setText("Registration Successful");
+                        ((JButton) o).setText("Proceed to Login");
+                    }
+                } // Registration screen
                 case "+" -> System.out.println("Item Added"); // User screen
                 case "-" -> System.out.println("Item removed"); // User screen
                 case "Checkout" -> checkoutScreen(); // User Screen
@@ -2184,6 +2184,151 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
     }
 
     /**
+     * Attempts to register a user.
+     *
+     * @return True if registration was successful, false otherwise.
+     * @see super.registerNewUser for further implementation.
+     */
+    private boolean register() {
+        // Check for a valid username.
+        if (newUsernameTF.getText().length() == 0) {
+            confirmRegistration.setText("Registration Failed. Please provide a username.");
+            return false;
+        }
+        // Check for a valid password.
+        if (newPasswordTF.getPassword().length == 0 || confirmPasswordTF.getPassword().length == 0) {
+            confirmRegistration.setText("Registration Failed. Please provide and confirm a password.");
+            return false;
+        }
+        // Check to see if the password matches the confirm password textfield.
+        if (!(new String(confirmPasswordTF.getPassword()).equals(new String(newPasswordTF.getPassword())))) {
+            confirmRegistration.setText("Registration Failed. Passwords do not match.");
+            return false;
+        }
+        // Check to see if the names contain any numbers/are empty.
+        if (firstNameTF.getText().length() == 0 || lastNameTF.getText().length() == 0) {
+            confirmRegistration.setText("Registration Failed. Please enter both a first and last name.");
+            return false;
+        }
+        if (!check(firstNameTF.getText())) {
+            confirmRegistration.setText("Registration Failed. First names cannot contain numerical values.");
+            return false;
+        }
+        if (!check(lastNameTF.getText())) {
+            confirmRegistration.setText("Registration Failed. Last names cannot contain numerical values.");
+            return false;
+        }
+        // Ensure the email field is not empty.
+        if (emailTF.getText().length() == 0) {
+            confirmRegistration.setText("Registration Failed. Email cannot be blank.");
+            return false;
+        }
+        boolean sameShipAndBill = billingSameAsShipping.isSelected();
+
+        // Check each of the address fields :(
+        // Street Numbers
+        try {
+            Double.parseDouble(shipStreetNumTF.getText());
+            if (!sameShipAndBill) {
+                Double.parseDouble(billStreetNumTF.getText());
+            }
+        } catch (NumberFormatException ex) {
+            confirmRegistration.setText("Registration Failed. Street numbers cannot contain letters.");
+            return false;
+        }
+        if (shipStreetNumTF.getText().length() == 0) {
+            confirmRegistration.setText("Registration Failed. Shipping street number cannot be empty.");
+            return false;
+        }
+        if (!sameShipAndBill && billStreetNumTF.getText().length() == 0) {
+            confirmRegistration.setText("Registration Failed. Billing street number cannot be empty.");
+            return false;
+        }
+        // Street Names
+        if (shipStreetNameTF.getText().length() == 0) {
+            confirmRegistration.setText("Registration Failed. Shipping street name cannot be empty.");
+            return false;
+        }
+        if (!sameShipAndBill && billStreetNameTF.getText().length() == 0) {
+            confirmRegistration.setText("Registration Failed. Billing street name cannot be empty.");
+            return false;
+        }
+        // Cities
+        if (!check(shipCityTF.getText())) {
+            confirmRegistration.setText("Registration Failed. Shipping city cannot contain numerical values.");
+            return false;
+        }
+        if (!check(billCityTF.getText())) {
+            confirmRegistration.setText("Registration Failed. Billing city cannot contain numerical values.");
+            return false;
+        }
+        if (shipCityTF.getText().length() == 0) {
+            confirmRegistration.setText("Registration Failed. Shipping city name cannot be empty.");
+            return false;
+        }
+        if (!sameShipAndBill && billCityTF.getText().length() == 0) {
+            confirmRegistration.setText("Registration Failed. Billing city name cannot be empty.");
+            return false;
+        }
+        // Countries
+        if (!check(shipCountryTF.getText())) {
+            confirmRegistration.setText("Registration Failed. Shipping country cannot contain numerical values.");
+            return false;
+        }
+        if (!check(billCountryTF.getText())) {
+            confirmRegistration.setText("Registration Failed. Billing country cannot contain numerical values.");
+            return false;
+        }
+        if (shipCountryTF.getText().length() == 0) {
+            confirmRegistration.setText("Registration Failed. Shipping country cannot be empty.");
+            return false;
+        }
+        if (!sameShipAndBill && billCountryTF.getText().length() == 0) {
+            confirmRegistration.setText("Registration Failed. Billing country cannot be empty.");
+            return false;
+        }
+        // Postal Code
+        if (shipPostalCodeTF.getText().length() == 0) {
+            confirmRegistration.setText("Registration Failed. Shipping country cannot be empty.");
+            return false;
+        }
+        if (!sameShipAndBill && billPostalCodeTF.getText().length() == 0) {
+            confirmRegistration.setText("Registration Failed. Billing country cannot be empty.");
+            return false;
+        }
+
+        // Attempt to add
+
+        // Attempt to add the user to the database.
+        if (registerNewUser(newUsernameTF.getText(), new String(newPasswordTF.getPassword()), firstNameTF.getText(), lastNameTF.getText(), emailTF.getText(), shipAdd, billAdd)) {
+            confirmRegistration.setText("Registration Successful");
+            return true;
+        } else {
+            confirmRegistration.setText("Registration Failed. A user with that username is already registered in the system. Please try again.");
+            return false;
+        }
+    }
+
+    /**
+     * Checks if a String contains only unicode letters.
+     * @param s The String to be checked
+     * @return True if the String contains only unicode letters, false otherwise.
+     */
+    boolean check(String s) {
+        if (s == null) {
+            return false;
+        }
+
+        int len = s.length();
+        for (int i = 0; i < len; i++) {
+            if ((Character.isLetter(s.charAt(i)) == false)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
      * Checks the username/ password combo. Currently only informs user if successful via JLabel
      *
      * @see super.lookForaLogin() for full implementation
@@ -2206,6 +2351,7 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
 
         Object[] options = {logoutButton, cancelButton};
         final JOptionPane areYouSure = new JOptionPane("Are you sure you want to logout?", JOptionPane.PLAIN_MESSAGE, JOptionPane.YES_NO_OPTION, null, options, options[1]);
+        areYouSure.setIcon(WINDOW_ICON);
         final JDialog dialog = areYouSure.createDialog("Logout");
         dialog.setContentPane(areYouSure);
         dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
@@ -2230,6 +2376,7 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
 
         Object[] options = {adminButton, userButton};
         final JOptionPane screenChoice = new JOptionPane("Which screen would you like to be directed to?", JOptionPane.PLAIN_MESSAGE, JOptionPane.YES_NO_OPTION, null, options, options[0]);
+        screenChoice.setIcon(WINDOW_ICON);
         final JDialog dialog = screenChoice.createDialog("Admin");
         dialog.setContentPane(screenChoice);
         dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
@@ -2249,15 +2396,15 @@ public class LookAttaBook extends LookForaBook implements ActionListener {
     }
 
     /**
-     *  Confirms the admin wants to exit the admin view
+     * Confirms the admin wants to exit the admin view
      */
-    private void confirmViewSwitch()
-    {
+    private void confirmViewSwitch() {
         JButton cancelButton = new JButton("Cancel");
         JButton userButton = new JButton("Customer View");
 
         Object[] options = {userButton, cancelButton};
         final JOptionPane screenChoice = new JOptionPane("Are you sure you wish to change views?\nYou cannot switch back without logging out.", JOptionPane.PLAIN_MESSAGE, JOptionPane.YES_NO_OPTION, null, options, options[1]);
+        screenChoice.setIcon(WINDOW_ICON);
         final JDialog dialog = screenChoice.createDialog("Admin");
         dialog.setContentPane(screenChoice);
         dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
