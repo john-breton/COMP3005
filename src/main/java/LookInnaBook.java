@@ -1,9 +1,8 @@
-/**
- * LookInnaBook is just as the entry point into the application.
- *
- * @author Ryan Godfrey
- * @version 1.0
+/*
+ * Copyright © 3.2020. Ryan Godfrey, John Breton.
+ * All rights reserved.
  */
+
 public class LookInnaBook {
     /**
      * Entry point for the application.

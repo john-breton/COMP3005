@@ -1,4 +1,10 @@
+/*
+ * Copyright © 3.2020. Ryan Godfrey, John Breton.
+ * All rights reserved.
+ */
+
 import java.sql.*;
+import java.util.*;
 
 /**
  * The LookForaBook class represents the back-end for the LookInnaBook application.
@@ -10,10 +16,45 @@ import java.sql.*;
  */
 public class LookForaBook {
 
-    // Constants that must be changed depending on execution environment.
-    private static final String USER = "postgres";
+    // Just putting this here so we can change it when we test.
+    private static final String USER = "ryan";
+    private static Statement statement = null;
     private static final String DATABASE = "lookinnabook";
 
+    protected LookForaBook(){
+        try {
+            Connection connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/LookInnaBook", USER, "");
+            statement = connection.createStatement();
+        }catch (SQLException e) {
+            System.out.println(e.toString());
+            e.printStackTrace();
+        }
+    }
+    /**
+     * Query the login information from the database.
+     *
+     * @param username The username that was entered.
+     * @param password The password that was entered.
+     * @return True if the password matches the password stored for the given username, false otherwise.
+     */
+    protected boolean[] lookForaLogin(String username, char[] password) {
+        boolean[] returnArr = {false, false}; // [0] = active user, [1] = admin
+
+        try {
+
+            ResultSet result = statement.executeQuery("SELECT * from project.user LEFT OUTER JOIN project.librarian USING (user_name) where user_name = '" + username.toLowerCase().trim() + "'");
+
+            while (result.next()) {
+                returnArr[0] = String.valueOf(password).equals(result.getString("password"));
+                if (returnArr[0])
+                    returnArr[1] = result.getString("salary") != null;
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return returnArr;
+    }
     /**
      * Inserts a new user into the database.
      *
@@ -93,29 +134,140 @@ public class LookForaBook {
     }
 
     /**
-     * Query the login information from the database.
+     * Query user information from the database.
      *
      * @param username The username that was entered.
-     * @param password The password that was entered.
-     * @return True if the password matches the password stored for the given username, false otherwise.
+     * @return ArrayList of user credentials from the database. [0] = username, [1] = password, [2] = first name, [3] = last name, [4] = email, [5] = salary, [6] = shippingID, [7] = billingID
+     * null if no user found.
      */
-    protected boolean[] lookForaLogin(String username, char[] password) {
-        boolean[] returnArr = {false, false}; // [0] = active user, [1] = admin
+    protected ArrayList lookForaUser(String username) {
+        ArrayList userCred = new ArrayList<>();
+        ArrayList<String> addresses = new ArrayList<>(); // extract addresses
 
-        try (Connection connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/" + DATABASE, USER, "")) {
-            Statement statement = connection.createStatement();
+        int rowCount = 0;
 
-            ResultSet result = statement.executeQuery("SELECT * from project.user LEFT OUTER JOIN project.librarian USING (user_name) where user_name = '" + username.toLowerCase().trim() + "'");
+        try {
 
-            while (result.next()) {
-                returnArr[0] = String.valueOf(password).equals(result.getString("password"));
-                if (returnArr[0])
-                    returnArr[1] = result.getString("salary") != null;
+            ResultSet result = statement.executeQuery("SELECT * FROM project.user left outer join project.librarian using (user_name) WHERE user_name = '" + username + "'");
+
+            while(result.next()){ // loop over results
+                rowCount++; // count results
+                userCred.add(0, result.getString("user_name"));
+                userCred.add(1, result.getString("password"));
+                userCred.add(2, result.getString("first_name"));
+                userCred.add(3, result.getString("last_name"));
+                userCred.add(4, result.getString("email"));
+                userCred.add(5, result.getString("salary"));
+                addresses.add(0, result.getString("shipping_add"));
+                addresses.add(1, result.getString("billing_add"));
+            }
+
+            for(String s : addresses){
+                userCred.add(lookForanAddress(username, s));
+            }
+
+            if(rowCount == 1) return userCred; // user found
+
+            if (rowCount == 0) return null; // user not found
+
+            // whaaaaaat
+            userCred.clear();
+            userCred.add("-1");
+            System.out.println("Houston, we gotta problem in lookForaUser");
+            return userCred;
+
+
+        } catch (SQLException e) {
+            System.out.println(e.toString());
+            e.printStackTrace();
+        }
+
+        return userCred;
+    }
+
+    /**
+     * Query address information from the database
+     *
+     * @param addID Address ID number
+     * @return An ArrayList of address info. [0] = street num, [1] = street name, [2] = apartment, [3] = city, [4] = province, [5] = country, [6] = postal code, [7] = isShipping, [8] = isBilling
+     */
+    private ArrayList lookForanAddress(String username, String addID){
+        ArrayList addInfo = new ArrayList<>();
+        int rowCount = 0;
+
+        try{
+            ResultSet result = statement.executeQuery("SELECT * FROM project.address NATURAL JOIN project.hasadd WHERE add_id = '" + addID + "' and user_name = '" + username + "'");
+
+            while(result.next()){
+                rowCount++; // count results
+                addInfo.add(0, result.getString("street_num"));
+                addInfo.add(1, result.getString("street_name"));
+                addInfo.add(2, result.getString("apartment"));
+                addInfo.add(3, result.getString("city"));
+                addInfo.add(4, result.getString("province"));
+                addInfo.add(5, result.getString("country"));
+                addInfo.add(6, result.getString("postal_code"));
+                addInfo.add(7, result.getBoolean("isshipping"));
+                addInfo.add(8, result.getBoolean("isbilling"));
+            }
+
+            if(rowCount == 1) return addInfo; // user found
+
+            if (rowCount == 0) return null; // user not found
+
+            // whaaaaaat
+            addInfo.clear();
+            addInfo.add("-1");
+            System.out.println("Houston, we gotta problem in lookForanAddress");
+            return addInfo;
+
+        }catch (SQLException e){
+            System.out.println(e.toString());
+            e.printStackTrace();
+        }
+        return addInfo;
+    }
+
+    /**
+     * Query the user information from the edit user screen to find and update a user.
+     * lookForaUser() should be invoked BEFORE this method to ensure the user is already present in the database
+     *
+     * @param username The username that was entered
+     * @param password The new password that was entered TODO: confirm password before passing
+     * @param firstName The first name that was entered
+     * @param lastName The last name that was entered
+     * @param email The email that was entered
+     * @param shippAdd The shipping address ID that was found and passed via lookForaUser
+     * @param billAdd The billing address ID that was found and passed via lookForaUser
+     * @return ArrayList of the updated user credentials (or added credentials but we don't want this), null otherwise
+     */
+    protected boolean updateUser(String username, String password, String firstName, String lastName, String email, String salary, ArrayList shippAdd, ArrayList billAdd){
+        try {
+
+            int rowsAffected = statement.executeUpdate("INSERT INTO project.user " +
+                    "values('" + username +
+                    "', '" + password +
+                    "', '" + firstName +
+                    "', '" + lastName +
+                    "', '" + email +
+                    "', '" + shippAdd +
+                    "', '" + billAdd +
+                    "') on conflict (user_name) " +
+                    "do update set password = '" + password +
+                    "', first_name = '" + firstName +
+                    "', last_name = '" + lastName +
+                    "', email = '" + email +
+                    "'"); // shipping and billing addresses will need to be updated through another/ nested query??
+
+            if(rowsAffected == 1){ // means a row was added or updated since searing by user_name
+                return true;
             }
 
         } catch (SQLException e) {
+            System.out.println(e);
             e.printStackTrace();
         }
-        return returnArr;
+
+        return false;
     }
 }
