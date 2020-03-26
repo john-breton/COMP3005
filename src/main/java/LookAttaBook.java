@@ -2462,11 +2462,11 @@ public class LookAttaBook extends LookForaBook implements ActionListener, Change
         }
         // Postal Code
         if (shipPostalCodeTF.getText().length() == 0) {
-            confirmRegistration.setText("Registration Failed. Shipping country cannot be empty.");
+            confirmRegistration.setText("Registration Failed. Shipping postal code cannot be empty.");
             return false;
         }
         if (!sameShipAndBill && billPostalCodeTF.getText().length() == 0) {
-            confirmRegistration.setText("Registration Failed. Billing country cannot be empty.");
+            confirmRegistration.setText("Registration Failed. Billing postal code cannot be empty.");
             return false;
         }
 
