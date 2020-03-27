@@ -103,7 +103,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>LookInnaBook</mainClass>
+                            <mainClass>startup.LookInnaBook</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>
