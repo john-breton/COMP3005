@@ -11,9 +11,7 @@ CREATE TABLE project.user (
     password 		character varying(16),
     first_name 		character varying(10),
     last_name 		character varying(20),
-    email 		character varying(30),
-    shipping_add	character varying(4),
-    billing_add 	character varying(4)
+    email 		character varying(30)
 );
 
 CREATE TABLE project.address (
@@ -35,7 +33,6 @@ CREATE TABLE project.librarian (
 CREATE TABLE project.publisher (
     pub_id 	character varying(6) PRIMARY KEY,
     name 	character varying(20),
-    address 	character varying(4),
     email_add 	character varying(30),
     phone_num 	numeric(10,0),
     bank_acc 	numeric(15,0)
@@ -45,7 +42,6 @@ CREATE TABLE project.book (
     isbn 	numeric(13,0) PRIMARY KEY,
     name 	character varying(30),
     version 	numeric(2,0),
-    genre 	character varying(10),
     num_pages 	numeric(4,0),
     price 	numeric(5,2),
     royalty 	numeric(3,1),
@@ -69,6 +65,9 @@ CREATE TABLE project.order (
     total_price 	numeric(6,2)
 );
 
+CREATE TABLE project.genre (
+    name 	character varying(20) PRIMARY KEY
+);
 -- Relations
 
 CREATE TABLE project.hasAdd (
@@ -120,4 +119,20 @@ CREATE TABLE project.checkout (
     order_num 	numeric(8,0) REFERENCES project.order(order_num),
 
     CONSTRAINT checkout_pkey PRIMARY KEY (basket_id, order_num)
+);
+
+CREATE TABLE project.ordadd (
+    order_num 	numeric(8,0) REFERENCES project.order(order_num),
+    add_id 	character varying(4) REFERENCES project.address(add_id),
+
+    CONSTRAINT	ordadd_pkey PRIMARY KEY (order_num, add_id)
+    
+);
+
+CREATE TABLE project.hasgenre (
+    name 	character varying(20) REFERENCES project.genre(name),
+    isbn	numeric(13,0) REFERENCES project.book(isbn),
+
+    CONSTRAINT	hasgenre_pkey PRIMARY KEY (name, isbn)
+    
 );
