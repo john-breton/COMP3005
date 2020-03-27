@@ -5,7 +5,7 @@ package backend;
  */
 
 import java.sql.*;
-import java.util.*;
+import java.util.ArrayList;
 
 /**
  * The backend.LookForaBook class represents the back-end for the util.LookInnaBook application.
@@ -168,7 +168,6 @@ public class DatabaseQueries {
      */
     public static ArrayList<Object> lookForaUser(String username) {
         ArrayList<Object> userCred = new ArrayList<>();
-        ArrayList<String> addresses = new ArrayList<>(); // extract addresses
 
         int rowCount = 0;
 
@@ -184,13 +183,9 @@ public class DatabaseQueries {
                 userCred.add(3, result.getString("last_name"));
                 userCred.add(4, result.getString("email"));
                 userCred.add(5, result.getString("salary"));
-                addresses.add(0, result.getString("shipping_add"));
-                addresses.add(1, result.getString("billing_add"));
             }
 
-            for (String s : addresses) {
-                userCred.add(lookForanAddress(username, s));
-            }
+            userCred.add(lookForanAddress(username)); // adds a loooong ArrayList of both addresses
 
             if (rowCount == 1) return userCred; // user found
 
@@ -214,30 +209,30 @@ public class DatabaseQueries {
     /**
      * Query address information from the database
      *
-     * @param addID Address ID number
+     * @param username Username of the user
      * @return An ArrayList of address info. [0] = street num, [1] = street name, [2] = apartment, [3] = city, [4] = province, [5] = country, [6] = postal code, [7] = isShipping, [8] = isBilling
      */
-    private static ArrayList<Object> lookForanAddress(String username, String addID) {
+    private static ArrayList<Object> lookForanAddress(String username) {
         ArrayList<Object> addInfo = new ArrayList<>();
         int rowCount = 0;
 
         try {
-            ResultSet result = statement.executeQuery("SELECT * FROM project.address NATURAL JOIN project.hasadd WHERE add_id = '" + addID + "' and user_name = '" + username + "'");
+            ResultSet result = statement.executeQuery("SELECT * FROM project.address NATURAL JOIN project.hasadd WHERE user_name = '" + username + "'");
 
             while (result.next()) {
                 rowCount++; // count results
-                addInfo.add(0, result.getString("street_num"));
-                addInfo.add(1, result.getString("street_name"));
-                addInfo.add(2, result.getString("apartment"));
-                addInfo.add(3, result.getString("city"));
-                addInfo.add(4, result.getString("province"));
-                addInfo.add(5, result.getString("country"));
-                addInfo.add(6, result.getString("postal_code"));
-                addInfo.add(7, result.getBoolean("isshipping"));
-                addInfo.add(8, result.getBoolean("isbilling"));
+                addInfo.add(result.getString("street_num"));
+                addInfo.add(result.getString("street_name"));
+                addInfo.add(result.getString("apartment"));
+                addInfo.add(result.getString("city"));
+                addInfo.add(result.getString("province"));
+                addInfo.add(result.getString("country"));
+                addInfo.add(result.getString("postal_code"));
+                addInfo.add(result.getBoolean("isshipping"));
+                addInfo.add(result.getBoolean("isbilling"));
             }
 
-            if (rowCount == 1) return addInfo; // user found
+            if (rowCount == 1 || rowCount == 2) return addInfo; // user found
 
             if (rowCount == 0) return null; // user not found
 

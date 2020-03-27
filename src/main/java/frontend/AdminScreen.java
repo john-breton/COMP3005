@@ -10,6 +10,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 public class AdminScreen extends JFrame implements ActionListener, ChangeListener {
     private final JCheckBox billingSameAsShipping = new JCheckBox("Billing Address is the same as Shipping Address");
@@ -321,53 +322,6 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
 
         isUserAdminCB.setEnabled(false);
 
-    }
-
-    /**
-     * Implements ActionListeners for GUI components
-     *
-     * @param e The ActionEvent that was triggered via a JButton.
-     */
-    public void actionPerformed(ActionEvent e) {
-        Object o = e.getSource();
-
-
-        if (o instanceof JButton) {
-            switch (((JButton) o).getText()) {
-                case "Logout" -> FrontEndUtilities.confirmLogout(this); // Anywhere and everywhere
-                case "Search Users" -> fetchEditUserData(); // Admin Edit User Screen
-                case "Update User" -> {
-                    defaultAdminViewFields();
-                    sendEditUserData();
-                } // Admin Edit User Screen
-                case "Search Books" -> System.out.println("Searching Books"); // Admin Edit Books Screen
-                case "Update Book" -> {
-                    defaultAdminViewFields();
-                    confirmBookEditLabel.setText("Book Updated");
-                } // Admin Edit Books Screen
-                case "Add Book" -> {
-                    defaultAdminViewFields();
-                    confirmNewBookAddition.setText("New Book Added");
-                }// Admin Add Book Screen
-                case "Add Publisher" -> {
-                    defaultAdminViewFields();
-                    confirmNewPublisherAddition.setText("New Publisher Added");
-                } // Admin Add Publisher Screen
-                case "Add User" -> {
-                    defaultAdminViewFields();
-                    confirmAdminReg.setText("New User Added");
-                } // Admin Add User Screen
-                default -> System.out.println("Error");
-            }
-        }
-
-        if (o instanceof JMenuItem) {
-            switch (((JMenuItem) o).getText()) {
-                case "Logout" -> FrontEndUtilities.confirmLogout(this); // Anywhere and everywhere
-                case "Switch to User View" -> confirmViewSwitch();
-                default -> System.out.println("Error");
-            }
-        }
     }
 
     /**
@@ -1563,21 +1517,27 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
      */
     private void fetchEditUserData() {
         ArrayList<Object> update = DatabaseQueries.lookForaUser(editUserSearchTF.getText());
+
         if (editUserSearchTF.getText().isEmpty()) {
+            defaultAdminViewFields();
             editUserErrorLabel.setText("Enter a username before searching");
         } else if (update == null || update.size() == 0) {
+            defaultAdminViewFields();
             editUserErrorLabel.setText("User Not Found");
         } else if (update.get(0).equals("-1")) {
+            defaultAdminViewFields();
             editUserErrorLabel.setText("Big boy error...contact someone");
         } else {
+            Iterator itr = update.iterator();
             editUserErrorLabel.setText(""); // reset errors
             editUserSearchTF.setText(""); // clear search bar
             // update fields
-            currentUserNameLabel.setText((String) update.get(0));
-            editFirstNameTF.setText((String) update.get(2));
-            editLastNameTF.setText((String) update.get(3));
-            editEmailTF.setText((String) update.get(4));
-            editSalaryTF.setText("$" + update.get(5));
+            currentUserNameLabel.setText((String) itr.next());
+            itr.next(); // skip password
+            editFirstNameTF.setText((String) itr.next());
+            editLastNameTF.setText((String) itr.next());
+            editEmailTF.setText((String) itr.next());
+            editSalaryTF.setText("$" + itr.next());
             if (editSalaryTF.getText().equals("$null")) {
                 editSalaryTF.setText("");
                 editSalaryTF.setEnabled(false);
@@ -1587,38 +1547,41 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
                 isUserAdminCB.setSelected(true);
             }
 
-            editShippingStreetNumTF.setText((String) ((ArrayList) update.get(6)).get(0));
-            editShippingStreetNameTF.setText((String) ((ArrayList) update.get(6)).get(1));
-            editShippingApartmentTF.setText((String) ((ArrayList) update.get(6)).get(2));
-            editShippingCityTF.setText((String) ((ArrayList) update.get(6)).get(3));
-            editShippingProvinceCB.setSelectedItem(((ArrayList) update.get(6)).get(4));
-            editShippingCountryTF.setText((String) ((ArrayList) update.get(6)).get(5));
-            editShippingPostalCodeTF.setText((String) ((ArrayList) update.get(6)).get(6));
+            if(itr.hasNext()) { // user has an address (admins are not required to have an address)
+                ArrayList shipAdd = (ArrayList) itr.next();
+                Iterator addIter = shipAdd.iterator();
+                editShippingStreetNumTF.setText((String) addIter.next());
+                editShippingStreetNameTF.setText((String) addIter.next());
+                editShippingApartmentTF.setText((String) addIter.next());
+                editShippingCityTF.setText((String) addIter.next());
+                editShippingProvinceCB.setSelectedItem(addIter.next());
+                editShippingCountryTF.setText((String) addIter.next());
+                editShippingPostalCodeTF.setText((String) addIter.next());
 
-            boolean isShipping = (boolean) ((ArrayList) update.get(6)).get(7);
-            boolean isBilling = (boolean) ((ArrayList) update.get(6)).get(8);
-
-            if (isShipping && isBilling) { // shipping == billing, user can only have 1 shipping/ billing address
+                boolean isShipping = (boolean) addIter.next();
+                boolean isBilling = (boolean) addIter.next();
                 editBillingSameAsShipping.setSelected(true);
-                editBillStreetNumTF.setText("");
-                editBillStreetNameTF.setText("");
-                editBillApartmentTF.setText("");
-                editBillCityTF.setText("");
-                editBillProvinceCB.setSelectedItem("");
-                editBillCountryTF.setText("");
-                editBillPostalCodeTF.setText("");
-            } else {
-                editBillingSameAsShipping.setSelected(false);
-
-                editBillStreetNumTF.setText((String) ((ArrayList) update.get(7)).get(0));
-                editBillStreetNameTF.setText((String) ((ArrayList) update.get(7)).get(1));
-                editBillApartmentTF.setText((String) ((ArrayList) update.get(7)).get(2));
-                editBillCityTF.setText((String) ((ArrayList) update.get(7)).get(3));
-                editBillProvinceCB.setSelectedItem(((ArrayList) update.get(6)).get(4));
-                editBillCountryTF.setText((String) ((ArrayList) update.get(7)).get(5));
-                editBillPostalCodeTF.setText((String) ((ArrayList) update.get(7)).get(6));
+                if(addIter.hasNext()) { // user has a billing address
+                    if (isShipping && isBilling) { // shipping == billing, user can only have 1 shipping/ billing address
+                        editBillStreetNumTF.setText("");
+                        editBillStreetNameTF.setText("");
+                        editBillApartmentTF.setText("");
+                        editBillCityTF.setText("");
+                        editBillProvinceCB.setSelectedItem("");
+                        editBillCountryTF.setText("");
+                        editBillPostalCodeTF.setText("");
+                    } else {
+                        editBillingSameAsShipping.setSelected(false);
+                        editBillStreetNumTF.setText((String) addIter.next());
+                        editBillStreetNameTF.setText((String) addIter.next());
+                        editBillApartmentTF.setText((String) addIter.next());
+                        editBillCityTF.setText((String) addIter.next());
+                        editBillProvinceCB.setSelectedItem(addIter.next());
+                        editBillCountryTF.setText((String) addIter.next());
+                        editBillPostalCodeTF.setText((String) addIter.next());
+                    }
+                }
             }
-
             // Enable fields after search
             boolean enable = true;
             editPasswordTF.setEnabled(true);
@@ -1647,6 +1610,53 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
         // Check to see if the password matches the confirm password textfield.
         if (!(new String(confirmEditPasswordTF.getPassword()).equals(new String(editPasswordTF.getPassword())))) {
             editUserErrorLabel.setText("Update Failed. New passwords do not match.");
+        }
+    }
+
+    /**
+     * Implements ActionListeners for GUI components
+     *
+     * @param e The ActionEvent that was triggered via a JButton.
+     */
+    public void actionPerformed(ActionEvent e) {
+        Object o = e.getSource();
+
+
+        if (o instanceof JButton) {
+            switch (((JButton) o).getText()) {
+                case "Logout" -> FrontEndUtilities.confirmLogout(this); // Anywhere and everywhere
+                case "Search Users" -> fetchEditUserData(); // Admin Edit User Screen
+                case "Update User" -> {
+                    defaultAdminViewFields();
+                    sendEditUserData();
+                } // Admin Edit User Screen
+                case "Search Books" -> System.out.println("Searching Books"); // Admin Edit Books Screen
+                case "Update Book" -> {
+                    defaultAdminViewFields();
+                    confirmBookEditLabel.setText("Book Updated");
+                } // Admin Edit Books Screen
+                case "Add Book" -> {
+                    defaultAdminViewFields();
+                    confirmNewBookAddition.setText("New Book Added");
+                }// Admin Add Book Screen
+                case "Add Publisher" -> {
+                    defaultAdminViewFields();
+                    confirmNewPublisherAddition.setText("New Publisher Added");
+                } // Admin Add Publisher Screen
+                case "Add User" -> {
+                    defaultAdminViewFields();
+                    confirmAdminReg.setText("New User Added");
+                } // Admin Add User Screen
+                default -> System.out.println("Error");
+            }
+        }
+
+        if (o instanceof JMenuItem) {
+            switch (((JMenuItem) o).getText()) {
+                case "Logout" -> FrontEndUtilities.confirmLogout(this); // Anywhere and everywhere
+                case "Switch to User View" -> confirmViewSwitch();
+                default -> System.out.println("Error");
+            }
         }
     }
 
