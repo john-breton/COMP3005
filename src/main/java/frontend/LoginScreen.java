@@ -1,9 +1,8 @@
 package frontend;
 
-import backend.LookForaBook;
+import backend.DatabaseQueries;
 
 import javax.swing.*;
-import javax.swing.plaf.ColorUIResource;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -24,9 +23,9 @@ public class LoginScreen extends JFrame implements ActionListener {
 
         /* Component declarations */
         // JButtons
-        JButton loginButton = new JButton("Login");
-        JButton registerButton = new JButton("Register");
-        JButton lookupOrderButton = new JButton("Order Lookup");
+        JButton loginButton = FrontEndUtilities.formatButton("Login");
+        JButton registerButton = FrontEndUtilities.formatButton("Register");
+        JButton lookupOrderButton = FrontEndUtilities.formatButton("Order Lookup");
 
         // JLabels
         JLabel usernameLabel = new JLabel("Username: ");
@@ -78,24 +77,16 @@ public class LoginScreen extends JFrame implements ActionListener {
 
         c.add(mainLoginPage);
 
-        this.pack();
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.getRootPane().setDefaultButton(loginButton);
-        this.setLocationRelativeTo(null);
-        this.setTitle("LookInnaBook");
-        this.setIconImage(FrontEndUtilities.WINDOW_ICON.getImage());
-        this.setVisible(true);
-        this.setResizable(false);
+        FrontEndUtilities.configureFrame(this);
     }
 
     /**
      * Gives the admin user the choice of where to go.
      */
     private void adminScreenChoice() {
-        JButton userButton = new JButton("Customer View");
-        JButton adminButton = new JButton("Administrative View");
-        userButton.setBackground(Color.WHITE);
-        adminButton.setBackground(Color.WHITE);
+        JButton userButton = FrontEndUtilities.formatButton("Customer View");
+        JButton adminButton = FrontEndUtilities.formatButton("Administrative View");
 
         Object[] options = {adminButton, userButton};
         final JOptionPane screenChoice = new JOptionPane("Which screen would you like to be directed to?", JOptionPane.PLAIN_MESSAGE, JOptionPane.YES_NO_OPTION, null, options, options[0]);
@@ -126,14 +117,14 @@ public class LoginScreen extends JFrame implements ActionListener {
      * @see super.lookForaLogin() for full implementation
      */
     private void login() {
-        boolean[] validCred = LookForaBook.lookForaLogin(FrontEndUtilities.usernameField.getText(), FrontEndUtilities.passwordField.getPassword());
+        boolean[] validCred = DatabaseQueries.lookForaLogin(FrontEndUtilities.usernameField.getText(), FrontEndUtilities.passwordField.getPassword());
         if (validCred[0]) {
-            this.dispose();
             if (validCred[1]) {
                 adminScreenChoice();
             } else {
                 new UserScreen();
             }
+            this.dispose();
         } else FrontEndUtilities.loginSuccess.setText("Login not successful. Please try again.");
     }
 

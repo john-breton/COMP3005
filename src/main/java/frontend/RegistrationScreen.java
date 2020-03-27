@@ -1,6 +1,6 @@
 package frontend;
 
-import backend.LookForaBook;
+import backend.DatabaseQueries;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -47,8 +47,6 @@ public class RegistrationScreen extends JFrame implements ActionListener {
         // Clear GUI in order to reload
         this.setPreferredSize(new Dimension(700, 550));
         this.setMaximumSize(new Dimension(700, 550));
-        this.setIconImage(FrontEndUtilities.WINDOW_ICON.getImage());
-        this.setResizable(false);
         if (this.getJMenuBar() != null) this.getJMenuBar().setVisible(false);
         // Get the container for the JFrame.
         Container c = this.getContentPane();
@@ -304,11 +302,7 @@ public class RegistrationScreen extends JFrame implements ActionListener {
         }
 
         c.add(regPage);
-        this.pack();
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setTitle("LookInnaBook");
-        this.setLocationRelativeTo(null);
-        this.setVisible(true);
+        FrontEndUtilities.configureFrame(this);
     }
 
     /**
@@ -435,17 +429,8 @@ public class RegistrationScreen extends JFrame implements ActionListener {
             return false;
         }
 
-        // Find out the number of addresses currently being stored (used for id numbers).
-        int addCount = LookForaBook.countAddresses();
-        // Setup ID numbers temporarily
-        int billAdd = addCount;
-
-        if (!sameShipAndBill) {
-            billAdd = addCount + 1;
-        }
-
         // Attempt to add the user to the database.
-        if (LookForaBook.registerNewUser(newUsernameTF.getText(), new String(newPasswordTF.getPassword()), firstNameTF.getText(), lastNameTF.getText(), emailTF.getText())) {
+        if (DatabaseQueries.registerNewUser(newUsernameTF.getText(), new String(newPasswordTF.getPassword()), firstNameTF.getText(), lastNameTF.getText(), emailTF.getText())) {
             confirmRegistration.setText("Registration Successful");
             confirmRegistration.setForeground(Color.BLACK);
         } else {
@@ -455,18 +440,18 @@ public class RegistrationScreen extends JFrame implements ActionListener {
 
         /* If we get here, the following insertion methods will not fail. */
         // Add the shipping address.
-        LookForaBook.addAddress(addCount, shipStreetNumTF.getText(), shipStreetNameTF.getText(), shipApartmentTF.getText(), shipCityTF.getText(), Objects.requireNonNull(shipProvinceCB.getSelectedItem()).toString(), shipCountryTF.getText(), shipPostalCodeTF.getText());
+        DatabaseQueries.addAddress(shipStreetNumTF.getText(), shipStreetNameTF.getText(), shipApartmentTF.getText(), shipCityTF.getText(), Objects.requireNonNull(shipProvinceCB.getSelectedItem()).toString(), shipCountryTF.getText(), shipPostalCodeTF.getText());
         if (!sameShipAndBill) {
             // Need to add the billing address as a separate address.
-            LookForaBook.addAddress(addCount + 1, billStreetNumTF.getText(), billStreetNameTF.getText(), billApartmentTF.getText(), billCityTF.getText(), Objects.requireNonNull(billProvinceCB.getSelectedItem()).toString(), billCountryTF.getText(), billPostalCodeTF.getText());
+            DatabaseQueries.addAddress(billStreetNumTF.getText(), billStreetNameTF.getText(), billApartmentTF.getText(), billCityTF.getText(), Objects.requireNonNull(billProvinceCB.getSelectedItem()).toString(), billCountryTF.getText(), billPostalCodeTF.getText());
         }
 
         // Create the hasAdd relations
-        if (billAdd != addCount) {
-            LookForaBook.addHasAdd(newUsernameTF.getText(), addCount, true, false);
-            LookForaBook.addHasAdd(newUsernameTF.getText(), billAdd, false, true);
+        if (!sameShipAndBill) {
+            DatabaseQueries.addHasAdd(newUsernameTF.getText(), true, false);
+            DatabaseQueries.addHasAdd(newUsernameTF.getText(), false, true);
         } else {
-            LookForaBook.addHasAdd(newUsernameTF.getText(), addCount, true, true);
+            DatabaseQueries.addHasAdd(newUsernameTF.getText(), true, true);
         }
         // Done.
         return true;

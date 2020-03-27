@@ -37,16 +37,11 @@ public class UserScreen extends JFrame implements ActionListener {
         JLabel totalPriceLabel = new JLabel("Total Price: ");
 
         // Buttons
-        JButton addToCart = new JButton("+");
-        JButton removeFromCart = new JButton("-");
-        JButton checkoutButton = new JButton("Checkout");
-        JButton searchButton = new JButton("Search");
-        JButton logoutButton = new JButton("Logout");
-        addToCart.setBackground(Color.WHITE);
-        removeFromCart.setBackground(Color.WHITE);
-        checkoutButton.setBackground(Color.WHITE);
-        searchButton.setBackground(Color.WHITE);
-        logoutButton.setBackground(Color.WHITE);
+        JButton addToCart = FrontEndUtilities.formatButton("+");
+        JButton removeFromCart = FrontEndUtilities.formatButton("-");
+        JButton checkoutButton = FrontEndUtilities.formatButton("Checkout");
+        JButton searchButton = FrontEndUtilities.formatButton("Search");
+        JButton logoutButton = FrontEndUtilities.formatButton("Logout");
 
         // ActionListeners
         addToCart.addActionListener(this);
@@ -144,12 +139,7 @@ public class UserScreen extends JFrame implements ActionListener {
 
 
         c.add(userView);
-        this.pack();
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setTitle("LookInnaBook");
-        this.setIconImage(FrontEndUtilities.WINDOW_ICON.getImage());
-        this.setLocationRelativeTo(null);
-        this.setVisible(true);
+        FrontEndUtilities.configureFrame(this);
     }
 
     /**
@@ -161,12 +151,13 @@ public class UserScreen extends JFrame implements ActionListener {
         Object o = e.getSource();
 
         switch (((JButton) o).getText()) {
-            case "Logout" -> {
-                FrontEndUtilities.confirmLogout(); // Anywhere and everywhere
-            }
+            case "Logout" -> FrontEndUtilities.confirmLogout(this); // Anywhere and everywhere
             case "+" -> System.out.println("Item Added"); // User screen
             case "-" -> System.out.println("Item removed"); // User screen
-            case "Checkout" -> new CheckoutScreen(); // User Screen
+            case "Checkout" -> {
+                this.dispose();
+                new CheckoutScreen(); // User Screen
+            }
             case "Search" -> System.out.println("Searching Books"); // User screen
             default -> System.out.println("Error");
         }

@@ -4,6 +4,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.Objects;
 
+import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
+
 class FrontEndUtilities {
     static final ImageIcon WINDOW_ICON = new ImageIcon(new ImageIcon(Objects.requireNonNull(Thread.currentThread().getContextClassLoader().getResource("logo.png"))).getImage());
     // JComboBox Arrays
@@ -21,7 +23,7 @@ class FrontEndUtilities {
     /**
      * Confirms that the user wishes to logout
      */
-    static void confirmLogout() {
+    static void confirmLogout(JFrame frame) {
         JButton logoutButton = new JButton("Logout");
         JButton cancelButton = new JButton("Cancel");
         logoutButton.setBackground(Color.WHITE);
@@ -35,9 +37,11 @@ class FrontEndUtilities {
         dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 
         logoutButton.addActionListener(e -> {
-            new LoginScreen();
+            frame.setVisible(false);
+            frame.dispose();
             dialog.setVisible(false);
             dialog.dispose();
+            new LoginScreen();
         });
         cancelButton.addActionListener(e -> dialog.setVisible(false));
 
@@ -47,12 +51,39 @@ class FrontEndUtilities {
     }
 
     /**
+     * Configure a JFrame for display.
+     *
+     * @param frame The JFrame to be configured.
+     */
+    static void configureFrame(JFrame frame) {
+        frame.pack();
+        frame.setResizable(false);
+        frame.setLocationRelativeTo(null);
+        frame.setIconImage(FrontEndUtilities.WINDOW_ICON.getImage());
+        frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
+        frame.setTitle("LookInnaBook");
+        frame.setVisible(true);
+    }
+
+    /**
+     * Prepare a JButton with default formatting options.
+     *
+     * @param name The name of the JButton.
+     * @return The newly created and correctly formatted JButton.
+     */
+    static JButton formatButton(String name) {
+        JButton button = new JButton(name);
+        button.setBackground(Color.WHITE);
+        return button;
+    }
+
+    /**
      * Checks if a String contains only unicode letters.
      *
      * @param s The String to be checked
      * @return True if the String contains only unicode letters, false otherwise.
      */
-     static boolean check(String s) {
+    static boolean check(String s) {
         if (s == null) {
             return true;
         }

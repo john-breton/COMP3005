@@ -8,14 +8,6 @@ import java.awt.event.ActionListener;
 
 public class LookupOrderScreen extends JFrame implements ActionListener {
 
-    // JTextField
-    private final JTextField orderNumber = new JTextField();
-    // JLabels
-    private final JLabel trackingNumber = new JLabel("123456789101112"),
-            dateOrderPlaced = new JLabel("March 25, 2020"),
-            userNameOrder = new JLabel("User's Username"),
-            orderStatus = new JLabel("TBH Dont know where it is");
-
     public LookupOrderScreen() {
 
         Container c = this.getContentPane();
@@ -29,8 +21,8 @@ public class LookupOrderScreen extends JFrame implements ActionListener {
         orderScreen.setBorder(new EmptyBorder(10, 10, 10, 10));
 
         /* JButtons */
-        JButton cancelLookup = new JButton("Cancel Lookup");
-        JButton lookupOrder = new JButton("Lookup Order");
+        JButton cancelLookup = FrontEndUtilities.formatButton("Cancel Lookup");
+        JButton lookupOrder = FrontEndUtilities.formatButton("Lookup Order");
 
         /* JLabels */
         JLabel orderNumberLabel = new JLabel("Order Number: ");
@@ -58,40 +50,42 @@ public class LookupOrderScreen extends JFrame implements ActionListener {
         con.gridx = 0;
         orderScreen.add(orderNumberLabel, con);
         con.gridx = 1;
+        // JTextField
+        JTextField orderNumber = new JTextField();
         orderScreen.add(orderNumber, con);
 
         con.gridy = 2;
         con.gridx = 0;
         orderScreen.add(trackingNumberLabel, con);
         con.gridx = 1;
+        // JLabels
+        JLabel trackingNumber = new JLabel("123456789101112");
         orderScreen.add(trackingNumber, con);
 
         con.gridy = 3;
         con.gridx = 0;
         orderScreen.add(dateOrderPlacedLabel, con);
         con.gridx = 1;
+        JLabel dateOrderPlaced = new JLabel("March 25, 2020");
         orderScreen.add(dateOrderPlaced, con);
 
         con.gridy = 4;
         con.gridx = 0;
         orderScreen.add(userNameOrderLabel, con);
         con.gridx = 1;
+        JLabel userNameOrder = new JLabel("User's Username");
         orderScreen.add(userNameOrder, con);
 
         con.gridy = 5;
         con.gridx = 0;
         orderScreen.add(orderStatusLabel, con);
         con.gridx = 1;
+        JLabel orderStatus = new JLabel("TBH Dont know where it is");
         orderScreen.add(orderStatus, con);
 
         c.add(orderScreen);
-        this.pack();
-        this.setResizable(false);
-        this.setLocationRelativeTo(null);
-        this.setIconImage(FrontEndUtilities.WINDOW_ICON.getImage());
-        this.setDefaultCloseOperation(EXIT_ON_CLOSE);
-        this.setTitle("LookInnaBook");
-        this.setVisible(true);
+
+        FrontEndUtilities.configureFrame(this);
     }
 
     /**
