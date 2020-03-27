@@ -30,21 +30,21 @@ public class LookAttaBook extends LookForaBook implements ActionListener, Change
     // JComboBox Arrays
     private static final String[] resultFilterArr = {"Price", "A-Z", "Z-A", "Year"};
     private static final String[] searchFilterArr = {"Title", "Author", "Genre", "ISBN", "Publisher", "Year"};
-    private static final String[] reportChoiceArr = {"Sales v Expense", "Sales per Genre", "Sales per Author", "Sales per Publisher", "Sales per Month", "Sales per Year", "Expense per Month", "Expense per Year"};
-    private static final String[] provincesArr = {"AB", "BC", "MB", "NB", "NL", "NS", "NT", "NU", "ON", "PE", "QC", "SK", "YT"};
+    private static final String[] reportChoiceArr = {"--", "Sales v Expense", "Sales per Genre", "Sales per Author", "Sales per Publisher", "Sales per Month", "Sales per Year", "Expense per Month", "Expense per Year"};
+    private static final String[] provincesArr = {"--", "AB", "BC", "MB", "NB", "NL", "NS", "NT", "NU", "ON", "PE", "QC", "SK", "YT"};
 
     /* JComboBoxes */
     // User
     final JComboBox<String> resultFilters = new JComboBox<>(resultFilterArr),
             searchFilters = new JComboBox<>(searchFilterArr),
             reportChoiceBox = new JComboBox<>(reportChoiceArr),
-            shipProvinceComboBox = new JComboBox<>(provincesArr),
-            billProvinceComboBox = new JComboBox<>(provincesArr),
-            pubProvinceComboBox = new JComboBox<>(provincesArr),
+            shipProvinceCB = new JComboBox<>(provincesArr),
+            billProvinceCB = new JComboBox<>(provincesArr),
+            pubProvinceCB = new JComboBox<>(provincesArr),
             shippingAdminProvinceCB = new JComboBox<>(provincesArr),
-            billAdminProvinceComboBox = new JComboBox<>(provincesArr),
+            billAdminProvinceCB = new JComboBox<>(provincesArr),
             editShippingProvinceCB = new JComboBox<>(provincesArr),
-            editBillProvinceComboBox = new JComboBox<>(provincesArr),
+            editBillProvinceCB = new JComboBox<>(provincesArr),
             checkoutShippingProvinceCB = new JComboBox<>(provincesArr),
             checkoutBillingProvinceCB = new JComboBox<>(provincesArr);
 
@@ -169,11 +169,11 @@ public class LookAttaBook extends LookForaBook implements ActionListener, Change
             editLastNameTF = new JTextField(15),
             editEmailTF = new JTextField(15),
             editSalaryTF = new JTextField(15),
-            editPasswordTF = new JTextField(15),
-            confirmEditPasswordTF = new JTextField(15),
-            editUserSearchTF = new JTextField(15),
+            editUserSearchTF = new JTextField(15);
+    private final JPasswordField editPasswordTF = new JPasswordField(15),
+            confirmEditPasswordTF = new JPasswordField(15);
     // Admin shipping address info (can be EMPTY)
-    editShippingStreetNumTF = new JTextField(15),
+    private final JTextField editShippingStreetNumTF = new JTextField(15),
             editShippingStreetNameTF = new JTextField(15),
             editShippingApartmentTF = new JTextField(15),
             editShippingCityTF = new JTextField(15),
@@ -366,16 +366,6 @@ public class LookAttaBook extends LookForaBook implements ActionListener, Change
         cancelReg.setBackground(Color.WHITE);
         submitReg.setBackground(Color.WHITE);
 
-        // Disable the fields by default.
-        billingSameAsShipping.setSelected(true);
-        billStreetNumTF.setEnabled(false);
-        billStreetNameTF.setEnabled(false);
-        billApartmentTF.setEnabled(false);
-        billCityTF.setEnabled(false);
-        billProvinceComboBox.setEnabled(false);
-        billCountryTF.setEnabled(false);
-        billPostalCodeTF.setEnabled(false);
-
         // Add action listeners
         cancelReg.addActionListener(this);
         submitReg.addActionListener(this);
@@ -385,7 +375,7 @@ public class LookAttaBook extends LookForaBook implements ActionListener, Change
             billStreetNameTF.setEnabled(sameAsBilling);
             billApartmentTF.setEnabled(sameAsBilling);
             billCityTF.setEnabled(sameAsBilling);
-            billProvinceComboBox.setEnabled(sameAsBilling);
+            billProvinceCB.setEnabled(sameAsBilling);
             billCountryTF.setEnabled(sameAsBilling);
             billPostalCodeTF.setEnabled(sameAsBilling);
         });
@@ -490,7 +480,7 @@ public class LookAttaBook extends LookForaBook implements ActionListener, Change
             regPage.add(shipCityTF, con);
             con.gridx = 4;
             con.gridwidth = 1;
-            regPage.add(shipProvinceComboBox, con);
+            regPage.add(shipProvinceCB, con);
 
             con.gridy = 12;
             con.gridx = 0;
@@ -542,7 +532,7 @@ public class LookAttaBook extends LookForaBook implements ActionListener, Change
             regPage.add(billCityTF, con);
             con.gridx = 4;
             con.gridwidth = 1;
-            regPage.add(billProvinceComboBox, con);
+            regPage.add(billProvinceCB, con);
 
             con.gridy = 17;
             con.gridx = 0;
@@ -616,10 +606,169 @@ public class LookAttaBook extends LookForaBook implements ActionListener, Change
         editEntitiesPanel.addTab("Edit Books", null, editBook(), "Edit properties of existing books");
         editEntitiesPanel.addTab("Edit User", null, editUser(), "Edit properties of existing users");
 
+        /* ChancgeListeners */
+        adminView.addChangeListener(this);
+        newEntitiesPanel.addChangeListener(this);
+        editEntitiesPanel.addChangeListener(this);
+
         c.add(adminView);
         f.setJMenuBar(adminMenuBar);
         f.pack();
         f.setLocationRelativeTo(null);
+    }
+
+    /**
+     * Clears all admin view fields and returns to default
+     */
+    private void defaultAdminViewFields(){
+        // addBook
+        newBookTitleTF.setText("");
+        newISBNTF.setText("");
+        newBookVersionTF.setText("");
+        newBookNumPagesTF.setText("");
+        newBookGenreTF.setText("");
+        newBookStockTF.setText("");
+        newBookYearTF.setText("");
+        newBookPriceTF.setText("");
+        newBookRoyaltyTF.setText("");
+        newBookAuthorFNTF.setText("");
+        newBookAuthorLNTF.setText("");
+        newBookPublisherTF.setText("");
+        addBookErrorLabel.setText("");
+        confirmNewBookAddition.setText("");
+
+        // addPublisher
+        newPublisherNameTF.setText("");
+        newPublisherEmailTF.setText("");
+        newPublisherPhoneTF.setText("");
+        newPublisherStreetNumTF.setText("");
+        newPublisherStreetNameTF.setText("");
+        newPublisherApartmentTF.setText("");
+        newPublisherCityTF.setText("");
+        newPublisherCountryTF.setText("");
+        newPublisherPostalCodeTF.setText("");
+        newPublisherBankAccountTF.setText("");
+        pubProvinceCB.setSelectedIndex(0);
+        addPublisherErrorLabel.setText("");
+        confirmNewPublisherAddition.setText("");
+
+        // addUser
+        newAdminUsernameTF.setText("");
+        newAdminPasswordTF.setText("");
+        confirmAdminPasswordTF.setText("");
+        firstNameAdminTF.setText("");
+        lastNameAdminTF.setText("");
+        emailAdminTF.setText("");
+        salaryAdminTF.setText("");
+        shippingAdminStreetNameTF.setText("");
+        shippingAdminStreetNumTF.setText("");
+        shippingAdminApartmentTF.setText("");
+        shippingAdminCityTF.setText("");
+        shippingAdminCountryTF.setText("");
+        shippingAdminPostalCodeTF.setText("");
+        billAdminStreetNameTF.setText("");
+        billAdminStreetNumTF.setText("");
+        billAdminApartmentTF.setText("");
+        billAdminCityTF.setText("");
+        billAdminCountryTF.setText("");
+        billAdminPostalCodeTF.setText("");
+        billAdminProvinceCB.setSelectedIndex(0);
+        shippingAdminProvinceCB.setSelectedIndex(0);
+        addUserErrorLabel.setText("");
+        confirmUserEditLabel.setText("");
+
+        // editBook
+        editBookSearchTF.setText("");
+        editBookTitleTF.setText("");
+        currentISBNLabel.setText("");
+        editBookVersionTF.setText("");
+        editBookNumPagesTF.setText("");
+        editBookGenreTF.setText("");
+        editBookStockTF.setText("");
+        editBookYearTF.setText("");
+        editBookPriceTF.setText("");
+        editBookRoyaltyTF.setText("");
+        editBookAuthorFNTF.setText("");
+        editBookAuthorLNTF.setText("");
+        editBookPublisherTF.setText("");
+        editBookErrorLabel.setText("");
+        confirmBookEditLabel.setText("");
+
+        // editUser
+        isUserAdminCB.setSelected(false);
+        editBillingSameAsShipping.setSelected(false);
+        editUserSearchTF.setText("");
+        currentUserNameLabel.setText("");
+        editPasswordTF.setText("");
+        confirmEditPasswordTF.setText("");
+        editFirstNameTF.setText("");
+        editLastNameTF.setText("");
+        editEmailTF.setText("");
+        editSalaryTF.setText("");
+        editShippingStreetNameTF.setText("");
+        editShippingStreetNumTF.setText("");
+        editShippingApartmentTF.setText("");
+        editShippingCityTF.setText("");
+        editShippingCountryTF.setText("");
+        editShippingPostalCodeTF.setText("");
+        editBillStreetNameTF.setText("");
+        editBillStreetNumTF.setText("");
+        editBillApartmentTF.setText("");
+        editBillCityTF.setText("");
+        editBillCountryTF.setText("");
+        editBillPostalCodeTF.setText("");
+        editShippingProvinceCB.setSelectedIndex(0);
+        editBillProvinceCB.setSelectedIndex(0);
+        editUserErrorLabel.setText("");
+        confirmUserEditLabel.setText("");
+
+        // reports
+
+
+        // Disable the fields by default.
+        billingSameAsShipping.setSelected(true);
+        billStreetNumTF.setEnabled(false);
+        billStreetNameTF.setEnabled(false);
+        billApartmentTF.setEnabled(false);
+        billCityTF.setEnabled(false);
+        billProvinceCB.setEnabled(false);
+        billCountryTF.setEnabled(false);
+        billPostalCodeTF.setEnabled(false);
+        editBookTitleTF.setEnabled(false);
+        currentISBNLabel.setEnabled(false);
+        editBookVersionTF.setEnabled(false);
+        editBookNumPagesTF.setEnabled(false);
+        editBookGenreTF.setEnabled(false);
+        editBookStockTF.setEnabled(false);
+        editBookYearTF.setEnabled(false);
+        editBookPriceTF.setEnabled(false);
+        editBookRoyaltyTF.setEnabled(false);
+        editBookAuthorFNTF.setEnabled(false);
+        editBookAuthorLNTF.setEnabled(false);
+        editBookPublisherTF.setEnabled(false);
+        editBookErrorLabel.setEnabled(false);
+        editBillStreetNumTF.setEnabled(false);
+        editBillStreetNameTF.setEnabled(false);
+        editBillApartmentTF.setEnabled(false);
+        editBillCityTF.setEnabled(false);
+        editBillProvinceCB.setEnabled(false);
+        editBillCountryTF.setEnabled(false);
+        editBillPostalCodeTF.setEnabled(false);
+        editPasswordTF.setEnabled(false);
+        confirmEditPasswordTF.setEnabled(false);
+        editFirstNameTF.setEnabled(false);
+        editLastNameTF.setEnabled(false);
+        editEmailTF.setEnabled(false);
+        editSalaryTF.setEnabled(false);
+        editShippingStreetNumTF.setEnabled(false);
+        editShippingStreetNameTF.setEnabled(false);
+        editShippingApartmentTF.setEnabled(false);
+        editShippingCityTF.setEnabled(false);
+        editShippingCountryTF.setEnabled(false);
+        editShippingPostalCodeTF.setEnabled(false);
+        editBillingSameAsShipping.setEnabled(false);
+        editShippingProvinceCB.setEnabled(false);
+
     }
 
     /**
@@ -1441,7 +1590,7 @@ public class LookAttaBook extends LookForaBook implements ActionListener, Change
             addNewPublisherPanel.add(newPublisherProvinceLabel, pubCon);
             pubCon.gridx = 5;
             pubCon.gridwidth = 2;
-            addNewPublisherPanel.add(pubProvinceComboBox, pubCon);
+            addNewPublisherPanel.add(pubProvinceCB, pubCon);
 
             pubCon.gridy = 8;
             pubCon.gridx = 1;
@@ -1544,7 +1693,7 @@ public class LookAttaBook extends LookForaBook implements ActionListener, Change
             billAdminStreetNameTF.setEnabled(sameAsBilling);
             billAdminApartmentTF.setEnabled(sameAsBilling);
             billAdminCityTF.setEnabled(sameAsBilling);
-            billAdminProvinceComboBox.setEnabled(sameAsBilling);
+            billAdminProvinceCB.setEnabled(sameAsBilling);
             billAdminCountryTF.setEnabled(sameAsBilling);
             billAdminPostalCodeTF.setEnabled(sameAsBilling);
         });
@@ -1579,7 +1728,7 @@ public class LookAttaBook extends LookForaBook implements ActionListener, Change
             billAdminStreetNameTF.setEnabled(false);
             billAdminApartmentTF.setEnabled(false);
             billAdminCityTF.setEnabled(false);
-            billAdminProvinceComboBox.setEnabled(false);
+            billAdminProvinceCB.setEnabled(false);
             billAdminCountryTF.setEnabled(false);
             billAdminPostalCodeTF.setEnabled(false);
             salaryAdminTF.setEnabled(false);
@@ -1755,7 +1904,7 @@ public class LookAttaBook extends LookForaBook implements ActionListener, Change
             userCon.gridwidth = 2;
             newUserPanel.add(billAdminCityTF, userCon);
             userCon.gridx = 5;
-            newUserPanel.add(billAdminProvinceComboBox, userCon);
+            newUserPanel.add(billAdminProvinceCB, userCon);
 
             userCon.gridy = 18;
             userCon.gridx = 1;
@@ -2025,11 +2174,11 @@ public class LookAttaBook extends LookForaBook implements ActionListener, Change
             editBillStreetNameTF.setEnabled(sameAsBilling);
             editBillApartmentTF.setEnabled(sameAsBilling);
             editBillCityTF.setEnabled(sameAsBilling);
-            editBillProvinceComboBox.setEnabled(sameAsBilling);
+            editBillProvinceCB.setEnabled(sameAsBilling);
             editBillCountryTF.setEnabled(sameAsBilling);
             editBillPostalCodeTF.setEnabled(sameAsBilling);
         });
-        isUserAdminCB.addActionListener(e -> {
+        isUserAdminCB.addChangeListener(e -> {
             boolean admin = isUserAdminCB.isSelected();
             editSalaryTF.setEnabled(admin);
             if (admin) {
@@ -2056,14 +2205,29 @@ public class LookAttaBook extends LookForaBook implements ActionListener, Change
         // Setup editUserPanel
         {
             // Disable fields by default
-            editBillStreetNumTF.setEnabled(false);
-            editBillStreetNameTF.setEnabled(false);
-            editBillApartmentTF.setEnabled(false);
-            editBillCityTF.setEnabled(false);
-            editBillProvinceComboBox.setEnabled(false);
-            editBillCountryTF.setEnabled(false);
-            editBillPostalCodeTF.setEnabled(false);
-            editSalaryTF.setEnabled(false);
+            boolean enable = false;
+            editBillStreetNumTF.setEnabled(enable);
+            editBillStreetNameTF.setEnabled(enable);
+            editBillApartmentTF.setEnabled(enable);
+            editBillCityTF.setEnabled(enable);
+            editBillProvinceCB.setEnabled(enable);
+            editBillCountryTF.setEnabled(enable);
+            editBillPostalCodeTF.setEnabled(enable);
+            editPasswordTF.setEnabled(enable);
+            confirmEditPasswordTF.setEnabled(enable);
+            editFirstNameTF.setEnabled(enable);
+            editLastNameTF.setEnabled(enable);
+            editEmailTF.setEnabled(enable);
+            editSalaryTF.setEnabled(enable);
+            editShippingStreetNumTF.setEnabled(enable);
+            editShippingStreetNameTF.setEnabled(enable);
+            editShippingApartmentTF.setEnabled(enable);
+            editShippingCityTF.setEnabled(enable);
+            editShippingCountryTF.setEnabled(enable);
+            editShippingPostalCodeTF.setEnabled(enable);
+            isUserAdminCB.setEnabled(enable);
+            editBillingSameAsShipping.setEnabled(enable);
+            editShippingProvinceCB.setEnabled(enable);
 
             GridBagConstraints con = new GridBagConstraints();
             Dimension spacer = new Dimension(35, 35);
@@ -2072,8 +2236,8 @@ public class LookAttaBook extends LookForaBook implements ActionListener, Change
             con.gridx = 0;
             con.anchor = GridBagConstraints.FIRST_LINE_START;
             editUserPanel.add(logoutButton, con);
-            con.gridx = 1;
-            con.gridwidth = 6;
+            con.gridx = 0;
+            con.gridwidth = 8;
             con.anchor = GridBagConstraints.CENTER;
             editUserErrorLabel.setForeground(Color.red);
             editUserPanel.add(editUserErrorLabel, con);
@@ -2256,7 +2420,7 @@ public class LookAttaBook extends LookForaBook implements ActionListener, Change
             con.gridwidth = 2;
             editUserPanel.add(editBillCityTF, con);
             con.gridx = 5;
-            editUserPanel.add(editBillProvinceComboBox, con);
+            editUserPanel.add(editBillProvinceCB, con);
 
             con.gridy = 21;
             con.gridx = 1;
@@ -2304,56 +2468,6 @@ public class LookAttaBook extends LookForaBook implements ActionListener, Change
         /* ActionListeners */
 
         return new JPanel();
-    }
-
-    /**
-     * Implements ActionListeners for GUI components
-     *
-     * @param e The ActionEvent that was triggered via a JButton.
-     */
-    public void actionPerformed(ActionEvent e) {
-        Object o = e.getSource();
-
-
-        if (o instanceof JButton) {
-            switch (((JButton) o).getText()) {
-                case "Logout" -> confirmLogout(); // Anywhere and everywhere
-                case "Login" -> login(); // Login Screen
-                case "Register" -> regScreen(); // Login screen
-                case "Order Lookup" -> lookupOrderScreen(); // Login Screen
-                case "Cancel Registration", "Proceed to Login" -> loginScreen(); // Registration screen
-                case "Submit" -> {
-                    if (register()) {
-                        confirmRegistration.setText("Registration Successful");
-                        ((JButton) o).setText("Proceed to Login");
-                    }
-                } // Registration screen
-                case "+" -> System.out.println("Item Added"); // User screen
-                case "-" -> System.out.println("Item removed"); // User screen
-                case "Checkout" -> checkoutScreen(); // User Screen
-                case "Search" -> System.out.println("Searching Books"); // User screen
-                case "Search Users" -> fetchEditUserData(); // Admin Edit User Screen
-                case "Update User" -> sendEditUserData(); // Admin Edit User Screen
-                case "Search Books" -> System.out.println("Searching Books"); // Admin Edit Books Screen
-                case "Update Book" -> confirmBookEditLabel.setText("Book Updated"); // Admin Edit Books Screen
-                case "Add Book" -> confirmNewBookAddition.setText("New Book Added"); // Admin Add Book Screen
-                case "Add Publisher" -> confirmNewPublisherAddition.setText("New Publisher Added"); // Admin Add Publisher Screen
-                case "Add User" -> confirmAdminReg.setText("New User Added"); // Admin Add User Screen
-                case "Cancel Checkout" -> userScreen(); // checkoutScreen
-                case "Confirm Order" -> System.out.println("Order Submitted"); // checkoutScreen
-                case "Cancel Lookup" -> loginScreen();
-                case "Lookup Order" -> System.out.println("Looking up order");
-                default -> System.out.println("Error");
-            }
-        }
-
-        if (o instanceof JMenuItem) {
-            switch (((JMenuItem) o).getText()) {
-                case "Logout" -> confirmLogout(); // Anywhere and everywhere
-                case "Switch to User View" -> confirmViewSwitch();
-                default -> System.out.println("Error");
-            }
-        }
     }
 
     /**
@@ -2444,6 +2558,13 @@ public class LookAttaBook extends LookForaBook implements ActionListener, Change
         if (!sameShipAndBill && billCityTF.getText().length() == 0) {
             confirmRegistration.setText("Registration Failed. Billing city name cannot be empty.");
             return false;
+        }if (shipProvinceCB.getSelectedIndex() == 0) {
+            confirmRegistration.setText("Registration Failed. Please select a shipping province.");
+            return false;
+        }
+        if (!sameShipAndBill && billProvinceCB.getSelectedIndex() == 0) {
+            confirmRegistration.setText("Registration Failed. Please select a billing province.");
+            return false;
         }
         // Countries
         if (check(shipCountryTF.getText())) {
@@ -2492,10 +2613,10 @@ public class LookAttaBook extends LookForaBook implements ActionListener, Change
 
         /* If we get here, the following insertion methods will not fail. */
         // Add the shipping address.
-        addAddress(addCount, shipStreetNumTF.getText(), shipStreetNameTF.getText(), shipApartmentTF.getText(), shipCityTF.getText(), Objects.requireNonNull(shipProvinceComboBox.getSelectedItem()).toString(), shipCountryTF.getText(), shipPostalCodeTF.getText());
+        addAddress(addCount, shipStreetNumTF.getText(), shipStreetNameTF.getText(), shipApartmentTF.getText(), shipCityTF.getText(), Objects.requireNonNull(shipProvinceCB.getSelectedItem()).toString(), shipCountryTF.getText(), shipPostalCodeTF.getText());
         if (!sameShipAndBill) {
             // Need to add the billing address as a separate address.
-            addAddress(addCount + 1, billStreetNumTF.getText(), billStreetNameTF.getText(), billApartmentTF.getText(), billCityTF.getText(), Objects.requireNonNull(billProvinceComboBox.getSelectedItem()).toString(), billCountryTF.getText(), billPostalCodeTF.getText());
+            addAddress(addCount + 1, billStreetNumTF.getText(), billStreetNameTF.getText(), billApartmentTF.getText(), billCityTF.getText(), Objects.requireNonNull(billProvinceCB.getSelectedItem()).toString(), billCountryTF.getText(), billPostalCodeTF.getText());
         }
 
         // Create the hasAdd relations
@@ -2507,6 +2628,34 @@ public class LookAttaBook extends LookForaBook implements ActionListener, Change
         }
         // Done.
         return true;
+    }
+
+    /**
+     * Clears the fields in the registration screen
+     */
+    private void clearRegistrationFields(){
+        newUsernameTF.setText("");
+        newPasswordTF.setText("");
+        confirmPasswordTF.setText("");
+        firstNameTF.setText("");
+        lastNameTF.setText("");
+        emailTF.setText("");
+        shipStreetNumTF.setText("");
+        shipStreetNameTF.setText("");
+        shipApartmentTF.setText("");
+        shipCityTF.setText("");
+        shipProvinceCB.setSelectedIndex(0);
+        shipCountryTF.setText("");
+        shipPostalCodeTF.setText("");
+        billStreetNameTF.setText("");
+        billStreetNumTF.setText("");
+        billApartmentTF.setText("");
+        billCityTF.setText("");
+        billProvinceCB.setSelectedIndex(0);
+        billCountryTF.setText("");
+        billPostalCodeTF.setText("");
+        confirmRegistration.setText("");
+
     }
 
     /**
@@ -2625,9 +2774,11 @@ public class LookAttaBook extends LookForaBook implements ActionListener, Change
      * Populates edit user fields with appropriate data from database
      * and correctly adjusts checkboxes
      */
-    private void fetchEditUserData(){
+    private void fetchEditUserData() {
         ArrayList<Object> update = lookForaUser(editUserSearchTF.getText());
-        if(update == null || update.size() == 0){
+        if(editUserSearchTF.getText().isEmpty()){
+            editUserErrorLabel.setText("Enter a username before searching");
+        }else if(update == null || update.size() == 0){
             editUserErrorLabel.setText("User Not Found");
         } else if (update.get(0).equals("-1")){
             editUserErrorLabel.setText("Big boy error...contact someone");
@@ -2666,28 +2817,37 @@ public class LookAttaBook extends LookForaBook implements ActionListener, Change
                 editBillStreetNameTF.setText("");
                 editBillApartmentTF.setText("");
                 editBillCityTF.setText("");
-                editBillProvinceComboBox.setSelectedItem("");
+                editBillProvinceCB.setSelectedItem("");
                 editBillCountryTF.setText("");
                 editBillPostalCodeTF.setText("");
             } else {
                 editBillingSameAsShipping.setSelected(false);
-                /*editBillStreetNumTF.setEnabled(true);
-                editBillStreetNameTF.setEnabled(true);
-                editBillApartmentTF.setEnabled(true);
-                editBillCityTF.setEnabled(true);
-                editBillProvinceComboBox.setEnabled(true);
-                editBillCountryTF.setEnabled(true);
-                editBillPostalCodeTF.setEnabled(true);
-                editSalaryTF.setEnabled(true);*/
 
                 editBillStreetNumTF.setText((String)((ArrayList)update.get(7)).get(0));
                 editBillStreetNameTF.setText((String)((ArrayList)update.get(7)).get(1));
                 editBillApartmentTF.setText((String)((ArrayList)update.get(7)).get(2));
                 editBillCityTF.setText((String)((ArrayList)update.get(7)).get(3));
-                editBillProvinceComboBox.setSelectedItem(((ArrayList)update.get(6)).get(4));
+                editBillProvinceCB.setSelectedItem(((ArrayList)update.get(6)).get(4));
                 editBillCountryTF.setText((String)((ArrayList)update.get(7)).get(5));
                 editBillPostalCodeTF.setText((String)((ArrayList)update.get(7)).get(6));
             }
+
+            // Enable fields after search
+            boolean enable = true;
+            editPasswordTF.setEnabled(enable);
+            confirmEditPasswordTF.setEnabled(enable);
+            editFirstNameTF.setEnabled(enable);
+            editLastNameTF.setEnabled(enable);
+            editEmailTF.setEnabled(enable);
+            editShippingStreetNumTF.setEnabled(enable);
+            editShippingStreetNameTF.setEnabled(enable);
+            editShippingApartmentTF.setEnabled(enable);
+            editShippingCityTF.setEnabled(enable);
+            editShippingCountryTF.setEnabled(enable);
+            editShippingPostalCodeTF.setEnabled(enable);
+            isUserAdminCB.setEnabled(enable);
+            editBillingSameAsShipping.setEnabled(enable);
+            editShippingProvinceCB.setEnabled(enable);
         }
     }
 
@@ -2697,11 +2857,71 @@ public class LookAttaBook extends LookForaBook implements ActionListener, Change
      * Clears fields if successful
      */
     private void sendEditUserData(){
+    // Check to see if the password matches the confirm password textfield.
+        if (!(new String(confirmEditPasswordTF.getPassword()).equals(new String(editPasswordTF.getPassword())))) {
+            editUserErrorLabel.setText("Update Failed. New passwords do not match.");
+        }
+    }
 
+    /**
+     * Implements ActionListeners for GUI components
+     *
+     * @param e The ActionEvent that was triggered via a JButton.
+     */
+    public void actionPerformed(ActionEvent e) {
+        Object o = e.getSource();
+
+
+        if (o instanceof JButton) {
+            switch (((JButton) o).getText()) {
+                case "Logout" -> confirmLogout(); // Anywhere and everywhere
+                case "Login" -> login(); // Login Screen
+                case "Register" -> regScreen(); // Login screen
+                case "Order Lookup" -> lookupOrderScreen(); // Login Screen
+                case "Cancel Registration" -> { clearRegistrationFields(); loginScreen(); }
+                case "Proceed to Login" -> loginScreen(); // Registration screen
+                case "Submit" -> {
+                    if (register()) {
+                        confirmRegistration.setText("Registration Successful");
+                        clearRegistrationFields();
+                        ((JButton) o).setText("Proceed to Login");
+                    }
+                } // Registration screen
+                case "+" -> System.out.println("Item Added"); // User screen
+                case "-" -> System.out.println("Item removed"); // User screen
+                case "Checkout" -> checkoutScreen(); // User Screen
+                case "Search" -> System.out.println("Searching Books"); // User screen
+                case "Search Users" -> fetchEditUserData(); // Admin Edit User Screen
+                case "Update User" -> {defaultAdminViewFields(); sendEditUserData();} // Admin Edit User Screen
+                case "Search Books" -> System.out.println("Searching Books"); // Admin Edit Books Screen
+                case "Update Book" -> {defaultAdminViewFields(); confirmBookEditLabel.setText("Book Updated");} // Admin Edit Books Screen
+                case "Add Book" -> {defaultAdminViewFields(); confirmNewBookAddition.setText("New Book Added");}// Admin Add Book Screen
+                case "Add Publisher" -> {defaultAdminViewFields(); confirmNewPublisherAddition.setText("New Publisher Added");} // Admin Add Publisher Screen
+                case "Add User" -> {defaultAdminViewFields(); confirmAdminReg.setText("New User Added");} // Admin Add User Screen
+                case "Cancel Checkout" -> userScreen(); // checkoutScreen
+                case "Confirm Order" -> System.out.println("Order Submitted"); // checkoutScreen
+                case "Cancel Lookup" -> loginScreen();
+                case "Lookup Order" -> System.out.println("Looking up order");
+                default -> System.out.println("Error");
+            }
+        }
+
+        if (o instanceof JMenuItem) {
+            switch (((JMenuItem) o).getText()) {
+                case "Logout" -> confirmLogout(); // Anywhere and everywhere
+                case "Switch to User View" -> confirmViewSwitch();
+                default -> System.out.println("Error");
+            }
+        }
     }
 
     @Override
     public void stateChanged(ChangeEvent e) {
+        Object o = e.getSource();
+
+        if(o instanceof JTabbedPane){
+            defaultAdminViewFields();
+        }
 
     }
 }
