@@ -764,7 +764,7 @@ public class LookAttaBook implements ActionListener, ChangeListener {
         editShippingPostalCodeTF.setEnabled(false);
         editBillingSameAsShipping.setEnabled(false);
         editShippingProvinceCB.setEnabled(false);
-
+        isUserAdminCB.setEnabled(false);
     }
 
     /**

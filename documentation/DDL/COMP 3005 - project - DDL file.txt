@@ -31,8 +31,7 @@ CREATE TABLE project.librarian (
 );
 
 CREATE TABLE project.publisher (
-    pub_id 		SERIAL NOT NULL PRIMARY KEY,
-    name 		character varying(20),
+    name 		character varying(200) PRIMARY KEY,
     email_add 	character varying(30),
     phone_num 	numeric(10,0),
     bank_acc 	numeric(15,0)
@@ -40,7 +39,7 @@ CREATE TABLE project.publisher (
 
 CREATE TABLE project.book (
     isbn 		numeric(13,0) PRIMARY KEY,
-    name 		character varying(30),
+    name 		character varying(200),
     version 	numeric(2,0),
     num_pages 	numeric(4,0),
     price 		numeric(5,2),
@@ -53,9 +52,10 @@ CREATE TABLE project.basket (
 );
 
 CREATE TABLE project.author (
-    auth_id 	SERIAL NOT NULL PRIMARY KEY,
-    first_name 	character varying(10),
-    last_name 	character varying(20)
+    first_name 	character varying(20) NOT NULL,
+    last_name 	character varying(40) NOT NULL,
+
+    CONSTRAINT author_pkey PRIMARY KEY (first_name, last_name)
 );
 
 CREATE TABLE project.order (
@@ -66,13 +66,13 @@ CREATE TABLE project.order (
 );
 
 CREATE TABLE project.genre (
-    name 	character varying(20) PRIMARY KEY
+    name 	character varying(150) PRIMARY KEY
 );
 -- Relations
 
 CREATE TABLE project.hasAdd (
     user_name 	character varying(16) NOT NULL REFERENCES project.user(user_name),
-    add_id 	SERIAL NOT NULL REFERENCES project.address(add_id),
+    add_id 		SERIAL NOT NULL REFERENCES project.address(add_id),
     isshipping 	boolean NOT NULL UNIQUE,
     isbilling 	boolean NOT NULL UNIQUE,
 
@@ -80,28 +80,31 @@ CREATE TABLE project.hasAdd (
 );
 
 CREATE TABLE project.pubadd (
-    add_id 	SERIAL NOT NULL REFERENCES project.address(add_id),
-    pub_id 	SERIAL NOT NULL REFERENCES project.publisher(pub_id) UNIQUE,
+    add_id 		SERIAL NOT NULL REFERENCES project.address(add_id),
+    pub_name 	character varying(200) REFERENCES project.publisher(name) UNIQUE,
 
-    CONSTRAINT 	pubadd_pkey PRIMARY KEY (add_id, pub_id)
+    CONSTRAINT 	pubadd_pkey PRIMARY KEY (add_id, pub_name)
 );
 
 CREATE TABLE project.publishes (
-    pub_id 	SERIAL REFERENCES project.publisher(pub_id),
-    isbn 	numeric(13,0) REFERENCES project.book(isbn),
-    year 	numeric(4,0),
+    pub_name 	character varying(200) REFERENCES project.publisher(name) NOT NULL,
+    isbn 		numeric(13,0) REFERENCES project.book(isbn) NOT NULL,
+    year 		numeric(4,0),
 
-    CONSTRAINT publishes_pkey PRIMARY KEY (pub_id, isbn)
+    CONSTRAINT publishes_pkey PRIMARY KEY (pub_name, isbn)
 );
 
 CREATE TABLE project.writes (
-    auth_id SERIAL NOT NULL REFERENCES project.author(auth_id),
-    isbn 	numeric(13,0) REFERENCES project.book(isbn)
+    auth_FN character varying(20),
+    auth_LN character varying(40),
+    isbn 	numeric(13,0) REFERENCES project.book(isbn),
+
+    CONSTRAINT writes_pkey PRIMARY KEY (auth_FN, auth_LN, isbn)
 );
 
 CREATE TABLE project.bask_item (
     basket_id 	SERIAL NOT NULL REFERENCES project.basket(basket_id),
-    isbn 	numeric(13,0) REFERENCES project.book(isbn),
+    isbn 		numeric(13,0) REFERENCES project.book(isbn),
     quantity 	integer,
 
     CONSTRAINT bask_item_pkey PRIMARY KEY (basket_id, isbn)
@@ -123,16 +126,17 @@ CREATE TABLE project.checkout (
 
 CREATE TABLE project.ordadd (
     order_num 	SERIAL NOT NULL REFERENCES project.order(order_num),
-    add_id 	SERIAL NOT NULL REFERENCES project.address(add_id),
+    add_id 		SERIAL NOT NULL REFERENCES project.address(add_id),
 
     CONSTRAINT	ordadd_pkey PRIMARY KEY (order_num, add_id)
-    
+
 );
 
 CREATE TABLE project.hasgenre (
-    name 	character varying(20) REFERENCES project.genre(name),
+    name 	character varying(150) REFERENCES project.genre(name),
     isbn	numeric(13,0) REFERENCES project.book(isbn),
 
     CONSTRAINT	hasgenre_pkey PRIMARY KEY (name, isbn)
-    
+
 );
+
