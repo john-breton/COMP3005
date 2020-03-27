@@ -18,8 +18,8 @@ import java.util.*;
 public class LookForaBook {
 
     // Just putting this here so we can change it when we test.
-    private static final String USER = "postgres";
-    private static final String DATABASE = "lookinnabook";
+    private static final String USER = "ryan";
+    private static final String DATABASE = "LookInnaBook";
     private static Connection connection;
     private static Statement statement;
 

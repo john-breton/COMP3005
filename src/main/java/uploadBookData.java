@@ -48,6 +48,10 @@ public class uploadBookData {
             stream.forEach(s -> resetDB.append(s).append("\n"));
             statement.executeUpdate(resetDB.toString());
 
+            // add admin
+            statement.executeUpdate("Insert into project.user (user_name, password) values ('" + USER + "', '" + USER + "');" +
+                    "insert into project.librarian values ('" + USER + "', 300.00);");
+
         }catch (SQLException | IOException e) {
             e.printStackTrace();
         }
