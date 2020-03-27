@@ -52,10 +52,10 @@ CREATE TABLE project.basket (
 );
 
 CREATE TABLE project.author (
-    first_name 	character varying(20) NOT NULL,
-    last_name 	character varying(40) NOT NULL,
+    auth_fn 	character varying(20) NOT NULL,
+    auth_ln 	character varying(40) NOT NULL,
 
-    CONSTRAINT author_pkey PRIMARY KEY (first_name, last_name)
+    CONSTRAINT author_pkey PRIMARY KEY (auth_fn, auth_ln)
 );
 
 CREATE TABLE project.order (
@@ -95,11 +95,12 @@ CREATE TABLE project.publishes (
 );
 
 CREATE TABLE project.writes (
-    auth_FN character varying(20),
-    auth_LN character varying(40),
+    auth_fn character varying(20),
+    auth_ln character varying(40),
     isbn 	numeric(13,0) REFERENCES project.book(isbn),
 
-    CONSTRAINT writes_pkey PRIMARY KEY (auth_FN, auth_LN, isbn)
+    CONSTRAINT writes_pkey PRIMARY KEY (auth_fn, auth_ln, isbn),
+    CONSTRAINT writes_fkey FOREIGN KEY (auth_fn, auth_ln) REFERENCES project.author
 );
 
 CREATE TABLE project.bask_item (

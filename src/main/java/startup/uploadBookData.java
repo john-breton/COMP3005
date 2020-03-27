@@ -189,7 +189,7 @@ public class uploadBookData {
                         "INSERT INTO project.writes values ('" + firstName + "', '" + lastName + "', '" + isbn + "');");
             } catch (SQLException e) {
                 if(!e.toString().equals("org.postgresql.util.PSQLException: ERROR: duplicate key value violates unique constraint \"author_pkey\"\n" +
-                        "  Detail: Key (first_name, last_name)=(" + firstName + ", " + lastName + ") already exists.")){
+                        "  Detail: Key (auth_fn, auth_ln)=(" + firstName + ", " + lastName + ") already exists.")){
                     System.out.println("Author Error Code: " + e.getErrorCode());
                 }
             }
