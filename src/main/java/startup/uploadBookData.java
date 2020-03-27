@@ -1,4 +1,4 @@
-/*
+package startup;/*
  * Copyright © 3.2020. Ryan Godfrey, John Breton.
  * All rights reserved.
  */

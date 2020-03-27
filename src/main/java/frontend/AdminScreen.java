@@ -319,6 +319,8 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
         editBillingSameAsShipping.setEnabled(false);
         editShippingProvinceCB.setEnabled(false);
 
+        isUserAdminCB.setEnabled(false);
+
     }
 
     /**
