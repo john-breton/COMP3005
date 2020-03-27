@@ -11,15 +11,15 @@ CREATE TABLE project.user (
     password 		character varying(16),
     first_name 		character varying(10),
     last_name 		character varying(20),
-    email 		character varying(30)
+    email 			character varying(30)
 );
 
 CREATE TABLE project.address (
-    add_id 	character varying(4) PRIMARY KEY,
+    add_id 		SERIAL NOT NULL PRIMARY KEY,
     street_num 	numeric(6,0),
     street_name character varying(20),
     apartment 	character varying(6),
-    city 	character varying(20),
+    city 		character varying(20),
     province 	character varying(20),
     country 	character varying(20),
     postal_code character varying(6)
@@ -27,39 +27,39 @@ CREATE TABLE project.address (
 
 CREATE TABLE project.librarian (
     user_name 	character varying(16) REFERENCES project.user(user_name) PRIMARY KEY,
-    salary 	numeric(8,2)
+    salary 		numeric(8,2)
 );
 
 CREATE TABLE project.publisher (
-    pub_id 	character varying(6) PRIMARY KEY,
-    name 	character varying(20),
+    pub_id 		SERIAL NOT NULL PRIMARY KEY,
+    name 		character varying(20),
     email_add 	character varying(30),
     phone_num 	numeric(10,0),
     bank_acc 	numeric(15,0)
 );
 
 CREATE TABLE project.book (
-    isbn 	numeric(13,0) PRIMARY KEY,
-    name 	character varying(30),
+    isbn 		numeric(13,0) PRIMARY KEY,
+    name 		character varying(30),
     version 	numeric(2,0),
     num_pages 	numeric(4,0),
-    price 	numeric(5,2),
+    price 		numeric(5,2),
     royalty 	numeric(3,1),
-    stock 	integer
+    stock 		integer
 );
 
 CREATE TABLE project.basket (
-    basket_id 	numeric(8,0) PRIMARY KEY
+	basket_id 	SERIAL NOT NULL PRIMARY KEY
 );
 
 CREATE TABLE project.author (
-    auth_id 	character varying(6) PRIMARY KEY,
+    auth_id 	SERIAL NOT NULL PRIMARY KEY,
     first_name 	character varying(10),
     last_name 	character varying(20)
 );
 
 CREATE TABLE project.order (
-    order_num 		numeric(8,0) PRIMARY KEY,
+    order_num 		SERIAL NOT NULL PRIMARY KEY,
     tracking_num 	numeric(16,0),
     date_placed 	timestamp without time zone,
     total_price 	numeric(6,2)
@@ -71,8 +71,8 @@ CREATE TABLE project.genre (
 -- Relations
 
 CREATE TABLE project.hasAdd (
-    user_name 	character varying(16) REFERENCES project.user(user_name),
-    add_id 	character varying(4) REFERENCES project.address(add_id),
+    user_name 	character varying(16) NOT NULL REFERENCES project.user(user_name),
+    add_id 	SERIAL NOT NULL REFERENCES project.address(add_id),
     isshipping 	boolean NOT NULL UNIQUE,
     isbilling 	boolean NOT NULL UNIQUE,
 
@@ -80,14 +80,14 @@ CREATE TABLE project.hasAdd (
 );
 
 CREATE TABLE project.pubadd (
-    add_id 	character varying(4) REFERENCES project.address(add_id),
-    pub_id 	character varying(6) REFERENCES project.publisher(pub_id) UNIQUE,
+    add_id 	SERIAL NOT NULL REFERENCES project.address(add_id),
+    pub_id 	SERIAL NOT NULL REFERENCES project.publisher(pub_id) UNIQUE,
 
     CONSTRAINT 	pubadd_pkey PRIMARY KEY (add_id, pub_id)
 );
 
 CREATE TABLE project.publishes (
-    pub_id 	character varying(6) REFERENCES project.publisher(pub_id),
+    pub_id 	SERIAL REFERENCES project.publisher(pub_id),
     isbn 	numeric(13,0) REFERENCES project.book(isbn),
     year 	numeric(4,0),
 
@@ -95,12 +95,12 @@ CREATE TABLE project.publishes (
 );
 
 CREATE TABLE project.writes (
-    auth_id 	character varying(6) REFERENCES project.author(auth_id),
+    auth_id SERIAL NOT NULL REFERENCES project.author(auth_id),
     isbn 	numeric(13,0) REFERENCES project.book(isbn)
 );
 
 CREATE TABLE project.bask_item (
-    basket_id 	numeric(8,0) REFERENCES project.basket(basket_id),
+    basket_id 	SERIAL NOT NULL REFERENCES project.basket(basket_id),
     isbn 	numeric(13,0) REFERENCES project.book(isbn),
     quantity 	integer,
 
@@ -109,21 +109,21 @@ CREATE TABLE project.bask_item (
 
 CREATE TABLE project.bask_manage (
     user_name 	character varying(16) REFERENCES project.user(user_name),
-    basket_id 	numeric(8,0) REFERENCES project.basket(basket_id),
+    basket_id 	SERIAL NOT NULL REFERENCES project.basket(basket_id),
 
     CONSTRAINT bask_manage_pkey PRIMARY KEY (user_name, basket_id)
 );
 
 CREATE TABLE project.checkout (
-    basket_id 	numeric(8,0) REFERENCES project.basket(basket_id),
-    order_num 	numeric(8,0) REFERENCES project.order(order_num),
+    basket_id 	SERIAL NOT NULL REFERENCES project.basket(basket_id),
+    order_num 	SERIAL NOT NULL REFERENCES project.order(order_num),
 
     CONSTRAINT checkout_pkey PRIMARY KEY (basket_id, order_num)
 );
 
 CREATE TABLE project.ordadd (
-    order_num 	numeric(8,0) REFERENCES project.order(order_num),
-    add_id 	character varying(4) REFERENCES project.address(add_id),
+    order_num 	SERIAL NOT NULL REFERENCES project.order(order_num),
+    add_id 	SERIAL NOT NULL REFERENCES project.address(add_id),
 
     CONSTRAINT	ordadd_pkey PRIMARY KEY (order_num, add_id)
     
