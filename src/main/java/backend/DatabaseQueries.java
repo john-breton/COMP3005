@@ -163,7 +163,7 @@ public class DatabaseQueries {
      * Query user information from the database.
      *
      * @param username The username that was entered.
-     * @return ArrayList of user credentials from the database. [0] = username, [1] = password, [2] = first name, [3] = last name, [4] = email, [5] = salary, [6] = shippingID, [7] = billingID
+     * @return ArrayList of user credentials from the database. [0] = username, [1] = password, [2] = first name, [3] = last name, [4] = email, [5] = salary
      * null if no user found.
      */
     public static ArrayList<Object> lookForaUser(String username) {
@@ -210,7 +210,7 @@ public class DatabaseQueries {
      * Query address information from the database
      *
      * @param username Username of the user
-     * @return An ArrayList of address info. [0] = street num, [1] = street name, [2] = apartment, [3] = city, [4] = province, [5] = country, [6] = postal code, [7] = isShipping, [8] = isBilling
+     * @return An ArrayList of address info. [0] = street num, [1] = street name, [2] = apartment, [3] = city, [4] = province, [5] = country, [6] = postal code
      */
     private static ArrayList<Object> lookForanAddress(String username) {
         ArrayList<Object> addInfo = new ArrayList<>();
@@ -253,33 +253,21 @@ public class DatabaseQueries {
      * lookForaUser() should be invoked BEFORE this method to ensure the user is already present in the database
      *
      * @param username  The username that was entered
-     * @param password  The new password that was entered TODO: confirm password before passing
+     * @param password  The new password that was entered
      * @param firstName The first name that was entered
      * @param lastName  The last name that was entered
      * @param email     The email that was entered
-     * @param shippAdd  The shipping address ID that was found and passed via lookForaUser
-     * @param billAdd   The billing address ID that was found and passed via lookForaUser
      * @return ArrayList of the updated user credentials (or added credentials but we don't want this), null otherwise
      */
-    protected static boolean updateUser(String username, String password, String firstName, String lastName, String email, String salary, ArrayList<Object> shippAdd, ArrayList<Object> billAdd) {
+    public static boolean updateUser(String username, String password, String firstName, String lastName, String email) {
         try {
+            int rowsAffected = 0;
+            if(!password.isEmpty())
+                rowsAffected = statement.executeUpdate("UPDATE project.user SET password = '" + password + "', first_name = '" + firstName + "', last_name = '" + lastName + "', email = '" + email + "' WHERE user_name = '" + username + "'");
+            else
+                rowsAffected = statement.executeUpdate("UPDATE project.user SET first_name = '" + firstName + "', last_name = '" + lastName + "', email = '" + email + "' WHERE user_name = '" + username + "'");
 
-            int rowsAffected = statement.executeUpdate("INSERT INTO project.user " +
-                    "values('" + username +
-                    "', '" + password +
-                    "', '" + firstName +
-                    "', '" + lastName +
-                    "', '" + email +
-                    "', '" + shippAdd +
-                    "', '" + billAdd +
-                    "') on conflict (user_name) " +
-                    "do update set password = '" + password +
-                    "', first_name = '" + firstName +
-                    "', last_name = '" + lastName +
-                    "', email = '" + email +
-                    "'"); // shipping and billing addresses will need to be updated through another/ nested query??
-
-            if (rowsAffected == 1) { // means a row was added or updated since searing by user_name
+            if (rowsAffected == 1) { // means a row was updated
                 return true;
             }
 
@@ -287,6 +275,103 @@ public class DatabaseQueries {
             e.printStackTrace();
         }
 
+        return false;
+    }
+
+    /**
+     * Query the admin info to update/ add an admin
+     *
+     * @param username username to be updated
+     * @param salary new salary
+     * @return true if admin relation is updated, false otherwise
+     */
+    public static boolean updateAdmin(String username, String salary){
+        try {
+            if (salary == null || salary.isEmpty()) {
+                int rowsAffected = statement.executeUpdate("UPDATE project.librarian " +
+                        "SET salary = NULL " +
+                        "WHERE user_name = '" + username + "'");
+                return rowsAffected == 1; //true if admin deleted
+            } else {
+                int rowsAffected = statement.executeUpdate("INSERT INTO project.librarian " +
+                        "values('" + username + "','" + salary + "') " +
+                        "ON CONFLICT (user_name) DO UPDATE SET salary = '" + salary + "'");
+                return rowsAffected == 1; // true if admin updated or added
+            }
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    /**
+     * Query the addresses to update user's address
+     *
+     * @param num        the num
+     * @param name       the name
+     * @param apartment  the apartment
+     * @param city       the city
+     * @param prov       the province
+     * @param country    the country
+     * @param postalCode the postal code
+     * @return true if successful update, false otherwise
+     */
+    public static boolean updateAddress(String username, String num, String name, String apartment, String city, String prov, String country, String postalCode, boolean isShipping, boolean isBilling){
+        // attempt to update address
+        try {
+            int rowsAffected = 0;
+            String add_id = null;
+            ResultSet result = statement.executeQuery("UPDATE project.address " +
+                    "SET street_num = '" + num + "'," +
+                    "street_name = '" + name + "'," +
+                    "apartment = '" + apartment + "'," +
+                    "city = '" + city + "'," +
+                    "province = '" + prov + "'," +
+                    "country = '" + country + "'," +
+                    "postal_code = '" + postalCode + "'" +
+                    "FROM project.hasadd " +
+                    "WHERE project.address.add_id = project.hasadd.add_id " +
+                    "AND project.hasadd.user_name = '" + username + "'" +
+                    "RETURNING project.hasadd.add_id");
+
+            while(result.next()){
+                rowsAffected++;
+                add_id = result.getString("add_id");
+            }
+
+            if(rowsAffected == 0) { //user doesn't have an address yet
+                return addAddress(num, name, apartment, city, prov, country, postalCode) && addHasAdd(username, isShipping, isBilling);
+            }
+
+            return updateHasAdd(username, add_id, isShipping, isBilling);// address was updated, now update hasAdd
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    /**
+     * Query the hasAdd relation to update user's preferences
+     *
+     * @param usr username
+     * @param add_id address id
+     * @param ship true if address is shipping address
+     * @param bill true if address is billing address
+     * @return true if an existing relation was updated, false otherwise
+     */
+    private static boolean updateHasAdd(String usr, String add_id, boolean ship, boolean bill){
+        try {
+            int rowsAffected = statement.executeUpdate("UPDATE project.hasadd " +
+                    "SET isshipping = '" + ship + "', " +
+                    "isbilling = '" + bill + "'" +
+                    "WHERE user_name = '" + usr + "'" +
+                    "AND add_id = '" + add_id + "'");
+
+            return rowsAffected == 1;//if false, add a new relationship
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         return false;
     }
 }

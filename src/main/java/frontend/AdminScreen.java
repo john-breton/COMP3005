@@ -11,6 +11,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Objects;
 
 public class AdminScreen extends JFrame implements ActionListener, ChangeListener {
     private final JCheckBox billingSameAsShipping = new JCheckBox("Billing Address is the same as Shipping Address");
@@ -1536,19 +1537,17 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
             editFirstNameTF.setText((String) itr.next());
             editLastNameTF.setText((String) itr.next());
             editEmailTF.setText((String) itr.next());
-            editSalaryTF.setText("$" + itr.next());
-            if (editSalaryTF.getText().equals("$null")) {
+            editSalaryTF.setText((String) itr.next());
+            if (editSalaryTF.getText().equals("null")) {
                 editSalaryTF.setText("");
-                editSalaryTF.setEnabled(false);
                 isUserAdminCB.setSelected(false);
             } else {
-                editSalaryTF.setEnabled(true);
                 isUserAdminCB.setSelected(true);
             }
 
-            if(itr.hasNext()) { // user has an address (admins are not required to have an address)
+            if (itr.hasNext()) { // user has an address (admins are not required to have an address)
                 ArrayList<Object> shipAdd = (ArrayList<Object>) itr.next();
-                if(shipAdd != null) {
+                if (shipAdd != null) {
                     Iterator<Object> addIter = shipAdd.iterator();
                     editShippingStreetNumTF.setText((String) addIter.next());
                     editShippingStreetNameTF.setText((String) addIter.next());
@@ -1606,11 +1605,146 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
      * Updates user about success
      * Clears fields if successful
      */
-    private void sendEditUserData() {
+    private boolean sendEditUserData() {
         // Check to see if the password matches the confirm password textfield.
-        if (!(new String(confirmEditPasswordTF.getPassword()).equals(new String(editPasswordTF.getPassword())))) {
-            editUserErrorLabel.setText("Update Failed. New passwords do not match.");
+        if (!(new String(editPasswordTF.getPassword()).equals(new String(confirmEditPasswordTF.getPassword())))) {
+            editUserErrorLabel.setText("Update Failed. Passwords do not match.");
+            return false;
         }
+        // Check to see if the names are empty.
+        if (editFirstNameTF.getText().length() == 0 || editLastNameTF.getText().length() == 0) {
+            editUserErrorLabel.setText("Update Failed. Please enter both a first and last name.");
+            return false;
+        }
+        // Check to see if the names contain any numbers
+        if (FrontEndUtilities.check(editFirstNameTF.getText())) {
+            editUserErrorLabel.setText("Update Failed. First names cannot contain numerical values.");
+            return false;
+        }
+        if (FrontEndUtilities.check(editLastNameTF.getText())) {
+            editUserErrorLabel.setText("Update Failed. Last names cannot contain numerical values.");
+            return false;
+        }
+        // Ensure the email field is not empty.
+        if (editEmailTF.getText().length() == 0) {
+            editUserErrorLabel.setText("Update Failed. Email cannot be blank.");
+            return false;
+        }
+        boolean sameShipAndBill = editBillingSameAsShipping.isSelected();
+
+        // Check each of the address fields :(
+        // Street Numbers
+        {
+            // Check for empty fields
+            if(!isUserAdminCB.isSelected()){
+                editSalaryTF.setText(null);
+                if (editShippingStreetNumTF.getText().length() == 0) {
+                    editUserErrorLabel.setText("Update Failed. Shipping street number cannot be empty.");
+                    return false;
+                }
+                if (!sameShipAndBill && editBillStreetNumTF.getText().length() == 0) {
+                    editUserErrorLabel.setText("Update Failed. Billing street number cannot be empty.");
+                    return false;
+                }
+                if (editShippingStreetNameTF.getText().length() == 0) {
+                    editUserErrorLabel.setText("Update Failed. Shipping street name cannot be empty.");
+                    return false;
+                }
+                if (!sameShipAndBill && editBillStreetNameTF.getText().length() == 0) {
+                    editUserErrorLabel.setText("Update Failed. Billing street name cannot be empty.");
+                    return false;
+                }
+                if (editShippingCityTF.getText().length() == 0) {
+                    editUserErrorLabel.setText("Update Failed. Shipping city name cannot be empty.");
+                    return false;
+                }
+                if (!sameShipAndBill && editBillCityTF.getText().length() == 0) {
+                    editUserErrorLabel.setText("Update Failed. Billing city name cannot be empty.");
+                    return false;
+                }
+                if (editShippingProvinceCB.getSelectedIndex() == 0) {
+                    editUserErrorLabel.setText("Update Failed. Please select a shipping province.");
+                    return false;
+                }
+                if (!sameShipAndBill && editBillProvinceCB.getSelectedIndex() == 0) {
+                    editUserErrorLabel.setText("Update Failed. Please select a billing province.");
+                    return false;
+                }
+                if (editShippingCountryTF.getText().length() == 0) {
+                    editUserErrorLabel.setText("Update Failed. Shipping country cannot be empty.");
+                    return false;
+                }
+                if (!sameShipAndBill && editBillCountryTF.getText().length() == 0) {
+                    editUserErrorLabel.setText("Update Failed. Billing country cannot be empty.");
+                    return false;
+                }
+                if (editShippingPostalCodeTF.getText().length() == 0) {
+                    editUserErrorLabel.setText("Update Failed. Shipping postal code cannot be empty.");
+                    return false;
+                }
+                if (!sameShipAndBill && editBillPostalCodeTF.getText().length() == 0) {
+                    editUserErrorLabel.setText("Update Failed. Billing postal code cannot be empty.");
+                    return false;
+                }
+            } else {
+                if(editSalaryTF.getText().isEmpty()){
+                    editUserErrorLabel.setText("Update Failed. Admins need a salary.");
+                    return false;
+                }
+            }
+
+            // Check validity
+            try {
+                if(!editShippingStreetNumTF.getText().isEmpty()) Double.parseDouble(editShippingStreetNumTF.getText());
+                if (!sameShipAndBill) {
+                    if(!editBillStreetNumTF.getText().isEmpty()) Double.parseDouble(editBillStreetNumTF.getText());
+                }
+                if (isUserAdminCB.isSelected()){
+                    if(!editSalaryTF.getText().isEmpty()) Double.parseDouble(editSalaryTF.getText());
+                }
+            } catch (NumberFormatException ex) {
+                editUserErrorLabel.setText("Update Failed. Street numbers cannot contain letters.");
+                return false;
+            }
+            if (FrontEndUtilities.check(editShippingCityTF.getText())) {
+                editUserErrorLabel.setText("Update Failed. Shipping city cannot contain numerical values.");
+                return false;
+            }
+            if (FrontEndUtilities.check(editBillCityTF.getText())) {
+                editUserErrorLabel.setText("Update Failed. Billing city cannot contain numerical values.");
+                return false;
+            }
+            if (FrontEndUtilities.check(editShippingCountryTF.getText())) {
+                editUserErrorLabel.setText("Update Failed. Shipping country cannot contain numerical values.");
+                return false;
+            }
+            if (FrontEndUtilities.check(editBillCountryTF.getText())) {
+                editUserErrorLabel.setText("Update Failed. Billing country cannot contain numerical values.");
+                return false;
+            }
+
+
+        }
+
+        // Attempt to add the user to the database.
+        if (DatabaseQueries.updateUser(currentUserNameLabel.getText(), new String(editPasswordTF.getPassword()), editFirstNameTF.getText(), editLastNameTF.getText(), editEmailTF.getText())) {
+            DatabaseQueries.updateAdmin(currentUserNameLabel.getText(), editSalaryTF.getText());
+        } else {
+            editUserErrorLabel.setText("Update Failed. A user with that username is not registered in the system. Proceed to \"Add User\" screen.");
+            return false;
+        }
+
+        /* If we get here, the following insertion methods will not fail. */
+        // Add the editShippingping address.
+        if (!sameShipAndBill) {
+            // Need to add the billing address as a separate address.
+            DatabaseQueries.updateAddress(currentUserNameLabel.getText(), editShippingStreetNumTF.getText(), editShippingStreetNameTF.getText(), editShippingApartmentTF.getText(), editShippingCityTF.getText(), Objects.requireNonNull(editShippingProvinceCB.getSelectedItem()).toString(), editShippingCountryTF.getText(), editShippingPostalCodeTF.getText(), true, false);
+            DatabaseQueries.updateAddress(currentUserNameLabel.getText(), editBillStreetNumTF.getText(), editBillStreetNameTF.getText(), editBillApartmentTF.getText(), editBillCityTF.getText(), Objects.requireNonNull(editBillProvinceCB.getSelectedItem()).toString(), editBillCountryTF.getText(), editBillPostalCodeTF.getText(), false, true);
+        }else {
+            DatabaseQueries.updateAddress(currentUserNameLabel.getText(), editShippingStreetNumTF.getText(), editShippingStreetNameTF.getText(), editShippingApartmentTF.getText(), editShippingCityTF.getText(), Objects.requireNonNull(editShippingProvinceCB.getSelectedItem()).toString(), editShippingCountryTF.getText(), editShippingPostalCodeTF.getText(), true, true);
+        }
+        // Done.
+        return true;
     }
 
     /**
@@ -1627,8 +1761,10 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
                 case "Logout" -> FrontEndUtilities.confirmLogout(this); // Anywhere and everywhere
                 case "Search Users" -> fetchEditUserData(); // Admin Edit User Screen
                 case "Update User" -> {
-                    defaultAdminViewFields();
-                    sendEditUserData();
+                    if (sendEditUserData()) {
+                        defaultAdminViewFields();
+                        confirmUserEditLabel.setText("User Updated");
+                    }
                 } // Admin Edit User Screen
                 case "Search Books" -> System.out.println("Searching Books"); // Admin Edit Books Screen
                 case "Update Book" -> {

@@ -1,4 +1,7 @@
 DROP Schema project CASCADE;
+DROP FUNCTION IF EXISTS delete_old_admin();
+DROP TRIGGER IF EXISTS delete_admin
+ON project.librarian;
 
 -- Schema 
 
@@ -142,4 +145,22 @@ CREATE TABLE project.hasgenre (
     CONSTRAINT	hasgenre_pkey PRIMARY KEY (name, isbn)
 
 );
+
+-- Functions
+CREATE FUNCTION delete_old_admin() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+    DELETE FROM project.librarian WHERE salary IS NULL;
+    RETURN NULL;
+END;
+$$;;
+
+-- Triggers
+
+CREATE TRIGGER delete_admin
+AFTER UPDATE ON project.librarian
+FOR EACH ROW
+WHEN (new.salary IS NULL)
+EXECUTE PROCEDURE delete_old_admin();
 
