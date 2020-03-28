@@ -159,7 +159,7 @@ $$;;
 -- Triggers
 
 CREATE TRIGGER delete_admin
-AFTER UPDATE ON project.librarian
+AFTER UPDATE OR INSERT ON project.librarian
 FOR EACH ROW
 WHEN (new.salary IS NULL)
 EXECUTE PROCEDURE delete_old_admin();
