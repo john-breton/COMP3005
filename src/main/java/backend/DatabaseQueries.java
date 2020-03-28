@@ -234,7 +234,7 @@ public class DatabaseQueries {
 
             if (rowCount == 1 || rowCount == 2) return addInfo; // user found
 
-            if (rowCount == 0) return null; // user not found
+            if (rowCount == 0) return null;
 
             // whaaaaaat
             addInfo.clear();

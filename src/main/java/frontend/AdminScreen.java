@@ -1220,7 +1220,6 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
         // Setup editUserPanel
         {
             // Disable fields by default
-            boolean enable = false;
             editBillStreetNumTF.setEnabled(false);
             editBillStreetNameTF.setEnabled(false);
             editBillApartmentTF.setEnabled(false);
@@ -1528,7 +1527,7 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
             defaultAdminViewFields();
             editUserErrorLabel.setText("Big boy error...contact someone");
         } else {
-            Iterator itr = update.iterator();
+            Iterator<Object> itr = update.iterator();
             editUserErrorLabel.setText(""); // reset errors
             editUserSearchTF.setText(""); // clear search bar
             // update fields
@@ -1548,42 +1547,43 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
             }
 
             if(itr.hasNext()) { // user has an address (admins are not required to have an address)
-                ArrayList shipAdd = (ArrayList) itr.next();
-                Iterator addIter = shipAdd.iterator();
-                editShippingStreetNumTF.setText((String) addIter.next());
-                editShippingStreetNameTF.setText((String) addIter.next());
-                editShippingApartmentTF.setText((String) addIter.next());
-                editShippingCityTF.setText((String) addIter.next());
-                editShippingProvinceCB.setSelectedItem(addIter.next());
-                editShippingCountryTF.setText((String) addIter.next());
-                editShippingPostalCodeTF.setText((String) addIter.next());
+                ArrayList<Object> shipAdd = (ArrayList<Object>) itr.next();
+                if(shipAdd != null) {
+                    Iterator<Object> addIter = shipAdd.iterator();
+                    editShippingStreetNumTF.setText((String) addIter.next());
+                    editShippingStreetNameTF.setText((String) addIter.next());
+                    editShippingApartmentTF.setText((String) addIter.next());
+                    editShippingCityTF.setText((String) addIter.next());
+                    editShippingProvinceCB.setSelectedItem(addIter.next());
+                    editShippingCountryTF.setText((String) addIter.next());
+                    editShippingPostalCodeTF.setText((String) addIter.next());
 
-                boolean isShipping = (boolean) addIter.next();
-                boolean isBilling = (boolean) addIter.next();
-                editBillingSameAsShipping.setSelected(true);
-                if(addIter.hasNext()) { // user has a billing address
-                    if (isShipping && isBilling) { // shipping == billing, user can only have 1 shipping/ billing address
-                        editBillStreetNumTF.setText("");
-                        editBillStreetNameTF.setText("");
-                        editBillApartmentTF.setText("");
-                        editBillCityTF.setText("");
-                        editBillProvinceCB.setSelectedItem("");
-                        editBillCountryTF.setText("");
-                        editBillPostalCodeTF.setText("");
-                    } else {
-                        editBillingSameAsShipping.setSelected(false);
-                        editBillStreetNumTF.setText((String) addIter.next());
-                        editBillStreetNameTF.setText((String) addIter.next());
-                        editBillApartmentTF.setText((String) addIter.next());
-                        editBillCityTF.setText((String) addIter.next());
-                        editBillProvinceCB.setSelectedItem(addIter.next());
-                        editBillCountryTF.setText((String) addIter.next());
-                        editBillPostalCodeTF.setText((String) addIter.next());
+                    boolean isShipping = (boolean) addIter.next();
+                    boolean isBilling = (boolean) addIter.next();
+                    editBillingSameAsShipping.setSelected(true);
+                    if (addIter.hasNext()) { // user has a billing address
+                        if (isShipping && isBilling) { // shipping == billing, user can only have 1 shipping/ billing address
+                            editBillStreetNumTF.setText("");
+                            editBillStreetNameTF.setText("");
+                            editBillApartmentTF.setText("");
+                            editBillCityTF.setText("");
+                            editBillProvinceCB.setSelectedItem("");
+                            editBillCountryTF.setText("");
+                            editBillPostalCodeTF.setText("");
+                        } else {
+                            editBillingSameAsShipping.setSelected(false);
+                            editBillStreetNumTF.setText((String) addIter.next());
+                            editBillStreetNameTF.setText((String) addIter.next());
+                            editBillApartmentTF.setText((String) addIter.next());
+                            editBillCityTF.setText((String) addIter.next());
+                            editBillProvinceCB.setSelectedItem(addIter.next());
+                            editBillCountryTF.setText((String) addIter.next());
+                            editBillPostalCodeTF.setText((String) addIter.next());
+                        }
                     }
                 }
             }
             // Enable fields after search
-            boolean enable = true;
             editPasswordTF.setEnabled(true);
             confirmEditPasswordTF.setEnabled(true);
             editFirstNameTF.setEnabled(true);

@@ -73,10 +73,12 @@ CREATE TABLE project.genre (
 CREATE TABLE project.hasAdd (
     user_name 	character varying(16) NOT NULL REFERENCES project.user(user_name),
     add_id 		SERIAL NOT NULL REFERENCES project.address(add_id),
-    isshipping 	boolean NOT NULL UNIQUE,
-    isbilling 	boolean NOT NULL UNIQUE,
+    isshipping 	boolean NOT NULL,
+    isbilling 	boolean NOT NULL,
 
-    CONSTRAINT 	hasadd_pkey PRIMARY KEY (user_name, add_id)
+    CONSTRAINT 	hasadd_pkey PRIMARY KEY (user_name, add_id),
+    UNIQUE  (user_name, isshipping),
+    UNIQUE  (user_name, isbilling)
 );
 
 CREATE TABLE project.pubadd (
