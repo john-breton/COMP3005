@@ -5,7 +5,7 @@ package backend;
  */
 
 import java.sql.*;
-import java.util.ArrayList;
+import java.util.*;
 
 /**
  * The backend.LookForaBook class represents the back-end for the util.LookInnaBook application.

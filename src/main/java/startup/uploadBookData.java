@@ -246,7 +246,7 @@ public class uploadBookData {
         // user deets
         String userFirstName = firstName[r.nextInt(firstName.length)];
         String userLastName = lastName[r.nextInt(lastName.length)];
-        String username = userFirstName.substring(0,1) + userLastName.substring(0, 3); // username is 1st letter of first name + first 3 letters of last name
+        String username = userFirstName.substring(0,1).toLowerCase() + userLastName.substring(0, 3).toLowerCase(); // username is 1st letter of first name + first 3 letters of last name
         Integer salary = null;
         int defaultSal = 30000;
         if(trueFalse[r.nextInt(2)] && (username.contains("r") || username.contains("R"))) // decide if the user is an admin
