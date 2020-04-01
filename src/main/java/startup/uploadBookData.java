@@ -251,19 +251,26 @@ public class uploadBookData {
         int defaultSal = 30000;
         if(trueFalse[r.nextInt(2)] && (username.contains("r") || username.contains("R"))) // decide if the user is an admin
             salary = defaultSal;
+        String streetid = streetID[r.nextInt(streetID.length)];
+        String apt = apartment[r.nextInt(apartment.length)];
+        String city = cities[r.nextInt(cities.length)];
+        String prov = provincesArr[r.nextInt(provincesArr.length)];
+        String count = country[r.nextInt(country.length)];
 
         try {
             statement.executeUpdate("Insert into project.user values ('" + username + "', '" + username + "', '" + userFirstName + "', '" + userLastName + "', '" + defaultEmail + "');" +
                     "insert into project.librarian values ('" + username + "'," + salary + ");");
 
-            DatabaseQueries.addAddress(Integer.toString(streetNum), defaultStreetName + streetID[r.nextInt(streetID.length)], apartment[r.nextInt(apartment.length)], cities[r.nextInt(cities.length)], provincesArr[r.nextInt(provincesArr.length)], country[r.nextInt(country.length)], postalCode.toString());
-            DatabaseQueries.addHasAdd(username, true, isBilling);
+            DatabaseQueries.addAddress(Integer.toString(streetNum), defaultStreetName + streetid, apt, city, prov, count, postalCode.toString());
+            DatabaseQueries.addHasAdd(username, true, false);
 
             if(!isBilling) { // need another address
                 streetNum = (int) (100L + r.nextFloat() * 900L);
                 DatabaseQueries.addAddress(Integer.toString(streetNum), defaultStreetName + streetID[r.nextInt(streetID.length)], apartment[r.nextInt(apartment.length)], cities[r.nextInt(cities.length)], provincesArr[r.nextInt(provincesArr.length)], country[r.nextInt(country.length)], postalCode.toString());
-                DatabaseQueries.addHasAdd(username, false, true);
+            } else {
+                DatabaseQueries.addAddress(Integer.toString(streetNum), defaultStreetName + streetid, apt, city, prov, count, postalCode.toString());
             }
+            DatabaseQueries.addHasAdd(username, false, true);
 
         } catch (SQLException e) {
             if(e.toString().equals("org.postgresql.util.PSQLException: ERROR: duplicate key value violates unique constraint \"user_pkey\"\n" +

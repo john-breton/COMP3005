@@ -439,20 +439,17 @@ public class RegistrationScreen extends JFrame implements ActionListener {
         }
 
         /* If we get here, the following insertion methods will not fail. */
-        // Add the shipping address.
+        // Add the shipping address and billing address.
+        // I changed this a bit, each user will now have exactly 2 addresses, 1 for shipping, 1 for billing for simplicity of updating their addresses later
         DatabaseQueries.addAddress(shipStreetNumTF.getText(), shipStreetNameTF.getText(), shipApartmentTF.getText(), shipCityTF.getText(), Objects.requireNonNull(shipProvinceCB.getSelectedItem()).toString(), shipCountryTF.getText(), shipPostalCodeTF.getText());
+        DatabaseQueries.addHasAdd(newUsernameTF.getText(), true, false);
         if (!sameShipAndBill) {
             // Need to add the billing address as a separate address.
             DatabaseQueries.addAddress(billStreetNumTF.getText(), billStreetNameTF.getText(), billApartmentTF.getText(), billCityTF.getText(), Objects.requireNonNull(billProvinceCB.getSelectedItem()).toString(), billCountryTF.getText(), billPostalCodeTF.getText());
-        }
-
-        // Create the hasAdd relations
-        if (!sameShipAndBill) {
-            DatabaseQueries.addHasAdd(newUsernameTF.getText(), true, false);
-            DatabaseQueries.addHasAdd(newUsernameTF.getText(), false, true);
         } else {
-            DatabaseQueries.addHasAdd(newUsernameTF.getText(), true, true);
+            DatabaseQueries.addAddress(shipStreetNumTF.getText(), shipStreetNameTF.getText(), shipApartmentTF.getText(), shipCityTF.getText(), Objects.requireNonNull(shipProvinceCB.getSelectedItem()).toString(), shipCountryTF.getText(), shipPostalCodeTF.getText());
         }
+        DatabaseQueries.addHasAdd(newUsernameTF.getText(), false, true);
         // Done.
         return true;
     }

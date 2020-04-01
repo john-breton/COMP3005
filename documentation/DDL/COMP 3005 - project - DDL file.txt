@@ -80,8 +80,7 @@ CREATE TABLE project.hasAdd (
     isbilling 	boolean NOT NULL,
 
     CONSTRAINT 	hasadd_pkey PRIMARY KEY (user_name, add_id),
-    UNIQUE  (user_name, isshipping),
-    UNIQUE  (user_name, isbilling)
+    UNIQUE (user_name, isshipping, isbilling)
 );
 
 CREATE TABLE project.pubadd (

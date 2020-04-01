@@ -77,7 +77,7 @@ public class DatabaseQueries {
     public static boolean registerNewUser(String username, String password, String first_name, String last_name, String email) {
         try {
             statement.execute("INSERT into project.user " +
-                    "values ('" + username +
+                    "values ('" + username.toLowerCase() +
                     "', '" + password +
                     "', '" + first_name +
                     "', '" + last_name +
@@ -173,7 +173,7 @@ public class DatabaseQueries {
 
         try {
 
-            ResultSet result = statement.executeQuery("SELECT * FROM project.user left outer join project.librarian using (user_name) WHERE user_name = '" + username + "'");
+            ResultSet result = statement.executeQuery("SELECT * FROM project.user left outer join project.librarian using (user_name) WHERE user_name = '" + username.toLowerCase() + "'");
 
             while (result.next()) { // loop over results
                 rowCount++; // count results
@@ -217,7 +217,7 @@ public class DatabaseQueries {
         int rowCount = 0;
 
         try {
-            ResultSet result = statement.executeQuery("SELECT * FROM project.address NATURAL JOIN project.hasadd WHERE user_name = '" + username + "'");
+            ResultSet result = statement.executeQuery("SELECT * FROM project.address NATURAL JOIN project.hasadd WHERE user_name = '" + username.toLowerCase() + "'");
 
             while (result.next()) {
                 rowCount++; // count results
@@ -228,11 +228,9 @@ public class DatabaseQueries {
                 addInfo.add(result.getString("province"));
                 addInfo.add(result.getString("country"));
                 addInfo.add(result.getString("postal_code"));
-                addInfo.add(result.getBoolean("isshipping"));
-                addInfo.add(result.getBoolean("isbilling"));
             }
 
-            if (rowCount == 1 || rowCount == 2) return addInfo; // user found
+            if (rowCount == 2) return addInfo; // user found
 
             if (rowCount == 0) return null;
 
@@ -263,9 +261,9 @@ public class DatabaseQueries {
         try {
             int rowsAffected = 0;
             if(!password.isEmpty())
-                rowsAffected = statement.executeUpdate("UPDATE project.user SET password = '" + password + "', first_name = '" + firstName + "', last_name = '" + lastName + "', email = '" + email + "' WHERE user_name = '" + username + "'");
+                rowsAffected = statement.executeUpdate("UPDATE project.user SET password = '" + password + "', first_name = '" + firstName + "', last_name = '" + lastName + "', email = '" + email + "' WHERE user_name = '" + username.toLowerCase() + "'");
             else
-                rowsAffected = statement.executeUpdate("UPDATE project.user SET first_name = '" + firstName + "', last_name = '" + lastName + "', email = '" + email + "' WHERE user_name = '" + username + "'");
+                rowsAffected = statement.executeUpdate("UPDATE project.user SET first_name = '" + firstName + "', last_name = '" + lastName + "', email = '" + email + "' WHERE user_name = '" + username.toLowerCase() + "'");
 
             if (rowsAffected == 1) { // means a row was updated
                 return true;
@@ -332,6 +330,7 @@ public class DatabaseQueries {
                     "FROM project.hasadd " +
                     "WHERE project.address.add_id = project.hasadd.add_id " +
                     "AND project.hasadd.user_name = '" + username + "'" +
+                    "AND project.hasadd.isshipping = '" + isShipping + "'" +
                     "RETURNING project.hasadd.add_id");
 
             while(result.next()){
@@ -343,32 +342,6 @@ public class DatabaseQueries {
                 return addAddress(num, name, apartment, city, prov, country, postalCode) && addHasAdd(username, isShipping, isBilling);
             }
 
-            return updateHasAdd(username, add_id, isShipping, isBilling);// address was updated, now update hasAdd
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-
-    /**
-     * Query the hasAdd relation to update user's preferences
-     *
-     * @param usr username
-     * @param add_id address id
-     * @param ship true if address is shipping address
-     * @param bill true if address is billing address
-     * @return true if an existing relation was updated, false otherwise
-     */
-    private static boolean updateHasAdd(String usr, String add_id, boolean ship, boolean bill){
-        try {
-            int rowsAffected = statement.executeUpdate("UPDATE project.hasadd " +
-                    "SET isshipping = '" + ship + "', " +
-                    "isbilling = '" + bill + "'" +
-                    "WHERE user_name = '" + usr + "'" +
-                    "AND add_id = '" + add_id + "'");
-
-            return rowsAffected == 1;//if false, add a new relationship
         } catch (SQLException e) {
             e.printStackTrace();
         }

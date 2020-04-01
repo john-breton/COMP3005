@@ -115,18 +115,18 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
             editBillCountryTF = new JTextField(15),
             editBillPostalCodeTF = new JTextField(15);
     // Admin
-    private final JLabel confirmNewBookAddition = new JLabel("", JLabel.CENTER),
-            confirmNewPublisherAddition = new JLabel("", JLabel.CENTER),
-            confirmAdminReg = new JLabel("", JLabel.CENTER),
+    private final JLabel confirmNewBookAddition = new JLabel("", JLabel.RIGHT),
+            confirmNewPublisherAddition = new JLabel("", JLabel.RIGHT),
+            confirmAdminReg = new JLabel("", JLabel.RIGHT),
             addUserErrorLabel = new JLabel("", JLabel.CENTER),
             addBookErrorLabel = new JLabel("", JLabel.CENTER),
             addPublisherErrorLabel = new JLabel("", JLabel.CENTER),
             editUserErrorLabel = new JLabel("", JLabel.CENTER),
             currentUserNameLabel = new JLabel(""),
-            confirmUserEditLabel = new JLabel("", JLabel.CENTER),
+            confirmUserEditLabel = new JLabel("", JLabel.RIGHT),
             editBookErrorLabel = new JLabel("", JLabel.CENTER),
             currentISBNLabel = new JLabel("Current ISBN Goes Here"),
-            confirmBookEditLabel = new JLabel("", JLabel.CENTER);
+            confirmBookEditLabel = new JLabel("", JLabel.RIGHT);
 
     public AdminScreen() {
         Container c = this.getContentPane();
@@ -248,7 +248,7 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
 
         // editUser
         isUserAdminCB.setSelected(false);
-        editBillingSameAsShipping.setSelected(false);
+        editBillingSameAsShipping.setSelected(true);
         editUserSearchTF.setText("");
         currentUserNameLabel.setText("");
         editPasswordTF.setText("");
@@ -1458,6 +1458,7 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
             Component glue = Box.createVerticalGlue();
             editUserPanel.add(glue, con);
 
+
             return editUserPanel;
         }
     }
@@ -1538,8 +1539,7 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
             editLastNameTF.setText((String) itr.next());
             editEmailTF.setText((String) itr.next());
             editSalaryTF.setText((String) itr.next());
-            if (editSalaryTF.getText().equals("null")) {
-                editSalaryTF.setText("");
+            if (editSalaryTF.getText().isEmpty()) {
                 isUserAdminCB.setSelected(false);
             } else {
                 isUserAdminCB.setSelected(true);
@@ -1557,28 +1557,33 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
                     editShippingCountryTF.setText((String) addIter.next());
                     editShippingPostalCodeTF.setText((String) addIter.next());
 
-                    boolean isShipping = (boolean) addIter.next();
-                    boolean isBilling = (boolean) addIter.next();
+                    editBillStreetNumTF.setText((String) addIter.next());
+                    editBillStreetNameTF.setText((String) addIter.next());
+                    editBillApartmentTF.setText((String) addIter.next());
+                    editBillCityTF.setText((String) addIter.next());
+                    editBillProvinceCB.setSelectedItem(addIter.next());
+                    editBillCountryTF.setText((String) addIter.next());
+                    editBillPostalCodeTF.setText((String) addIter.next());
                     editBillingSameAsShipping.setSelected(true);
-                    if (addIter.hasNext()) { // user has a billing address
-                        if (isShipping && isBilling) { // shipping == billing, user can only have 1 shipping/ billing address
-                            editBillStreetNumTF.setText("");
-                            editBillStreetNameTF.setText("");
-                            editBillApartmentTF.setText("");
-                            editBillCityTF.setText("");
-                            editBillProvinceCB.setSelectedItem("");
-                            editBillCountryTF.setText("");
-                            editBillPostalCodeTF.setText("");
-                        } else {
-                            editBillingSameAsShipping.setSelected(false);
-                            editBillStreetNumTF.setText((String) addIter.next());
-                            editBillStreetNameTF.setText((String) addIter.next());
-                            editBillApartmentTF.setText((String) addIter.next());
-                            editBillCityTF.setText((String) addIter.next());
-                            editBillProvinceCB.setSelectedItem(addIter.next());
-                            editBillCountryTF.setText((String) addIter.next());
-                            editBillPostalCodeTF.setText((String) addIter.next());
-                        }
+
+                    editBillingSameAsShipping.setSelected( // true if shipping address == billing address
+                        editBillStreetNumTF.getText().equals(editShippingStreetNumTF.getText()) &&
+                        editBillStreetNameTF.getText().equals(editShippingStreetNameTF.getText()) &&
+                        editBillApartmentTF.getText().equals(editShippingApartmentTF.getText()) &&
+                        editBillCityTF.getText().equals(editShippingCityTF.getText()) &&
+                        editBillProvinceCB.getSelectedIndex() == editShippingProvinceCB.getSelectedIndex() &&
+                        editBillCountryTF.getText().equals(editShippingCountryTF.getText()) &&
+                        editBillPostalCodeTF.getText().equals(editShippingPostalCodeTF.getText())
+                    );
+
+                    if (editBillingSameAsShipping.isSelected()) { // shipping == billing, user can only have 1 shipping/ billing address
+                        editBillStreetNumTF.setText("");
+                        editBillStreetNameTF.setText("");
+                        editBillApartmentTF.setText("");
+                        editBillCityTF.setText("");
+                        editBillProvinceCB.setSelectedItem("");
+                        editBillCountryTF.setText("");
+                        editBillPostalCodeTF.setText("");
                     }
                 }
             }
@@ -1726,23 +1731,23 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
 
         }
 
-        // Attempt to add the user to the database.
+        // Attempt to update the user in the database.
         if (DatabaseQueries.updateUser(currentUserNameLabel.getText(), new String(editPasswordTF.getPassword()), editFirstNameTF.getText(), editLastNameTF.getText(), editEmailTF.getText())) {
             DatabaseQueries.updateAdmin(currentUserNameLabel.getText(), editSalaryTF.getText());
         } else {
-            editUserErrorLabel.setText("Update Failed. A user with that username is not registered in the system. Proceed to \"Add User\" screen.");
             return false;
         }
 
         /* If we get here, the following insertion methods will not fail. */
-        // Add the editShippingping address.
+        // Update the user's addresses.
+        DatabaseQueries.updateAddress(currentUserNameLabel.getText(),editShippingStreetNumTF.getText(), editShippingStreetNameTF.getText(), editShippingApartmentTF.getText(), editShippingCityTF.getText(), Objects.requireNonNull(editShippingProvinceCB.getSelectedItem()).toString(), editShippingCountryTF.getText(), editShippingPostalCodeTF.getText(), true, false);
         if (!sameShipAndBill) {
             // Need to add the billing address as a separate address.
-            DatabaseQueries.updateAddress(currentUserNameLabel.getText(), editShippingStreetNumTF.getText(), editShippingStreetNameTF.getText(), editShippingApartmentTF.getText(), editShippingCityTF.getText(), Objects.requireNonNull(editShippingProvinceCB.getSelectedItem()).toString(), editShippingCountryTF.getText(), editShippingPostalCodeTF.getText(), true, false);
             DatabaseQueries.updateAddress(currentUserNameLabel.getText(), editBillStreetNumTF.getText(), editBillStreetNameTF.getText(), editBillApartmentTF.getText(), editBillCityTF.getText(), Objects.requireNonNull(editBillProvinceCB.getSelectedItem()).toString(), editBillCountryTF.getText(), editBillPostalCodeTF.getText(), false, true);
-        }else {
-            DatabaseQueries.updateAddress(currentUserNameLabel.getText(), editShippingStreetNumTF.getText(), editShippingStreetNameTF.getText(), editShippingApartmentTF.getText(), editShippingCityTF.getText(), Objects.requireNonNull(editShippingProvinceCB.getSelectedItem()).toString(), editShippingCountryTF.getText(), editShippingPostalCodeTF.getText(), true, true);
+        } else {
+            DatabaseQueries.updateAddress(currentUserNameLabel.getText(),editShippingStreetNumTF.getText(), editShippingStreetNameTF.getText(), editShippingApartmentTF.getText(), editShippingCityTF.getText(), Objects.requireNonNull(editShippingProvinceCB.getSelectedItem()).toString(), editShippingCountryTF.getText(), editShippingPostalCodeTF.getText(), false, true);
         }
+
         // Done.
         return true;
     }
@@ -1759,7 +1764,10 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
         if (o instanceof JButton) {
             switch (((JButton) o).getText()) {
                 case "Logout" -> FrontEndUtilities.confirmLogout(this); // Anywhere and everywhere
-                case "Search Users" -> fetchEditUserData(); // Admin Edit User Screen
+                case "Search Users" -> {
+                    fetchEditUserData();
+                    confirmUserEditLabel.setText("");
+                }// Admin Edit User Screen
                 case "Update User" -> {
                     if (sendEditUserData()) {
                         defaultAdminViewFields();
