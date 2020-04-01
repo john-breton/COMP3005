@@ -121,10 +121,10 @@ public class uploadBookData {
     private void addGenre(JsonArray genres) {
         genres.forEach(g -> {
             try {
-                statement.executeUpdate("INSERT INTO project.genre values ('" + g + "');");
+                statement.executeUpdate("INSERT INTO project.genre values ('" + g.toString().replaceAll("\"", "") + "');");
             } catch (SQLException e) {
                 if(!e.toString().equals("org.postgresql.util.PSQLException: ERROR: duplicate key value violates unique constraint \"genre_pkey\"\n" +
-                        "  Detail: Key (name)=(" + g + ") already exists.")){
+                        "  Detail: Key (name)=(" + g.toString().replaceAll("\"", "") + ") already exists.")){
                     System.out.println("Genre Error Code: " + e.getErrorCode());
                 }
             }
@@ -134,10 +134,10 @@ public class uploadBookData {
     private void addHasGenre(BigInteger isbn, JsonArray genres){
         genres.forEach(g -> {
             try {
-                statement.executeUpdate("INSERT INTO project.hasgenre values ('" + g + "', '" + isbn + "');");
+                statement.executeUpdate("INSERT INTO project.hasgenre values ('" + g.toString().replaceAll("\"", "") + "', '" + isbn + "');");
             } catch (SQLException e) {
                 if(!e.toString().equals("org.postgresql.util.PSQLException: ERROR: duplicate key value violates unique constraint \"hasgenre_pkey\"\n" +
-                        "  Detail: Key (name, isbn)=(" + g + ", " + isbn + ") already exists.")){
+                        "  Detail: Key (name, isbn)=(" + g.toString().replaceAll("\"", "") + ", " + isbn + ") already exists.")){
                     System.out.println("HasGenre Error Code: " + e.getErrorCode());
                 }
             }

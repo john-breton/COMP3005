@@ -347,4 +347,87 @@ public class DatabaseQueries {
         }
         return false;
     }
+
+    public static ArrayList<Object> lookForaBook(String isbn){
+        ArrayList<Object> bookInfo = new ArrayList<>();
+        int rowCount = 0;
+
+        try {
+            ResultSet result = statement.executeQuery("SELECT * FROM project.book natural join project.publishes WHERE isbn = " + isbn);
+
+            while (result.next()) {
+                rowCount++; // count results
+                bookInfo.add(result.getString("isbn"));
+                bookInfo.add(result.getString("name"));
+                bookInfo.add(result.getString("version"));
+                bookInfo.add(result.getString("num_pages"));
+                bookInfo.add(result.getString("price"));
+                bookInfo.add(result.getString("royalty"));
+                bookInfo.add(result.getString("stock"));
+                bookInfo.add(result.getString("pub_name"));
+                bookInfo.add(result.getString("year"));
+            }
+            // get author info
+            bookInfo.add(lookForaAuthor(isbn));
+            // get genres
+            bookInfo.add(lookForaGenre(isbn));
+
+            if (rowCount == 1) return bookInfo; // user found
+
+            if (rowCount == 0) return null;
+
+            // whaaaaaat
+            bookInfo.clear();
+            bookInfo.add("-1");
+            System.out.println("Houston, we gotta problem in lookForanAddress");
+            return bookInfo;
+
+        } catch (SQLException e) {
+            if(!e.toString().contains("invalid input syntax for type"))
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static ArrayList<String> lookForaAuthor(String isbn){
+        ArrayList<String> authInfo = new ArrayList<>();
+        int rowCount = 0;
+
+        try{
+            ResultSet result = statement.executeQuery("SELECT * FROM project.author natural join project.writes WHERE isbn = " + isbn);
+
+            while(result.next()){
+                rowCount++;
+                authInfo.add(result.getString("auth_fn") + " " + result.getString("auth_ln"));
+            }
+
+            if (rowCount > 0) return authInfo;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    public static ArrayList<String> lookForaGenre(String isbn){
+        ArrayList<String> genreInfo = new ArrayList<>();
+        int rowCount = 0;
+
+        try{
+            ResultSet result = statement.executeQuery("SELECT * FROM project.genre natural join project.hasgenre WHERE isbn = " + isbn);
+
+            while(result.next()){
+                rowCount++;
+                genreInfo.add(result.getString("name"));
+            }
+
+            if (rowCount > 0) return genreInfo;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
 }
