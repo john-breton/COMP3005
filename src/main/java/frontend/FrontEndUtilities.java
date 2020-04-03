@@ -6,8 +6,8 @@ import java.util.Objects;
 
 import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
 
-class FrontEndUtilities {
-    static final ImageIcon WINDOW_ICON = new ImageIcon(new ImageIcon(Objects.requireNonNull(Thread.currentThread().getContextClassLoader().getResource("logo.png"))).getImage());
+public class FrontEndUtilities {
+    public static final ImageIcon WINDOW_ICON = new ImageIcon(new ImageIcon(Objects.requireNonNull(Thread.currentThread().getContextClassLoader().getResource("logo.png"))).getImage());
     // JComboBox Arrays
     static final String[] resultFilterArr = {"Price", "A-Z", "Z-A", "Year"};
     static final String[] searchFilterArr = {"Title", "Author", "Genre", "ISBN", "Publisher", "Year"};
@@ -71,7 +71,7 @@ class FrontEndUtilities {
      * @param name The name of the JButton.
      * @return The newly created and correctly formatted JButton.
      */
-    static JButton formatButton(String name) {
+    public static JButton formatButton(String name) {
         JButton button = new JButton(name);
         button.setBackground(Color.WHITE);
         return button;
