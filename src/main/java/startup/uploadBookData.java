@@ -174,7 +174,9 @@ public class uploadBookData {
                 statement.executeUpdate("INSERT INTO project.publishes values ('" + newP + "', '" + isbn + "', '" + year + "');");
             } catch (SQLException e) {
                 if(!e.toString().equals("org.postgresql.util.PSQLException: ERROR: duplicate key value violates unique constraint \"publishes_pkey\"\n" +
-                        "  Detail: Key (pub_name, isbn)=(" + newP + ", " + isbn + ") already exists.")){
+                        "  Detail: Key (pub_name, isbn)=(" + newP + ", " + isbn + ") already exists.") &&
+                        !e.toString().equals("org.postgresql.util.PSQLException: ERROR: duplicate key value violates unique constraint \"publishes_isbn_key\"\n" +
+                "  Detail: Key (isbn)=(" + isbn + ") already exists.")){
                     System.out.println("Publishes Error Code: " + e.getErrorCode());
                 }
             }

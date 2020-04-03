@@ -1611,6 +1611,8 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
     /**
      * Sends edit user fields with appropriate data to the database
      * Updates user about success
+     *
+     * @return true if successful, false otherwise
      */
     private boolean sendEditUserData() {
         // Check to see if the password matches the confirm password textfield.
@@ -1754,6 +1756,9 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
         return true;
     }
 
+    /**
+     * Populates the edit book screen with information about a certain book
+     */
     private void fetchEditBookData(){
         ArrayList<Object> updateBookInfo = new ArrayList<>();
         if(!editBookSearchTF.getText().isEmpty()) updateBookInfo = DatabaseQueries.lookForaBook(editBookSearchTF.getText());
@@ -1823,6 +1828,11 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
         }
     }
 
+    /**
+     * Send the book information to the database to be updated
+     *
+     * @return return true if successful, false otherwise
+     */
     private boolean sendEditBookData(){
         // check all fields are not empty
         if(editBookTitleTF.getText().isEmpty() ||
@@ -1902,6 +1912,7 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
             default -> {return true;}
         }
     }
+
     /**
      * Implements ActionListeners for GUI components
      *

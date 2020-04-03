@@ -92,7 +92,7 @@ CREATE TABLE project.pubadd (
 
 CREATE TABLE project.publishes (
     pub_name 	character varying(200) REFERENCES project.publisher(name) NOT NULL,
-    isbn 		numeric(13,0) REFERENCES project.book(isbn) NOT NULL,
+    isbn 		numeric(13,0) REFERENCES project.book(isbn) NOT NULL UNIQUE,
     year 		numeric(4,0),
 
     CONSTRAINT publishes_pkey PRIMARY KEY (pub_name, isbn)
