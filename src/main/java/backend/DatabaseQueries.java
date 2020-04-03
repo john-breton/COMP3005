@@ -399,8 +399,8 @@ public class DatabaseQueries {
         ArrayList<String> authInfo = new ArrayList<>();
         int rowCount = 0;
 
-        try {
-            ResultSet result = statement.executeQuery("SELECT * FROM project.author natural join project.writes WHERE isbn = " + isbn);
+        try{
+            ResultSet result = statement.executeQuery(String.format("SELECT * FROM project.author natural join project.writes WHERE isbn =%s", isbn));
 
             while (result.next()) {
                 rowCount++;
@@ -426,8 +426,8 @@ public class DatabaseQueries {
         ArrayList<String> genreInfo = new ArrayList<>();
         int rowCount = 0;
 
-        try {
-            ResultSet result = statement.executeQuery("SELECT * FROM project.genre natural join project.hasgenre WHERE isbn = " + isbn);
+        try{
+            ResultSet result = statement.executeQuery(String.format("SELECT * FROM project.genre natural join project.hasgenre WHERE isbn = %s", isbn));
 
             while (result.next()) {
                 rowCount++;
