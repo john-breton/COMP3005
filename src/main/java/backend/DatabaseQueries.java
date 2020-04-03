@@ -430,4 +430,76 @@ public class DatabaseQueries {
 
         return null;
     }
+
+    public static int updateBook(String isbn, String title, String version, String pageCount, String year, String stock, String[] genres, String price, String royalty, String[] authors, String publisher){
+        try{
+            statement.executeUpdate("UPDATE project.book " +
+                    "SET name = '" + title + "'," +
+                    "version = '" + version + "'," +
+                    "num_pages = '" + pageCount + "'," +
+                    "price = '" + price + "'," +
+                    "royalty = '" + royalty + "'," +
+                    "stock = '" + stock + "'" +
+                    "WHERE isbn = '" + isbn + "'");
+            if(updatePublisher(isbn, publisher, year)) {
+                if (updateGenre(isbn, genres)) {
+                    if (updateAuthor(isbn, authors)) {
+                        return 0;
+                    } else return 1;
+                } else return 2;
+            }else return 3;
+        }catch(SQLException e){
+            e.printStackTrace();
+        }
+        return 4;
+    }
+
+    private static boolean updatePublisher(String isbn, String publisher, String year){
+        try{
+            statement.executeUpdate("UPDATE project.publishes " +
+                    "SET year = '" + year + "'," +
+                    "pub_name = '" + publisher + "'" +
+                    "WHERE isbn = '" + isbn + "'");
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    private static boolean updateGenre(String isbn, String[] genres){
+        try {
+            for(String s : genres) {
+                s = s.trim();
+                statement.executeUpdate("INSERT INTO project.genre " +
+                        "VALUES ('" + s + "')" +
+                        "ON CONFLICT (name) DO NOTHING");
+                statement.executeUpdate("INSERT INTO project.hasgenre " +
+                            "VALUES ('" + s + "', '" + isbn + "')" +
+                            "ON CONFLICT (name, isbn) DO NOTHING");
+            }
+            return true;
+        }catch(SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    private static boolean updateAuthor(String isbn, String[] authors){
+        try {
+            for(String s : authors) {
+                String[] names = s.trim().split(" ");
+                statement.executeUpdate("INSERT INTO project.author " +
+                        "VALUES ('" + names[0].trim() + "', '" + names[1].trim() + "')" +
+                        "ON CONFLICT (auth_fn, auth_ln) DO NOTHING");
+                statement.execute("INSERT INTO project.writes " +
+                        "VALUES ('" + names[0].trim() + "', '" + names[1].trim() +  "', '" + isbn + "')" +
+                        "ON CONFLICT (auth_fn, auth_ln, isbn) DO NOTHING");
+            }
+            return true;
+        }catch(SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 }

@@ -46,7 +46,7 @@ CREATE TABLE project.book (
     version 	numeric(2,0),
     num_pages 	numeric(4,0),
     price 		numeric(5,2),
-    royalty 	numeric(3,1),
+    royalty 	numeric(4,2),
     stock 		integer
 );
 

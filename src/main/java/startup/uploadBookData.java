@@ -102,7 +102,7 @@ public class uploadBookData {
             int version = 1;
             Random r = new Random();
             int price = r.nextInt(998) + 1;
-            double royalty = r.nextDouble();
+            double royalty = (r.nextInt(99) + 1) / 1.0;
             int stock = r.nextInt(1000) + 1;
 
             statement.executeUpdate("INSERT INTO project.book values(" + isbn +",'" + title + "'," + version + ", " + pgCnt + ", " + price + ", " + royalty + ", " + stock + ")");
