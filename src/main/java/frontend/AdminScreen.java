@@ -132,6 +132,13 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
         this.setPreferredSize(new Dimension(950, 800));
         c.removeAll();
 
+        billProvinceCB.setBackground(Color.WHITE);
+        pubProvinceCB.setBackground(Color.WHITE);
+        shippingAdminProvinceCB.setBackground(Color.WHITE);
+        billAdminProvinceCB.setBackground(Color.WHITE);
+        editShippingProvinceCB.setBackground(Color.WHITE);
+        editBillProvinceCB.setBackground(Color.WHITE);
+
         /* JMenu Setup */
         JMenuBar adminMenuBar = new JMenuBar();
         JMenu adminMenu = new JMenu("Admin");
@@ -1570,13 +1577,13 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
                     editBillingSameAsShipping.setSelected(true);
 
                     editBillingSameAsShipping.setSelected( // true if shipping address == billing address
-                        editBillStreetNumTF.getText().equals(editShippingStreetNumTF.getText()) &&
-                        editBillStreetNameTF.getText().equals(editShippingStreetNameTF.getText()) &&
-                        editBillApartmentTF.getText().equals(editShippingApartmentTF.getText()) &&
-                        editBillCityTF.getText().equals(editShippingCityTF.getText()) &&
-                        editBillProvinceCB.getSelectedIndex() == editShippingProvinceCB.getSelectedIndex() &&
-                        editBillCountryTF.getText().equals(editShippingCountryTF.getText()) &&
-                        editBillPostalCodeTF.getText().equals(editShippingPostalCodeTF.getText())
+                            editBillStreetNumTF.getText().equals(editShippingStreetNumTF.getText()) &&
+                                    editBillStreetNameTF.getText().equals(editShippingStreetNameTF.getText()) &&
+                                    editBillApartmentTF.getText().equals(editShippingApartmentTF.getText()) &&
+                                    editBillCityTF.getText().equals(editShippingCityTF.getText()) &&
+                                    editBillProvinceCB.getSelectedIndex() == editShippingProvinceCB.getSelectedIndex() &&
+                                    editBillCountryTF.getText().equals(editShippingCountryTF.getText()) &&
+                                    editBillPostalCodeTF.getText().equals(editShippingPostalCodeTF.getText())
                     );
 
                     if (editBillingSameAsShipping.isSelected()) { // shipping == billing, user can only have 1 shipping/ billing address
@@ -1645,7 +1652,7 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
         // Street Numbers
         {
             // Check for empty fields
-            if(!isUserAdminCB.isSelected()){
+            if (!isUserAdminCB.isSelected()) {
                 editSalaryTF.setText(null);
                 if (editShippingStreetNumTF.getText().length() == 0) {
                     editUserErrorLabel.setText("Update Failed. Shipping street number cannot be empty.");
@@ -1696,7 +1703,7 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
                     return false;
                 }
             } else {
-                if(editSalaryTF.getText().isEmpty()){
+                if (editSalaryTF.getText().isEmpty()) {
                     editUserErrorLabel.setText("Update Failed. Admins need a salary.");
                     return false;
                 }
@@ -1704,12 +1711,12 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
 
             // Check validity
             try {
-                if(!editShippingStreetNumTF.getText().isEmpty()) Double.parseDouble(editShippingStreetNumTF.getText());
+                if (!editShippingStreetNumTF.getText().isEmpty()) Double.parseDouble(editShippingStreetNumTF.getText());
                 if (!sameShipAndBill) {
-                    if(!editBillStreetNumTF.getText().isEmpty()) Double.parseDouble(editBillStreetNumTF.getText());
+                    if (!editBillStreetNumTF.getText().isEmpty()) Double.parseDouble(editBillStreetNumTF.getText());
                 }
-                if (isUserAdminCB.isSelected()){
-                    if(!editSalaryTF.getText().isEmpty()) Double.parseDouble(editSalaryTF.getText());
+                if (isUserAdminCB.isSelected()) {
+                    if (!editSalaryTF.getText().isEmpty()) Double.parseDouble(editSalaryTF.getText());
                 }
             } catch (NumberFormatException ex) {
                 editUserErrorLabel.setText("Update Failed. Street numbers cannot contain letters.");
@@ -1744,12 +1751,12 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
 
         /* If we get here, the following insertion methods will not fail. */
         // Update the user's addresses.
-        DatabaseQueries.updateAddress(currentUserNameLabel.getText(),editShippingStreetNumTF.getText(), editShippingStreetNameTF.getText(), editShippingApartmentTF.getText(), editShippingCityTF.getText(), Objects.requireNonNull(editShippingProvinceCB.getSelectedItem()).toString(), editShippingCountryTF.getText(), editShippingPostalCodeTF.getText(), true, false);
+        DatabaseQueries.updateAddress(currentUserNameLabel.getText(), editShippingStreetNumTF.getText(), editShippingStreetNameTF.getText(), editShippingApartmentTF.getText(), editShippingCityTF.getText(), Objects.requireNonNull(editShippingProvinceCB.getSelectedItem()).toString(), editShippingCountryTF.getText(), editShippingPostalCodeTF.getText(), true, false);
         if (!sameShipAndBill) {
             // Need to add the billing address as a separate address.
             DatabaseQueries.updateAddress(currentUserNameLabel.getText(), editBillStreetNumTF.getText(), editBillStreetNameTF.getText(), editBillApartmentTF.getText(), editBillCityTF.getText(), Objects.requireNonNull(editBillProvinceCB.getSelectedItem()).toString(), editBillCountryTF.getText(), editBillPostalCodeTF.getText(), false, true);
         } else {
-            DatabaseQueries.updateAddress(currentUserNameLabel.getText(),editShippingStreetNumTF.getText(), editShippingStreetNameTF.getText(), editShippingApartmentTF.getText(), editShippingCityTF.getText(), Objects.requireNonNull(editShippingProvinceCB.getSelectedItem()).toString(), editShippingCountryTF.getText(), editShippingPostalCodeTF.getText(), false, true);
+            DatabaseQueries.updateAddress(currentUserNameLabel.getText(), editShippingStreetNumTF.getText(), editShippingStreetNameTF.getText(), editShippingApartmentTF.getText(), editShippingCityTF.getText(), Objects.requireNonNull(editShippingProvinceCB.getSelectedItem()).toString(), editShippingCountryTF.getText(), editShippingPostalCodeTF.getText(), false, true);
         }
 
         // Done.
@@ -1759,14 +1766,15 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
     /**
      * Populates the edit book screen with information about a certain book
      */
-    private void fetchEditBookData(){
+    private void fetchEditBookData() {
         ArrayList<Object> updateBookInfo = new ArrayList<>();
-        if(!editBookSearchTF.getText().isEmpty()) updateBookInfo = DatabaseQueries.lookForaBook(editBookSearchTF.getText(), "isbn");
+        if (!editBookSearchTF.getText().isEmpty())
+            updateBookInfo = DatabaseQueries.lookForaBook(editBookSearchTF.getText(), "isbn");
 
-        if(editBookSearchTF.getText().isEmpty()){
+        if (editBookSearchTF.getText().isEmpty()) {
             defaultAdminViewFields();
             editBookErrorLabel.setText("Please enter an ISBN before searching");
-        } else if (updateBookInfo == null || updateBookInfo.size() == 0){
+        } else if (updateBookInfo == null || updateBookInfo.size() == 0) {
             defaultAdminViewFields();
             editBookErrorLabel.setText("Book not found. Please try again.");
         } else {
@@ -1789,24 +1797,24 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
             editBookYearTF.setText((String) bookItr.next());
 
             // the book has authors...DUH
-            if(bookItr.hasNext()){
+            if (bookItr.hasNext()) {
                 Iterator<String> authItr = ((ArrayList<String>) bookItr.next()).iterator();
 
-                while(authItr.hasNext()){
+                while (authItr.hasNext()) {
                     authors.append(authItr.next());
-                    if(authItr.hasNext())
+                    if (authItr.hasNext())
                         authors.append(", ");
                 }
             }
             editBookAuthorTF.setText(authors.toString());
 
             // the book has genres...again DUH
-            if(bookItr.hasNext()){
+            if (bookItr.hasNext()) {
                 Iterator<String> genItr = ((ArrayList<String>) bookItr.next()).iterator();
 
-                while(genItr.hasNext()){
+                while (genItr.hasNext()) {
                     genres.append(genItr.next());
-                    if(genItr.hasNext())
+                    if (genItr.hasNext())
                         genres.append(", ");
                 }
             }
@@ -1833,18 +1841,18 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
      *
      * @return return true if successful, false otherwise
      */
-    private boolean sendEditBookData(){
+    private boolean sendEditBookData() {
         // check all fields are not empty
-        if(editBookTitleTF.getText().isEmpty() ||
-        editBookVersionTF.getText().isEmpty() ||
-        editBookNumPagesTF.getText().isEmpty() ||
-        editBookYearTF.getText().isEmpty() ||
-        editBookStockTF.getText().isEmpty() ||
-        editBookGenreTF.getText().isEmpty() ||
-        editBookPriceTF.getText().isEmpty() ||
-        editBookRoyaltyTF.getText().isEmpty() ||
-        editBookAuthorTF.getText().isEmpty() ||
-        editBookPublisherTF.getText().isEmpty()){
+        if (editBookTitleTF.getText().isEmpty() ||
+                editBookVersionTF.getText().isEmpty() ||
+                editBookNumPagesTF.getText().isEmpty() ||
+                editBookYearTF.getText().isEmpty() ||
+                editBookStockTF.getText().isEmpty() ||
+                editBookGenreTF.getText().isEmpty() ||
+                editBookPriceTF.getText().isEmpty() ||
+                editBookRoyaltyTF.getText().isEmpty() ||
+                editBookAuthorTF.getText().isEmpty() ||
+                editBookPublisherTF.getText().isEmpty()) {
             editBookErrorLabel.setText("Update Failed. Please make all fields are filled out properly");
             return false;
         }
@@ -1853,31 +1861,31 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
         // version can only be numbers
         try {
             Double.parseDouble(editBookVersionTF.getText());
-        }catch(NumberFormatException e){
+        } catch (NumberFormatException e) {
             editBookErrorLabel.setText("Update Failed. Version cannot contain letters or spaces");
             return false;
         }
         // Page Count can only be numbers
         try {
             Double.parseDouble(editBookNumPagesTF.getText());
-        }catch(NumberFormatException e){
+        } catch (NumberFormatException e) {
             editBookErrorLabel.setText("Update Failed. Page Count cannot contain letters or spaces");
             return false;
         }
         // Stock can only be numbers
         try {
             Double.parseDouble(editBookStockTF.getText());
-        }catch(NumberFormatException e){
+        } catch (NumberFormatException e) {
             editBookErrorLabel.setText("Update Failed. Stock cannot contain letters or spaces");
             return false;
         }
         // Year can only be numbers && must be 4 characters
         try {
-            if(editBookYearTF.getText().length() != 4)
+            if (editBookYearTF.getText().length() != 4)
                 throw new IllegalArgumentException();
             Double.parseDouble(editBookYearTF.getText());
-        }catch(IllegalArgumentException e){
-            if(e instanceof NumberFormatException)
+        } catch (IllegalArgumentException e) {
+            if (e instanceof NumberFormatException)
                 editBookErrorLabel.setText("Update Failed. Year cannot contain letters or spaces");
             else editBookErrorLabel.setText("Update Failed. Year must be in the format: YYYY");
             return false;
@@ -1885,16 +1893,16 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
         // Price can only be numbers
         try {
             Double.parseDouble(editBookPriceTF.getText());
-        }catch(NumberFormatException e){
+        } catch (NumberFormatException e) {
             editBookErrorLabel.setText("Update Failed. Price cannot contain letters or spaces");
             return false;
         }
         // Royalty can only be numbers
         try {
-            if(Double.parseDouble(editBookRoyaltyTF.getText()) > 100.0)
+            if (Double.parseDouble(editBookRoyaltyTF.getText()) > 100.0)
                 throw new IllegalArgumentException();
-        }catch(IllegalArgumentException e){
-            if(e instanceof NumberFormatException)
+        } catch (IllegalArgumentException e) {
+            if (e instanceof NumberFormatException)
                 editBookErrorLabel.setText("Update Failed. Royalty cannot contain letters or spaces");
             else editBookErrorLabel.setText("Update Failed. Royalty cannot be greater than 100%");
             return false;
@@ -1903,13 +1911,26 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
         String[] genres = editBookGenreTF.getText().split(",");
         String[] authors = editBookAuthorTF.getText().split(",");
 
-        switch(DatabaseQueries.updateBook(currentISBNLabel.getText(), editBookTitleTF.getText(), editBookVersionTF.getText(), editBookNumPagesTF.getText(), editBookYearTF.getText(), editBookStockTF.getText(), genres, editBookPriceTF.getText(), editBookRoyaltyTF.getText(), authors, editBookPublisherTF.getText()))
-        {
-            case 1 -> {editBookErrorLabel.setText("There was an error with the given authors."); return false;}
-            case 2 -> {editBookErrorLabel.setText("There was an error with the given genre."); return false;}
-            case 3 -> {editBookErrorLabel.setText("There was an error with the given publisher."); return false;}
-            case 4 -> {editBookErrorLabel.setText("There was an error with the given book."); return false;}
-            default -> {return true;}
+        switch (DatabaseQueries.updateBook(currentISBNLabel.getText(), editBookTitleTF.getText(), editBookVersionTF.getText(), editBookNumPagesTF.getText(), editBookYearTF.getText(), editBookStockTF.getText(), genres, editBookPriceTF.getText(), editBookRoyaltyTF.getText(), authors, editBookPublisherTF.getText())) {
+            case 1 -> {
+                editBookErrorLabel.setText("There was an error with the given authors.");
+                return false;
+            }
+            case 2 -> {
+                editBookErrorLabel.setText("There was an error with the given genre.");
+                return false;
+            }
+            case 3 -> {
+                editBookErrorLabel.setText("There was an error with the given publisher.");
+                return false;
+            }
+            case 4 -> {
+                editBookErrorLabel.setText("There was an error with the given book.");
+                return false;
+            }
+            default -> {
+                return true;
+            }
         }
     }
 
@@ -1940,7 +1961,7 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
                     confirmBookEditLabel.setText("");
                 }// Admin Edit Books Screen
                 case "Update Book" -> {
-                    if(sendEditBookData()) {
+                    if (sendEditBookData()) {
                         defaultAdminViewFields();
                         confirmBookEditLabel.setText("Book Updated");
                     }

@@ -22,6 +22,9 @@ public class UserScreen extends JFrame implements ActionListener {
         if (this.getJMenuBar() != null) this.getJMenuBar().setVisible(false);
         c.removeAll();
 
+        searchFilters.setBackground(Color.WHITE);
+        resultFilters.setBackground(Color.WHITE);
+
         // Dimensions
         Dimension addRemoveButtonDimensions = new Dimension(25, 25);
         Dimension searchResultDimension = new Dimension(500, c.getHeight());
@@ -155,6 +158,7 @@ public class UserScreen extends JFrame implements ActionListener {
     private void search() {
         String searchText = userSearchTF.getText();
 
+        // TODO make this a label
         if (searchText.isEmpty()) {
             System.out.println("There's nothing here to search with!");
             return;
@@ -162,9 +166,13 @@ public class UserScreen extends JFrame implements ActionListener {
         String searchTerm = searchFilters.getSelectedItem().toString().toLowerCase();
         if (searchTerm.equals("title")) {
             searchTerm = "name";
+        } else if (searchTerm.equals("publisher")) {
+            searchTerm = "pub_name";
         }
 
+        // Execute the search.
         ArrayList<Object> results = DatabaseQueries.lookForaBook(searchText, searchTerm);
+
         if (searchResult == null) {
             System.out.println("Did not find any books matching that ISBN, please try again!");
         } else {

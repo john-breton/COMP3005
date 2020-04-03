@@ -52,6 +52,9 @@ public class RegistrationScreen extends JFrame implements ActionListener {
         Container c = this.getContentPane();
         c.removeAll();
 
+        shipProvinceCB.setBackground(Color.WHITE);
+        billProvinceCB.setBackground(Color.WHITE);
+
         // JButton
         JButton cancelReg = new JButton("Cancel Registration");
         JPanel buttons = new JPanel();
