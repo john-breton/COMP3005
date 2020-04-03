@@ -960,21 +960,21 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
         JButton searchBookButton = FrontEndUtilities.formatButton("Search Books");
 
         /* JLabel */
-        JLabel editBookLabel = new JLabel("Edit Book Information (required fields indicated by *): "),
+        JLabel editBookLabel = new JLabel("Edit Book Information (All fields are required, insert \"0\" if unknown): "),
                 searchISBNLabel = new JLabel("Search ISBNs"),
                 editISBNLabel = new JLabel("Book ISBN: ", JLabel.RIGHT),
-                editBookTitleLabel = new JLabel("*Title: "),
+                editBookTitleLabel = new JLabel("Title: "),
                 editBookVersionLabel = new JLabel("Version: "),
                 editBookGenreLabel = new JLabel("Genre(s): "),
                 editBookNumPagesLabel = new JLabel("Pg Count: ", JLabel.RIGHT),
-                editBookPriceLabel = new JLabel("*Price:"),
-                editBookRoyaltyLabel = new JLabel("*Royalty (%): ", JLabel.RIGHT),
+                editBookPriceLabel = new JLabel("Price ($):"),
+                editBookRoyaltyLabel = new JLabel("Royalty (%): ", JLabel.RIGHT),
                 editBookStockLabel = new JLabel("Stock:", JLabel.RIGHT),
                 editBookAuthorLabel = new JLabel("Author(s) "),
                 editBookAuthorNameLabel = new JLabel("Names: "),
                 editBookPublisherLabel = new JLabel("Publisher (be sure to add new publishers before editing books): "),
-                editBookYearLabel = new JLabel("Year: "),
-                accountingLabel = new JLabel("*Accounting: ");
+                editBookYearLabel = new JLabel("Year (YYYY): "),
+                accountingLabel = new JLabel("Accounting: ");
 
         /* ActionListeners */
         logoutButton.addActionListener(this);
@@ -1049,6 +1049,7 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
             con.gridx = 1;
             editBookPanel.add(editBookYearLabel, con);
             con.gridx = 2;
+            editBookYearTF.setToolTipText("If year is < 1000, add leading 0's");
             editBookPanel.add(editBookYearTF, con);
             con.gridx = 3;
             editBookPanel.add(editBookStockLabel, con);
@@ -1060,8 +1061,9 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
             editBookPanel.add(editBookGenreLabel, con);
             con.gridwidth = 3;
             con.gridx = 2;
-            editBookGenreTF.setToolTipText("Enter Genres, separated by a \",\"");
+            editBookGenreTF.setToolTipText("Enter genres, separated by a \",\". No genre can contain a \" \"");
             editBookGenreTF.setLineWrap(true);
+            editBookGenreTF.setWrapStyleWord(true);
             editBookPanel.add(new JScrollPane(editBookGenreTF), con);
 
             con.gridwidth = 1;
@@ -1099,6 +1101,7 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
             con.gridwidth = 3;
             editBookAuthorTF.setToolTipText("Enter author's names, separated by a \",\"");
             editBookAuthorTF.setLineWrap(true);
+            editBookAuthorTF.setWrapStyleWord(true);
             editBookPanel.add(new JScrollPane(editBookAuthorTF), con);
 
             con.gridy = 14;
@@ -1608,6 +1611,8 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
     /**
      * Sends edit user fields with appropriate data to the database
      * Updates user about success
+     *
+     * @return true if successful, false otherwise
      */
     private boolean sendEditUserData() {
         // Check to see if the password matches the confirm password textfield.
@@ -1751,6 +1756,9 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
         return true;
     }
 
+    /**
+     * Populates the edit book screen with information about a certain book
+     */
     private void fetchEditBookData(){
         ArrayList<Object> updateBookInfo = new ArrayList<>();
         if(!editBookSearchTF.getText().isEmpty()) updateBookInfo = DatabaseQueries.lookForaBook(editBookSearchTF.getText(), "isbn");
@@ -1762,7 +1770,7 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
             defaultAdminViewFields();
             editBookErrorLabel.setText("Book not found. Please try again.");
         } else {
-            Iterator bookItr = updateBookInfo.iterator();
+            Iterator<Object> bookItr = updateBookInfo.iterator();
             StringBuilder authors = new StringBuilder();
             StringBuilder genres = new StringBuilder();
             editBookErrorLabel.setText(""); // clear errors + search bar
@@ -1780,8 +1788,9 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
             editBookPublisherTF.setText((String) bookItr.next());
             editBookYearTF.setText((String) bookItr.next());
 
-            if(bookItr.hasNext()){ // the book has authors...DUH
-                Iterator authItr = ((ArrayList<String>) bookItr.next()).iterator();
+            // the book has authors...DUH
+            if(bookItr.hasNext()){
+                Iterator<String> authItr = ((ArrayList<String>) bookItr.next()).iterator();
 
                 while(authItr.hasNext()){
                     authors.append(authItr.next());
@@ -1791,8 +1800,9 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
             }
             editBookAuthorTF.setText(authors.toString());
 
-            if(bookItr.hasNext()){ // the book has genres...again DUH
-                Iterator genItr = ((ArrayList<String>) bookItr.next()).iterator();
+            // the book has genres...again DUH
+            if(bookItr.hasNext()){
+                Iterator<String> genItr = ((ArrayList<String>) bookItr.next()).iterator();
 
                 while(genItr.hasNext()){
                     genres.append(genItr.next());
@@ -1817,6 +1827,92 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
             editBookGenreTF.setEnabled(true);
         }
     }
+
+    /**
+     * Send the book information to the database to be updated
+     *
+     * @return return true if successful, false otherwise
+     */
+    private boolean sendEditBookData(){
+        // check all fields are not empty
+        if(editBookTitleTF.getText().isEmpty() ||
+        editBookVersionTF.getText().isEmpty() ||
+        editBookNumPagesTF.getText().isEmpty() ||
+        editBookYearTF.getText().isEmpty() ||
+        editBookStockTF.getText().isEmpty() ||
+        editBookGenreTF.getText().isEmpty() ||
+        editBookPriceTF.getText().isEmpty() ||
+        editBookRoyaltyTF.getText().isEmpty() ||
+        editBookAuthorTF.getText().isEmpty() ||
+        editBookPublisherTF.getText().isEmpty()){
+            editBookErrorLabel.setText("Update Failed. Please make all fields are filled out properly");
+            return false;
+        }
+
+        // check all fields are valid
+        // version can only be numbers
+        try {
+            Double.parseDouble(editBookVersionTF.getText());
+        }catch(NumberFormatException e){
+            editBookErrorLabel.setText("Update Failed. Version cannot contain letters or spaces");
+            return false;
+        }
+        // Page Count can only be numbers
+        try {
+            Double.parseDouble(editBookNumPagesTF.getText());
+        }catch(NumberFormatException e){
+            editBookErrorLabel.setText("Update Failed. Page Count cannot contain letters or spaces");
+            return false;
+        }
+        // Stock can only be numbers
+        try {
+            Double.parseDouble(editBookStockTF.getText());
+        }catch(NumberFormatException e){
+            editBookErrorLabel.setText("Update Failed. Stock cannot contain letters or spaces");
+            return false;
+        }
+        // Year can only be numbers && must be 4 characters
+        try {
+            if(editBookYearTF.getText().length() != 4)
+                throw new IllegalArgumentException();
+            Double.parseDouble(editBookYearTF.getText());
+        }catch(IllegalArgumentException e){
+            if(e instanceof NumberFormatException)
+                editBookErrorLabel.setText("Update Failed. Year cannot contain letters or spaces");
+            else editBookErrorLabel.setText("Update Failed. Year must be in the format: YYYY");
+            return false;
+        }
+        // Price can only be numbers
+        try {
+            Double.parseDouble(editBookPriceTF.getText());
+        }catch(NumberFormatException e){
+            editBookErrorLabel.setText("Update Failed. Price cannot contain letters or spaces");
+            return false;
+        }
+        // Royalty can only be numbers
+        try {
+            if(Double.parseDouble(editBookRoyaltyTF.getText()) > 100.0)
+                throw new IllegalArgumentException();
+        }catch(IllegalArgumentException e){
+            if(e instanceof NumberFormatException)
+                editBookErrorLabel.setText("Update Failed. Royalty cannot contain letters or spaces");
+            else editBookErrorLabel.setText("Update Failed. Royalty cannot be greater than 100%");
+            return false;
+        }
+
+        String[] genres = editBookGenreTF.getText().split(",");
+        String[] authors = editBookAuthorTF.getText().split(",");
+
+        switch(DatabaseQueries.updateBook(currentISBNLabel.getText(), editBookTitleTF.getText(), editBookVersionTF.getText(), editBookNumPagesTF.getText(), editBookYearTF.getText(), editBookStockTF.getText(), genres, editBookPriceTF.getText(), editBookRoyaltyTF.getText(), authors, editBookPublisherTF.getText()))
+        {
+            case 1 -> {editBookErrorLabel.setText("There was an error with the given authors."); return false;}
+            case 2 -> {editBookErrorLabel.setText("There was an error with the given genre."); return false;}
+            case 3 -> {editBookErrorLabel.setText("There was an error with the given publisher."); return false;}
+            case 4 -> {editBookErrorLabel.setText("There was an error with the given book."); return false;}
+            default -> {return true;}
+        }
+    }
+
     /**
      * Implements ActionListeners for GUI components
      *
@@ -1844,8 +1940,10 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
                     confirmBookEditLabel.setText("");
                 }// Admin Edit Books Screen
                 case "Update Book" -> {
-                    defaultAdminViewFields();
-                    confirmBookEditLabel.setText("Book Updated");
+                    if(sendEditBookData()) {
+                        defaultAdminViewFields();
+                        confirmBookEditLabel.setText("Book Updated");
+                    }
                 } // Admin Edit Books Screen
                 case "Add Book" -> {
                     defaultAdminViewFields();

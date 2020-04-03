@@ -46,7 +46,7 @@ CREATE TABLE project.book (
     version 	numeric(2,0),
     num_pages 	numeric(4,0),
     price 		numeric(5,2),
-    royalty 	numeric(3,1),
+    royalty 	numeric(4,2),
     stock 		integer
 );
 
@@ -92,7 +92,7 @@ CREATE TABLE project.pubadd (
 
 CREATE TABLE project.publishes (
     pub_name 	character varying(200) REFERENCES project.publisher(name) NOT NULL,
-    isbn 		numeric(13,0) REFERENCES project.book(isbn) NOT NULL,
+    isbn 		numeric(13,0) REFERENCES project.book(isbn) NOT NULL UNIQUE,
     year 		numeric(4,0),
 
     CONSTRAINT publishes_pkey PRIMARY KEY (pub_name, isbn)

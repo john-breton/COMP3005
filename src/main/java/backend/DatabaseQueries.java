@@ -143,27 +143,23 @@ public class DatabaseQueries {
      * @param username   The username associated with the address.
      * @param isShipping True if the address is a shipping address, false otherwise.
      * @param isBilling  True if the address is a shipping address, false otherwise.
-     * @return True if the insertion was successful, false otherwise.
      */
-    public static boolean addHasAdd(String username, boolean isShipping, boolean isBilling) {
+    public static void addHasAdd(String username, boolean isShipping, boolean isBilling) {
         try {
             statement.execute("INSERT into project.hasadd " +
                     "values ('" + username +
                     "', nextval('project.hasadd_add_id_seq'),'"
                     + isShipping + "', '" + isBilling + "')");
-            return true;
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return false;
     }
 
     /**
      * Query user information from the database.
      *
      * @param username The username that was entered.
-     * @return ArrayList of user credentials from the database. [0] = username, [1] = password, [2] = first name, [3] = last name, [4] = email, [5] = salary
-     * null if no user found.
+     * @return ArrayList of user credentials from the database. [0] = username, [1] = password, [2] = first name, [3] = last name, [4] = email, [5] = salary null if no user found.
      */
     public static ArrayList<Object> lookForaUser(String username) {
         ArrayList<Object> userCred = new ArrayList<>();
@@ -280,30 +276,27 @@ public class DatabaseQueries {
      *
      * @param username username to be updated
      * @param salary   new salary
-     * @return true if admin relation is updated, false otherwise
      */
-    public static boolean updateAdmin(String username, String salary) {
+    public static void updateAdmin(String username, String salary) {
         try {
             if (salary == null || salary.isEmpty()) {
-                int rowsAffected = statement.executeUpdate("UPDATE project.librarian " +
+                statement.executeUpdate("UPDATE project.librarian " +
                         "SET salary = NULL " +
                         "WHERE user_name = '" + username + "'");
-                return rowsAffected == 1; //true if admin deleted
             } else {
-                int rowsAffected = statement.executeUpdate("INSERT INTO project.librarian " +
+                statement.executeUpdate("INSERT INTO project.librarian " +
                         "values('" + username + "','" + salary + "') " +
                         "ON CONFLICT (user_name) DO UPDATE SET salary = '" + salary + "'");
-                return rowsAffected == 1; // true if admin updated or added
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return false;
     }
 
     /**
      * Query the addresses to update user's address
      *
+     * @param username   the username
      * @param num        the num
      * @param name       the name
      * @param apartment  the apartment
@@ -311,14 +304,13 @@ public class DatabaseQueries {
      * @param prov       the province
      * @param country    the country
      * @param postalCode the postal code
-     * @return true if successful update, false otherwise
+     * @param isShipping the is shipping
+     * @param isBilling  the is billing
      */
-    public static boolean updateAddress(String username, String num, String name, String apartment, String city, String prov, String country, String postalCode, boolean isShipping, boolean isBilling) {
+    public static void updateAddress(String username, String num, String name, String apartment, String city, String prov, String country, String postalCode, boolean isShipping, boolean isBilling){
         // attempt to update address
         try {
-            int rowsAffected = 0;
-            String add_id = null;
-            ResultSet result = statement.executeQuery("UPDATE project.address " +
+            int rowsAffected = statement.executeUpdate("UPDATE project.address " +
                     "SET street_num = '" + num + "'," +
                     "street_name = '" + name + "'," +
                     "apartment = '" + apartment + "'," +
@@ -332,19 +324,15 @@ public class DatabaseQueries {
                     "AND project.hasadd.isshipping = '" + isShipping + "'" +
                     "RETURNING project.hasadd.add_id");
 
-            while (result.next()) {
-                rowsAffected++;
-                add_id = result.getString("add_id");
-            }
-
-            if (rowsAffected == 0) { //user doesn't have an address yet
-                return addAddress(num, name, apartment, city, prov, country, postalCode) && addHasAdd(username, isShipping, isBilling);
+            if(rowsAffected == 0) { //user doesn't have an address yet
+                if (addAddress(num, name, apartment, city, prov, country, postalCode)) {
+                    addHasAdd(username, isShipping, isBilling);
+                }
             }
 
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return false;
     }
 
     /**
@@ -388,17 +376,16 @@ public class DatabaseQueries {
             // We can find more than one book given the parameters.
             if (rowCount >= 1) return bookInfo; // book found
 
-            if (rowCount == 0) return null;
+            if (rowCount == 0) return null; // no isbn found
 
-            // whaaaaaat
+            // whaaaaaat (more that one or less than 0 ISBNs found??)
             bookInfo.clear();
             bookInfo.add("-1");
-            System.out.println("Houston, we gotta problem in lookForanAddress");
+            System.out.println("Houston, we gotta problem in lookForaBook");
             return bookInfo;
 
         } catch (SQLException e) {
-            if (!e.toString().contains("invalid input syntax for type"))
-                e.printStackTrace();
+            e.printStackTrace();
         }
         return null;
     }
@@ -455,5 +442,126 @@ public class DatabaseQueries {
         }
 
         return null;
+    }
+
+    /**
+     * Update a book's information within the database
+     *
+     * @param isbn      the current isbn (can't be changed)
+     * @param title     the new title
+     * @param version   the new version
+     * @param pageCount the new page count
+     * @param year      the new year
+     * @param stock     the new stock
+     * @param genres    the new genres
+     * @param price     the new price
+     * @param royalty   the new royalty
+     * @param authors   the new authors
+     * @param publisher the new publisher
+     * @return 0 if successful update of all attributes, 1 if error with the author information, 2 if error with the genre information, 3 if error with publisher information, 4 if error with book information
+     */
+    public static int updateBook(String isbn, String title, String version, String pageCount, String year, String stock, String[] genres, String price, String royalty, String[] authors, String publisher){
+        try{
+            // attempt update of book info
+            statement.executeUpdate("UPDATE project.book " +
+                    "SET name = '" + title + "'," +
+                    "version = '" + version + "'," +
+                    "num_pages = '" + pageCount + "'," +
+                    "price = '" + price + "'," +
+                    "royalty = '" + royalty + "'," +
+                    "stock = '" + stock + "'" +
+                    "WHERE isbn = '" + isbn + "'");
+            // attempt update of publisher info
+            if(updatePublisher(isbn, publisher, year)) {
+                // attempt update of genre ino
+                if (updateGenre(isbn, genres)) {
+                    // attempt update of author info
+                    if (updateAuthor(isbn, authors)) {
+                        return 0;
+                    } else return 1;
+                } else return 2;
+            }else return 3;
+        }catch(SQLException e){
+            e.printStackTrace();
+        }
+        return 4;
+    }
+
+    /**
+     * Update a book's publisher within the database
+     *
+     * @param isbn The isbn of the book
+     * @param publisher The name of the publisher
+     * @param year The year of publication
+     * @return True if an existing publisher was updated as publisher of the book, false if no publisher is present
+     */
+    private static boolean updatePublisher(String isbn, String publisher, String year) {
+        boolean result = false;
+        try {
+            statement.executeUpdate("UPDATE project.publishes " +
+                    "SET year = '" + year + "'," +
+                    "pub_name = '" + publisher + "'" +
+                    "WHERE isbn = '" + isbn + "'");
+            result = true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    /**
+     * Update a book's genre info within the database
+     *
+     * @param isbn The isbn of the book
+     * @param genres The list of genres for that book
+     * @return true if successful update, false otherwise
+     */
+    private static boolean updateGenre(String isbn, String[] genres){
+        try {
+            statement.executeUpdate("DELETE FROM project.hasgenre WHERE isbn = '" + isbn + "'"); // delete all the book's current genre info in order to update
+            for(String s : genres) {
+                s = s.trim();
+                // attempt to insert the genre info into the genre entity, do nothing if the genre already exists
+                statement.executeUpdate("INSERT INTO project.genre " +
+                        "VALUES ('" + s + "')" +
+                        "ON CONFLICT (name) DO NOTHING");
+                // attempt to update the book to have that genre, do nothing if the relationship already exists
+                statement.executeUpdate("INSERT INTO project.hasgenre " +
+                            "VALUES ('" + s + "', '" + isbn + "')" +
+                            "ON CONFLICT (name, isbn) DO NOTHING");
+            }
+            return true;
+        }catch(SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    /**
+     * Update the book's author info within the database
+     *
+     * @param isbn The isbn of the current book
+     * @param authors The list of authors for the current book
+     * @return true if successful, false otherwise
+     */
+    private static boolean updateAuthor(String isbn, String[] authors){
+        try {
+            statement.executeUpdate("DELETE FROM project.writes WHERE isbn = '" + isbn + "'"); // delete all authors from the current book
+            for(String s : authors) {
+                String[] names = s.trim().split(" ");
+                // attempt to insert the author's names into the database, do nothing if that author already exists
+                statement.executeUpdate("INSERT INTO project.author " +
+                        "VALUES ('" + names[0].trim() + "', '" + names[1].trim() + "')" +
+                        "ON CONFLICT (auth_fn, auth_ln) DO NOTHING");
+                // attempt to insert the relationship between author and book into the database, do nothing if the relationship already exists
+                statement.execute("INSERT INTO project.writes " +
+                        "VALUES ('" + names[0].trim() + "', '" + names[1].trim() +  "', '" + isbn + "')" +
+                        "ON CONFLICT (auth_fn, auth_ln, isbn) DO NOTHING");
+            }
+            return true;
+        }catch(SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 }
