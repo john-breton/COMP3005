@@ -346,7 +346,7 @@ public class DatabaseQueries {
         int rowCount = 0; // how many rows found with the given isbn (should be 1 or 0)
 
         try {
-            ResultSet result = statement.executeQuery("SELECT * FROM project.book natural join project.publishes WHERE isbn =" + isbn); // retrieve all books and publisher information with the given isbn
+            ResultSet result = statement.executeQuery(String.format("SELECT * FROM project.book natural join project.publishes WHERE isbn =%s", isbn)); // retrieve all books and publisher information with the given isbn
 
             while (result.next()) {
                 rowCount++; // count results
@@ -392,7 +392,7 @@ public class DatabaseQueries {
         int rowCount = 0;
 
         try{
-            ResultSet result = statement.executeQuery("SELECT * FROM project.author natural join project.writes WHERE isbn =" + isbn);
+            ResultSet result = statement.executeQuery(String.format("SELECT * FROM project.author natural join project.writes WHERE isbn =%s", isbn));
 
             while(result.next()){
                 rowCount++;
@@ -419,7 +419,7 @@ public class DatabaseQueries {
         int rowCount = 0;
 
         try{
-            ResultSet result = statement.executeQuery("SELECT * FROM project.genre natural join project.hasgenre WHERE isbn =" + isbn);
+            ResultSet result = statement.executeQuery(String.format("SELECT * FROM project.genre natural join project.hasgenre WHERE isbn = %s", isbn));
 
             while(result.next()){
                 rowCount++;

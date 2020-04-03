@@ -132,8 +132,11 @@ CREATE TABLE project.checkout (
 CREATE TABLE project.ordadd (
     order_num 	SERIAL NOT NULL REFERENCES project.order(order_num),
     add_id 		SERIAL NOT NULL REFERENCES project.address(add_id),
+    isshipping  boolean NOT NULL,
+    isbilling   boolean NOT NULL,
 
-    CONSTRAINT	ordadd_pkey PRIMARY KEY (order_num, add_id)
+    CONSTRAINT	ordadd_pkey PRIMARY KEY (order_num, add_id),
+    UNIQUE (order_num, isshipping, isbilling)
 
 );
 

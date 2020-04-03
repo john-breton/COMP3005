@@ -36,15 +36,16 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
     private final JTextField newISBNTF = new JTextField(15),
             newBookTitleTF = new JTextField(15),
             newBookVersionTF = new JTextField(15),
-            newBookGenreTF = new JTextField(15),
             newBookNumPagesTF = new JTextField(15),
             newBookPriceTF = new JTextField(15),
             newBookRoyaltyTF = new JTextField(15),
             newBookStockTF = new JTextField("0", 15),
-            newBookAuthorFNTF = new JTextField(15),
-            newBookAuthorLNTF = new JTextField(15),
             newBookPublisherTF = new JTextField(15),
             newBookYearTF = new JTextField(15);
+    private final JTextArea
+            newBookGenreTF = new JTextArea(),
+            newBookAuthorNameTF = new JTextArea();
+
     // addPublisher
     private final JTextField newPublisherNameTF = new JTextField(15),
             newPublisherStreetNumTF = new JTextField(5),
@@ -182,8 +183,7 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
         newBookYearTF.setText("");
         newBookPriceTF.setText("");
         newBookRoyaltyTF.setText("");
-        newBookAuthorFNTF.setText("");
-        newBookAuthorLNTF.setText("");
+        newBookAuthorNameTF.setText("");
         newBookPublisherTF.setText("");
         addBookErrorLabel.setText("");
         confirmNewBookAddition.setText("");
@@ -334,21 +334,20 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
         JButton addBookButton = FrontEndUtilities.formatButton("Add Book");
 
         /* JLabels */
-        JLabel newBookLabel = new JLabel("Enter Book Information (required fields indicated by *): "),
-                newISBNLabel = new JLabel("*ISBN: ", JLabel.RIGHT), // this doesn't work and idk why
-                newBookTitleLabel = new JLabel("*Title: "),
+        JLabel newBookLabel = new JLabel("Enter Book Information (All fields are required, insert \"0\" if unknown):"),
+                newISBNLabel = new JLabel("ISBN: ", JLabel.RIGHT), // this doesn't work and idk why
+                newBookTitleLabel = new JLabel("Title: "),
                 newBookVersionLabel = new JLabel("Version: "),
-                newBookGenreLabel = new JLabel("Genre: "),
+                newBookGenreLabel = new JLabel("Genre(s): "),
                 newBookNumPagesLabel = new JLabel("Pg Count: ", JLabel.RIGHT),
-                newBookPriceLabel = new JLabel("*Price:"),
-                newBookRoyaltyLabel = new JLabel("*Royalty (%): ", JLabel.RIGHT),
-                newBookStockLabel = new JLabel("Stock:", JLabel.RIGHT),
-                newBookAuthorLabel = new JLabel("Author: "),
-                newBookAuthorFNLabel = new JLabel("First Name: "),
-                newBookAuthorLNLabel = new JLabel("Last Name: ", JLabel.RIGHT),
+                newBookPriceLabel = new JLabel("Price:"),
+                newBookRoyaltyLabel = new JLabel("Royalty (%): ", JLabel.RIGHT),
+                newBookStockLabel = new JLabel("Stock: ", JLabel.RIGHT),
+                newBookAuthorLabel = new JLabel("Author(s) "),
+                newBookAuthorNameLabel = new JLabel("Name: "),
                 newBookPublisherLabel = new JLabel("Publisher (be sure to add new publishers before adding books): "),
-                newBookYearLabel = new JLabel("Year: "),
-                accountingLabel = new JLabel("*Accounting: ");
+                newBookYearLabel = new JLabel("Year (YYYY): "),
+                accountingLabel = new JLabel("Accounting: ");
 
         /* ActionListeners */
         logoutAddBookButton.addActionListener(this);
@@ -382,9 +381,10 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
             bookCon.gridy = 2;
             bookCon.gridx = 1;
             bookCon.gridwidth = 1;
+            bookCon.fill = GridBagConstraints.HORIZONTAL;
             addNewBookPanel.add(newBookTitleLabel, bookCon);
             bookCon.gridx = 2;
-            addNewBookPanel.add(newBookTitleTF, bookCon);
+            addNewBookPanel.add(new JScrollPane(newBookTitleTF), bookCon);
             bookCon.gridx = 3;
             addNewBookPanel.add(newISBNLabel, bookCon);
             bookCon.gridx = 4;
@@ -402,9 +402,10 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
 
             bookCon.gridy = 4;
             bookCon.gridx = 1;
-            addNewBookPanel.add(newBookGenreLabel, bookCon);
+            addNewBookPanel.add(newBookYearLabel, bookCon);
             bookCon.gridx = 2;
-            addNewBookPanel.add(newBookGenreTF, bookCon);
+            newBookYearTF.setToolTipText("If year is < 1000, add leading 0's");
+            addNewBookPanel.add(newBookYearTF, bookCon);
             bookCon.gridx = 3;
             addNewBookPanel.add(newBookStockLabel, bookCon);
             bookCon.gridx = 4;
@@ -412,10 +413,15 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
 
             bookCon.gridy = 5;
             bookCon.gridx = 1;
-            addNewBookPanel.add(newBookYearLabel, bookCon);
+            addNewBookPanel.add(newBookGenreLabel, bookCon);
             bookCon.gridx = 2;
-            addNewBookPanel.add(newBookYearTF, bookCon);
+            bookCon.gridwidth = 3;
+            newBookGenreTF.setToolTipText("Enter genres, separated by a \",\". No genre can contain a \" \"");
+            newBookGenreTF.setLineWrap(true);
+            newBookGenreTF.setWrapStyleWord(true);
+            addNewBookPanel.add(new JScrollPane(newBookGenreTF), bookCon);
 
+            bookCon.gridwidth = 1;
             bookCon.gridy = 6;
             bookCon.gridx = 1;
             addNewBookPanel.add(Box.createRigidArea(spacer), bookCon);
@@ -446,14 +452,15 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
 
             bookCon.gridy = 11;
             bookCon.gridx = 1;
-            addNewBookPanel.add(newBookAuthorFNLabel, bookCon);
+            addNewBookPanel.add(newBookAuthorNameLabel, bookCon);
             bookCon.gridx = 2;
-            addNewBookPanel.add(newBookAuthorFNTF, bookCon);
-            bookCon.gridx = 3;
-            addNewBookPanel.add(newBookAuthorLNLabel, bookCon);
-            bookCon.gridx = 4;
-            addNewBookPanel.add(newBookAuthorLNTF, bookCon);
+            bookCon.gridwidth = 3;
+            newBookAuthorNameTF.setToolTipText("Enter author's names, separated by a \",\"");
+            newBookAuthorNameTF.setLineWrap(true);
+            newBookAuthorNameTF.setWrapStyleWord(true);
+            addNewBookPanel.add(new JScrollPane(newBookAuthorNameTF), bookCon);
 
+            bookCon.gridwidth = 1;
             bookCon.gridy = 12;
             bookCon.gridx = 1;
             addNewBookPanel.add(Box.createRigidArea(spacer), bookCon);
@@ -969,7 +976,7 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
                 editBookNumPagesLabel = new JLabel("Pg Count: ", JLabel.RIGHT),
                 editBookPriceLabel = new JLabel("Price ($):"),
                 editBookRoyaltyLabel = new JLabel("Royalty (%): ", JLabel.RIGHT),
-                editBookStockLabel = new JLabel("Stock:", JLabel.RIGHT),
+                editBookStockLabel = new JLabel("Stock: ", JLabel.RIGHT),
                 editBookAuthorLabel = new JLabel("Author(s) "),
                 editBookAuthorNameLabel = new JLabel("Names: "),
                 editBookPublisherLabel = new JLabel("Publisher (be sure to add new publishers before editing books): "),
@@ -1584,7 +1591,7 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
                         editBillStreetNameTF.setText("");
                         editBillApartmentTF.setText("");
                         editBillCityTF.setText("");
-                        editBillProvinceCB.setSelectedItem("");
+                        editBillProvinceCB.setSelectedItem("--");
                         editBillCountryTF.setText("");
                         editBillPostalCodeTF.setText("");
                     }
@@ -1719,7 +1726,7 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
                 editUserErrorLabel.setText("Update Failed. Shipping city cannot contain numerical values.");
                 return false;
             }
-            if (FrontEndUtilities.check(editBillCityTF.getText())) {
+            if (!sameShipAndBill && FrontEndUtilities.check(editBillCityTF.getText())) {
                 editUserErrorLabel.setText("Update Failed. Billing city cannot contain numerical values.");
                 return false;
             }
@@ -1727,7 +1734,7 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
                 editUserErrorLabel.setText("Update Failed. Shipping country cannot contain numerical values.");
                 return false;
             }
-            if (FrontEndUtilities.check(editBillCountryTF.getText())) {
+            if (!sameShipAndBill && FrontEndUtilities.check(editBillCountryTF.getText())) {
                 editUserErrorLabel.setText("Update Failed. Billing country cannot contain numerical values.");
                 return false;
             }

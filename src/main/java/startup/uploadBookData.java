@@ -105,7 +105,7 @@ public class uploadBookData {
             double royalty = (r.nextInt(99) + 1) / 1.0;
             int stock = r.nextInt(1000) + 1;
 
-            statement.executeUpdate("INSERT INTO project.book values(" + isbn + ",'" + title + "'," + version + "," + pgCnt + "," + price + "," + royalty + "," + stock + ")");
+            statement.executeUpdate(String.format("INSERT INTO project.book values(%s,'%s',%d,%d,%d,%s,%d)", isbn, title, version, pgCnt, price, royalty, stock));
         } catch (SQLException e) {
             if(!e.toString().equals("org.postgresql.util.PSQLException: ERROR: duplicate key value violates unique constraint \"book_pkey\"\n" +
                     "  Detail: Key (isbn)=(" + isbn + ") already exists.")){
@@ -157,7 +157,7 @@ public class uploadBookData {
         publishers.forEach(p -> {
             String newP = p.getAsString().replaceAll("'","");
             try {
-                statement.executeUpdate("INSERT INTO project.publisher values ('" + newP + "','" + defaultEmail + "', " + phoneNum + ", " + bankAcc + ");");
+                statement.executeUpdate(String.format("INSERT INTO project.publisher values ('%s','%s', %d, %d);", newP, defaultEmail, phoneNum, bankAcc));
             } catch (SQLException e) {
                 if(!e.toString().equals("org.postgresql.util.PSQLException: ERROR: duplicate key value violates unique constraint \"publisher_pkey\"\n" +
                         "  Detail: Key (name)=(" + newP + ") already exists.")){
@@ -260,8 +260,7 @@ public class uploadBookData {
         String count = country[r.nextInt(country.length)];
 
         try {
-            statement.executeUpdate("Insert into project.user values ('" + username + "', '" + username + "', '" + userFirstName + "', '" + userLastName + "', '" + defaultEmail + "');" +
-                    "insert into project.librarian values ('" + username + "'," + salary + ");");
+            statement.executeUpdate(String.format("Insert into project.user values ('%s', '%s', '%s', '%s', '%s');insert into project.librarian values ('%s',%d);", username, username, userFirstName, userLastName, defaultEmail, username, salary));
 
             DatabaseQueries.addAddress(Integer.toString(streetNum), defaultStreetName + streetid, apt, city, prov, count, postalCode.toString());
             DatabaseQueries.addHasAdd(username, true, false);
