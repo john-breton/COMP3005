@@ -6,7 +6,6 @@ import backend.DatabaseQueries;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import javax.xml.crypto.Data;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -1050,7 +1049,7 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
             con.gridx = 1;
             editBookPanel.add(editBookYearLabel, con);
             con.gridx = 2;
-            editBookYearTF.setToolTipText("If year is < 1000, add leading 0\'s");
+            editBookYearTF.setToolTipText("If year is < 1000, add leading 0's");
             editBookPanel.add(editBookYearTF, con);
             con.gridx = 3;
             editBookPanel.add(editBookStockLabel, con);
@@ -1766,7 +1765,7 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
             defaultAdminViewFields();
             editBookErrorLabel.setText("Book not found. Please try again.");
         } else {
-            Iterator bookItr = updateBookInfo.iterator();
+            Iterator<Object> bookItr = updateBookInfo.iterator();
             StringBuilder authors = new StringBuilder();
             StringBuilder genres = new StringBuilder();
             editBookErrorLabel.setText(""); // clear errors + search bar
@@ -1786,7 +1785,7 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
 
             // the book has authors...DUH
             if(bookItr.hasNext()){
-                Iterator authItr = ((ArrayList<String>) bookItr.next()).iterator();
+                Iterator<String> authItr = ((ArrayList<String>) bookItr.next()).iterator();
 
                 while(authItr.hasNext()){
                     authors.append(authItr.next());
@@ -1798,7 +1797,7 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
 
             // the book has genres...again DUH
             if(bookItr.hasNext()){
-                Iterator genItr = ((ArrayList<String>) bookItr.next()).iterator();
+                Iterator<String> genItr = ((ArrayList<String>) bookItr.next()).iterator();
 
                 while(genItr.hasNext()){
                     genres.append(genItr.next());

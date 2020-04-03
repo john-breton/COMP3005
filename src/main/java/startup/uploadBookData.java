@@ -105,7 +105,7 @@ public class uploadBookData {
             double royalty = (r.nextInt(99) + 1) / 1.0;
             int stock = r.nextInt(1000) + 1;
 
-            statement.executeUpdate("INSERT INTO project.book values(" + isbn +",'" + title + "'," + version + ", " + pgCnt + ", " + price + ", " + royalty + ", " + stock + ")");
+            statement.executeUpdate("INSERT INTO project.book values(" + isbn + ",'" + title + "'," + version + "," + pgCnt + "," + price + "," + royalty + "," + stock + ")");
         } catch (SQLException e) {
             if(!e.toString().equals("org.postgresql.util.PSQLException: ERROR: duplicate key value violates unique constraint \"book_pkey\"\n" +
                     "  Detail: Key (isbn)=(" + isbn + ") already exists.")){
@@ -249,7 +249,7 @@ public class uploadBookData {
         String username = userFirstName.substring(0,1).toLowerCase() + userLastName.substring(0, 3).toLowerCase(); // username is 1st letter of first name + first 3 letters of last name
         Integer salary = null;
         int defaultSal = 30000;
-        if(trueFalse[r.nextInt(2)] && (username.contains("r") || username.contains("R"))) // decide if the user is an admin
+        if(trueFalse[r.nextInt(2)] && (username.contains("r"))) // decide if the user is an admin
             salary = defaultSal;
         String streetid = streetID[r.nextInt(streetID.length)];
         String apt = apartment[r.nextInt(apartment.length)];

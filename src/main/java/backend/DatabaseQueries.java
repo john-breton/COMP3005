@@ -20,7 +20,6 @@ public class DatabaseQueries {
     // Just putting this here so we can change it when we test.
     private static final String USER = "ryan";
     private static final String DATABASE = "LookInnaBook";
-    private static Connection connection;
     private static Statement statement;
 
     static {
@@ -144,19 +143,16 @@ public class DatabaseQueries {
      * @param username   The username associated with the address.
      * @param isShipping True if the address is a shipping address, false otherwise.
      * @param isBilling  True if the address is a shipping address, false otherwise.
-     * @return True if the insertion was successful, false otherwise.
      */
-    public static boolean addHasAdd(String username, boolean isShipping, boolean isBilling) {
+    public static void addHasAdd(String username, boolean isShipping, boolean isBilling) {
         try {
             statement.execute("INSERT into project.hasadd " +
                     "values ('" + username +
                     "', nextval('project.hasadd_add_id_seq'),'"
                     + isShipping + "', '" + isBilling + "')");
-            return true;
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return false;
     }
 
     /**
@@ -259,7 +255,7 @@ public class DatabaseQueries {
      */
     public static boolean updateUser(String username, String password, String firstName, String lastName, String email) {
         try {
-            int rowsAffected = 0;
+            int rowsAffected;
             if(!password.isEmpty())
                 rowsAffected = statement.executeUpdate("UPDATE project.user SET password = '" + password + "', first_name = '" + firstName + "', last_name = '" + lastName + "', email = '" + email + "' WHERE user_name = '" + username.toLowerCase() + "'");
             else
@@ -281,25 +277,21 @@ public class DatabaseQueries {
      *
      * @param username username to be updated
      * @param salary new salary
-     * @return true if admin relation is updated, false otherwise
      */
-    public static boolean updateAdmin(String username, String salary){
+    public static void updateAdmin(String username, String salary){
         try {
             if (salary == null || salary.isEmpty()) {
                 int rowsAffected = statement.executeUpdate("UPDATE project.librarian " +
                         "SET salary = NULL " +
                         "WHERE user_name = '" + username + "'");
-                return rowsAffected == 1; //true if admin deleted
             } else {
                 int rowsAffected = statement.executeUpdate("INSERT INTO project.librarian " +
                         "values('" + username + "','" + salary + "') " +
                         "ON CONFLICT (user_name) DO UPDATE SET salary = '" + salary + "'");
-                return rowsAffected == 1; // true if admin updated or added
             }
         }catch (SQLException e){
             e.printStackTrace();
         }
-        return false;
     }
 
     /**
@@ -312,14 +304,11 @@ public class DatabaseQueries {
      * @param prov       the province
      * @param country    the country
      * @param postalCode the postal code
-     * @return true if successful update, false otherwise
      */
-    public static boolean updateAddress(String username, String num, String name, String apartment, String city, String prov, String country, String postalCode, boolean isShipping, boolean isBilling){
+    public static void updateAddress(String username, String num, String name, String apartment, String city, String prov, String country, String postalCode, boolean isShipping, boolean isBilling){
         // attempt to update address
         try {
-            int rowsAffected = 0;
-            String add_id = null;
-            ResultSet result = statement.executeQuery("UPDATE project.address " +
+            int rowsAffected = statement.executeUpdate("UPDATE project.address " +
                     "SET street_num = '" + num + "'," +
                     "street_name = '" + name + "'," +
                     "apartment = '" + apartment + "'," +
@@ -333,19 +322,15 @@ public class DatabaseQueries {
                     "AND project.hasadd.isshipping = '" + isShipping + "'" +
                     "RETURNING project.hasadd.add_id");
 
-            while(result.next()){
-                rowsAffected++;
-                add_id = result.getString("add_id");
-            }
-
             if(rowsAffected == 0) { //user doesn't have an address yet
-                return addAddress(num, name, apartment, city, prov, country, postalCode) && addHasAdd(username, isShipping, isBilling);
+                if (addAddress(num, name, apartment, city, prov, country, postalCode)) {
+                    addHasAdd(username, isShipping, isBilling);
+                }
             }
 
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return false;
     }
 
     public static ArrayList<Object> lookForaBook(String isbn){
@@ -353,7 +338,7 @@ public class DatabaseQueries {
         int rowCount = 0;
 
         try {
-            ResultSet result = statement.executeQuery("SELECT * FROM project.book natural join project.publishes WHERE isbn = " + isbn);
+            ResultSet result = statement.executeQuery("SELECT * FROM project.book natural join project.publishes WHERE isbn =" + isbn);
 
             while (result.next()) {
                 rowCount++; // count results
@@ -394,7 +379,7 @@ public class DatabaseQueries {
         int rowCount = 0;
 
         try{
-            ResultSet result = statement.executeQuery("SELECT * FROM project.author natural join project.writes WHERE isbn = " + isbn);
+            ResultSet result = statement.executeQuery("SELECT * FROM project.author natural join project.writes WHERE isbn =" + isbn);
 
             while(result.next()){
                 rowCount++;
@@ -415,7 +400,7 @@ public class DatabaseQueries {
         int rowCount = 0;
 
         try{
-            ResultSet result = statement.executeQuery("SELECT * FROM project.genre natural join project.hasgenre WHERE isbn = " + isbn);
+            ResultSet result = statement.executeQuery("SELECT * FROM project.genre natural join project.hasgenre WHERE isbn =" + isbn);
 
             while(result.next()){
                 rowCount++;
