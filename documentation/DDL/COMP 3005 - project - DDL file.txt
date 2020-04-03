@@ -1,7 +1,7 @@
 DROP Schema project CASCADE;
 DROP FUNCTION IF EXISTS delete_old_admin();
-DROP TRIGGER IF EXISTS delete_admin
-ON project.librarian;
+DROP FUNCTION IF EXISTS order_more_books(numeric);
+DROP TRIGGER IF EXISTS delete_admin ON project.librarian;
 
 -- Schema 
 
@@ -157,6 +157,17 @@ BEGIN
     RETURN NULL;
 END;
 $$;;
+
+CREATE OR REPLACE FUNCTION order_more_books(searchISBN numeric(13,0))
+RETURNS BOOLEAN AS $$
+BEGIN
+RETURN 10 > (
+    SELECT stock
+    FROM project.book
+    WHERE isbn = searchISBN
+    );
+END;
+$$ 	LANGUAGE plpgsql;
 
 -- Triggers
 
