@@ -1753,7 +1753,7 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
 
     private void fetchEditBookData(){
         ArrayList<Object> updateBookInfo = new ArrayList<>();
-        if(!editBookSearchTF.getText().isEmpty()) updateBookInfo = DatabaseQueries.lookForaBook(editBookSearchTF.getText());
+        if(!editBookSearchTF.getText().isEmpty()) updateBookInfo = DatabaseQueries.lookForaBook(editBookSearchTF.getText(), "isbn");
 
         if(editBookSearchTF.getText().isEmpty()){
             defaultAdminViewFields();

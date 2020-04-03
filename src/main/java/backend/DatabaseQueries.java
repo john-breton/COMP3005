@@ -18,14 +18,14 @@ import java.util.*;
 public class DatabaseQueries {
 
     // Just putting this here so we can change it when we test.
-    private static final String USER = "ryan";
-    private static final String DATABASE = "LookInnaBook";
-    private static Connection connection;
-    private static Statement statement;
+    private static final String USER = "postgres";
+    private static final String DATABASE = "lookinnabook";
+    public static Connection connection;
+    public static Statement statement;
 
     static {
         try {
-            Connection connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/" + DATABASE, USER, "");
+            connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/" + DATABASE, USER, "");
             statement = connection.createStatement();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -49,7 +49,6 @@ public class DatabaseQueries {
         boolean[] returnArr = {false, false}; // [0] = active user, [1] = admin
 
         try {
-
             ResultSet result = statement.executeQuery("SELECT * from project.user LEFT OUTER JOIN project.librarian USING (user_name) where user_name = '" + username.toLowerCase().trim() + "'");
 
             while (result.next()) {
@@ -260,7 +259,7 @@ public class DatabaseQueries {
     public static boolean updateUser(String username, String password, String firstName, String lastName, String email) {
         try {
             int rowsAffected = 0;
-            if(!password.isEmpty())
+            if (!password.isEmpty())
                 rowsAffected = statement.executeUpdate("UPDATE project.user SET password = '" + password + "', first_name = '" + firstName + "', last_name = '" + lastName + "', email = '" + email + "' WHERE user_name = '" + username.toLowerCase() + "'");
             else
                 rowsAffected = statement.executeUpdate("UPDATE project.user SET first_name = '" + firstName + "', last_name = '" + lastName + "', email = '" + email + "' WHERE user_name = '" + username.toLowerCase() + "'");
@@ -280,10 +279,10 @@ public class DatabaseQueries {
      * Query the admin info to update/ add an admin
      *
      * @param username username to be updated
-     * @param salary new salary
+     * @param salary   new salary
      * @return true if admin relation is updated, false otherwise
      */
-    public static boolean updateAdmin(String username, String salary){
+    public static boolean updateAdmin(String username, String salary) {
         try {
             if (salary == null || salary.isEmpty()) {
                 int rowsAffected = statement.executeUpdate("UPDATE project.librarian " +
@@ -296,7 +295,7 @@ public class DatabaseQueries {
                         "ON CONFLICT (user_name) DO UPDATE SET salary = '" + salary + "'");
                 return rowsAffected == 1; // true if admin updated or added
             }
-        }catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return false;
@@ -314,7 +313,7 @@ public class DatabaseQueries {
      * @param postalCode the postal code
      * @return true if successful update, false otherwise
      */
-    public static boolean updateAddress(String username, String num, String name, String apartment, String city, String prov, String country, String postalCode, boolean isShipping, boolean isBilling){
+    public static boolean updateAddress(String username, String num, String name, String apartment, String city, String prov, String country, String postalCode, boolean isShipping, boolean isBilling) {
         // attempt to update address
         try {
             int rowsAffected = 0;
@@ -333,12 +332,12 @@ public class DatabaseQueries {
                     "AND project.hasadd.isshipping = '" + isShipping + "'" +
                     "RETURNING project.hasadd.add_id");
 
-            while(result.next()){
+            while (result.next()) {
                 rowsAffected++;
                 add_id = result.getString("add_id");
             }
 
-            if(rowsAffected == 0) { //user doesn't have an address yet
+            if (rowsAffected == 0) { //user doesn't have an address yet
                 return addAddress(num, name, apartment, city, prov, country, postalCode) && addHasAdd(username, isShipping, isBilling);
             }
 
@@ -348,16 +347,30 @@ public class DatabaseQueries {
         return false;
     }
 
-    public static ArrayList<Object> lookForaBook(String isbn){
+    /**
+     * Pretty sure this searches for a book. I mean I hope that's what it does because that's what I'm using it for.
+     * TODO Expand options to allow searches to be conducted using different parameters. Maybe a switch and a mode variable can be used?
+     *
+     * @param searchText The searchText to be used in the search.
+     * @param searchType The type of search being performed. Can be
+     *                   1: By Title
+     *                   2: By Author
+     *                   3: By Genre
+     *                   4: By ISBN
+     *                   5: By Publisher
+     *                   6: By Year
+     * @return An ArrayList containing the
+     */
+    public static ArrayList<Object> lookForaBook(String searchText, String searchType) {
         ArrayList<Object> bookInfo = new ArrayList<>();
         int rowCount = 0;
-
         try {
-            ResultSet result = statement.executeQuery("SELECT * FROM project.book natural join project.publishes WHERE isbn = " + isbn);
-
+            ResultSet result = statement.executeQuery("SELECT * FROM project.book natural join project.publishes WHERE " + searchType + " = " + "'" + searchText + "'");
+            String isbn = null;
             while (result.next()) {
                 rowCount++; // count results
-                bookInfo.add(result.getString("isbn"));
+                isbn = result.getString("isbn");
+                bookInfo.add(isbn);
                 bookInfo.add(result.getString("name"));
                 bookInfo.add(result.getString("version"));
                 bookInfo.add(result.getString("num_pages"));
@@ -366,13 +379,14 @@ public class DatabaseQueries {
                 bookInfo.add(result.getString("stock"));
                 bookInfo.add(result.getString("pub_name"));
                 bookInfo.add(result.getString("year"));
+                // get author info
+                bookInfo.add(lookForaAuthor(isbn));
+                // get genres
+                bookInfo.add(lookForaGenre(isbn));
             }
-            // get author info
-            bookInfo.add(lookForaAuthor(isbn));
-            // get genres
-            bookInfo.add(lookForaGenre(isbn));
 
-            if (rowCount == 1) return bookInfo; // user found
+            // We can find more than one book given the parameters.
+            if (rowCount >= 1) return bookInfo; // book found
 
             if (rowCount == 0) return null;
 
@@ -383,20 +397,26 @@ public class DatabaseQueries {
             return bookInfo;
 
         } catch (SQLException e) {
-            if(!e.toString().contains("invalid input syntax for type"))
-            e.printStackTrace();
+            if (!e.toString().contains("invalid input syntax for type"))
+                e.printStackTrace();
         }
         return null;
     }
 
-    public static ArrayList<String> lookForaAuthor(String isbn){
+    /**
+     * Searches for a book authors based on the provided ISBN.
+     *
+     * @param isbn The ISBN used to search for the authors.
+     * @return An ArrayList containing the authors' first and last name.
+     */
+    public static ArrayList<String> lookForaAuthor(String isbn) {
         ArrayList<String> authInfo = new ArrayList<>();
         int rowCount = 0;
 
-        try{
+        try {
             ResultSet result = statement.executeQuery("SELECT * FROM project.author natural join project.writes WHERE isbn = " + isbn);
 
-            while(result.next()){
+            while (result.next()) {
                 rowCount++;
                 authInfo.add(result.getString("auth_fn") + " " + result.getString("auth_ln"));
             }
@@ -410,14 +430,20 @@ public class DatabaseQueries {
         return null;
     }
 
-    public static ArrayList<String> lookForaGenre(String isbn){
+    /**
+     * Search for a book genres based on the provided ISBN.
+     *
+     * @param isbn The ISBN used to search for the genres.
+     * @return An ArrayList containing the names of the genres for the given ISBN.
+     */
+    public static ArrayList<String> lookForaGenre(String isbn) {
         ArrayList<String> genreInfo = new ArrayList<>();
         int rowCount = 0;
 
-        try{
+        try {
             ResultSet result = statement.executeQuery("SELECT * FROM project.genre natural join project.hasgenre WHERE isbn = " + isbn);
 
-            while(result.next()){
+            while (result.next()) {
                 rowCount++;
                 genreInfo.add(result.getString("name"));
             }

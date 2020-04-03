@@ -1,18 +1,23 @@
 package frontend;
 
+import backend.DatabaseQueries;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 public class UserScreen extends JFrame implements ActionListener {
 
+    private static JTextField userSearchTF = new JTextField();
+    private static final JComboBox<String> searchFilters = new JComboBox<>(FrontEndUtilities.searchFilterArr);
+    private static final JComboBox<String> resultFilters = new JComboBox<>(FrontEndUtilities.resultFilterArr);
+    private JPanel searchResult = new JPanel();
+    private Container c = this.getContentPane();
+
     public UserScreen() {
-        JTextField userSearchTF = new JTextField();
-        JComboBox<String> searchFilters = new JComboBox<>(FrontEndUtilities.searchFilterArr);
-        JComboBox<String> resultFilters = new JComboBox<>(FrontEndUtilities.resultFilterArr);
         JLabel totalPrice = new JLabel("$0.00", JLabel.CENTER);
-        Container c = this.getContentPane();
         this.setPreferredSize(new Dimension(798, 850));
         if (this.getJMenuBar() != null) this.getJMenuBar().setVisible(false);
         c.removeAll();
@@ -25,10 +30,11 @@ public class UserScreen extends JFrame implements ActionListener {
         /* Components */
         // Panels and Panes
         JSplitPane userView = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true);
-        JPanel searchAndResults = new JPanel();
+        userView.setEnabled(false);
         JPanel cartPanel = new JPanel();
         JPanel pricePanel = new JPanel();
         JPanel checkoutPanel = new JPanel();
+        JPanel searchAndResults = new JPanel();
 
         // Labels
         JLabel searchLabel = new JLabel("Search: ");
@@ -52,7 +58,6 @@ public class UserScreen extends JFrame implements ActionListener {
 
         // ScrollPanes
         JScrollPane currentCart = new JScrollPane();
-        JScrollPane searchResult = new JScrollPane();
 
         /* Setup Panels */
         // Price panel
@@ -121,6 +126,8 @@ public class UserScreen extends JFrame implements ActionListener {
         con.insets = new Insets(5, 5, 5, 5);
         con.fill = GridBagConstraints.BOTH;
         con.anchor = GridBagConstraints.CENTER;
+        searchResult.setBorder(BorderFactory.createLineBorder(Color.black));
+
         searchAndResults.add(searchResult, con);
 
         searchAndResults.setMinimumSize(searchResultDimension);
@@ -143,6 +150,64 @@ public class UserScreen extends JFrame implements ActionListener {
     }
 
     /**
+     * Attempts to search for a book.
+     */
+    private void search() {
+        String searchText = userSearchTF.getText();
+
+        if (searchText.isEmpty()) {
+            System.out.println("There's nothing here to search with!");
+            return;
+        }
+        String searchTerm = searchFilters.getSelectedItem().toString().toLowerCase();
+        if (searchTerm.equals("title")) {
+            searchTerm = "name";
+        }
+
+        ArrayList<Object> results = DatabaseQueries.lookForaBook(searchText, searchTerm);
+        if (searchResult == null) {
+            System.out.println("Did not find any books matching that ISBN, please try again!");
+        } else {
+            JButton book = FrontEndUtilities.formatButton("");
+            book.setMinimumSize(new Dimension(600, 100));
+            StringBuilder text = new StringBuilder();
+            text.append("<html>");
+            text.append("<u>ISBN:</u> " + results.get(0).toString() + "<br/>");
+            text.append("<u>Title:</u> " + results.get(1).toString() + "<br/>");
+            text.append("<u>Author(s):</u> ");
+            String[] authors = results.get(9).toString().split(",");
+            int count = 0;
+            for (String curr: authors) {
+                if (count == 0 && count == authors.length - 1) {
+                    text.append(curr, 1, curr.length() - 1);
+                } else if (count == authors.length - 1) {
+                    text.append(curr, 0, curr.length() - 1);
+                } else if (count == 0) {
+                    text.append(curr.substring(1));
+                } else {
+                    text.append(curr + ", ");
+                }
+                count++;
+            }
+            text.append("<br/><u>Edition:</u> " + results.get(2).toString() + "<br/>");
+            text.append("<u>Page Count:</u> " + results.get(3).toString() + "<br/>");
+            text.append("<u>Price:</u> $" + results.get(4).toString() + "<br/>");
+            text.append("<u>Stock:</u> " + results.get(6).toString() + "<br/>");
+            text.append("<u>Publisher:</u> " + results.get(7).toString() + "<br/>");
+            text.append("<u>Year:</u> " + results.get(8).toString() + "<br/>");
+            text.append("</html>");
+            book.setText(text.toString());
+            System.out.println(text);
+            searchResult.add(book);
+        }
+
+        this.invalidate();
+        this.validate();
+        this.repaint();
+
+    }
+
+    /**
      * Implements ActionListeners for GUI components
      *
      * @param e The ActionEvent that was triggered via a JButton.
@@ -158,7 +223,7 @@ public class UserScreen extends JFrame implements ActionListener {
                 this.dispose();
                 new CheckoutScreen(); // User Screen
             }
-            case "Search" -> System.out.println("Searching Books"); // User screen
+            case "Search" -> search(); // User screen
             default -> System.out.println("Error");
         }
     }
