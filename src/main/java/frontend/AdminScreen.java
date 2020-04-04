@@ -1,17 +1,12 @@
 package frontend;
 
 
-import backend.*;
-
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Objects;
 
 public class AdminScreen extends JFrame implements ActionListener, ChangeListener {
     protected static final JCheckBox billingSameAsShipping = new JCheckBox("Billing Address is the same as Shipping Address");
@@ -125,7 +120,7 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
             currentUserNameLabel = new JLabel(""),
             confirmUserEditLabel = new JLabel("", JLabel.RIGHT),
             editBookErrorLabel = new JLabel("", JLabel.CENTER),
-            currentISBNLabel = new JLabel("Current ISBN Goes Here"),
+            currentISBNLabel = new JLabel(""),
             confirmBookEditLabel = new JLabel("", JLabel.RIGHT);
 
     public AdminScreen() {
@@ -151,6 +146,7 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
         adminMenu.add(logoutMenuItem);
         switchToUserScreen.addActionListener(this);
         logoutMenuItem.addActionListener(this);
+        this.setJMenuBar(adminMenuBar);
 
         /* JTabbedPanes */
         JTabbedPane adminView = new JTabbedPane();
@@ -354,7 +350,7 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
                 newBookAuthorNameLabel = new JLabel("Name: "),
                 newBookPublisherLabel = new JLabel("Publisher (be sure to add new publishers before adding books): "),
                 newBookYearLabel = new JLabel("Year (YYYY): "),
-                accountingLabel = new JLabel("Accounting: ");
+                accountingLabel = new JLabel("Accounting ");
 
         /* ActionListeners */
         logoutAddBookButton.addActionListener(this);
@@ -1562,8 +1558,10 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
                     }
                 } // Admin Edit Books Screen
                 case "Add Book" -> {
-                    defaultAdminViewFields();
-                    confirmNewBookAddition.setText("New Book Added");
+                    if(AdminScreenUtilities.addBook()) {
+                        defaultAdminViewFields();
+                        confirmNewBookAddition.setText("New Book Added");
+                    }
                 }// Admin Add Book Screen
                 case "Add Publisher" -> {
                     defaultAdminViewFields();
