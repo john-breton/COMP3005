@@ -148,11 +148,26 @@ public class DatabaseQueries {
         try {
             statement.execute("INSERT into project.hasadd " +
                     "values ('" + username +
-                    "', nextval('project.hasadd_add_id_seq'),'"
+                    "', currval('project.address_add_id_seq'),'"
                     + isShipping + "', '" + isBilling + "')");
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Adds a relationship between a publisher and address in the database
+     *
+     * @param pub_name
+     * @return true if a valid relationship was created, false otherwise
+     */
+    public static boolean addPubAdd(String pub_name){
+        try {
+            return statement.executeUpdate(String.format("INSERT into project.pubadd values (currval('project.address_add_id_seq'), '%s')", pub_name)) == 1;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     /**
@@ -528,10 +543,19 @@ public class DatabaseQueries {
         return 4;
     }
 
-    private static boolean addPublisher(String name, String email, String phoneNum, String bankAcc) {
+    /**
+     * Adds a publisher to the database
+     *
+     * @param name
+     * @param email
+     * @param phoneNum
+     * @param bankAcc
+     * @return true if successful, false otherwise
+     */
+    public static boolean addPublisher(String name, String email, String phoneNum, String bankAcc) {
         try {
-            int rowCount = statement.executeUpdate(String.format("INSERT INTO project.publisher values ('%s','%s', %s, %s);", name, email, phoneNum, bankAcc));
-            return rowCount == 1;
+            if(phoneNum.isEmpty()) phoneNum = null;
+            return statement.executeUpdate(String.format("INSERT INTO project.publisher values ('%s','%s', %s, %s);", name, email, phoneNum, bankAcc)) == 1;
         } catch (SQLException e) {
             e.printStackTrace();
         }
