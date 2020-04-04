@@ -345,14 +345,23 @@ public class DatabaseQueries {
      *                   2: By ISBN "isbn"
      *                   3: By Publisher "pub_name"
      *                   4: By Year "year"
+     *                   5: By Genre "genre"
+     *                   6: By Author "author"
      * @return An ArrayList containing containing book information. [1] = isbn, [2] = title, [3] = version, [4] = page count, [5] = price, [6] = royalty, [7] = stock, [8] = publisher name, [9] = year, [10] = author info (ArrayList), [11] = genre info (ArrayList),
      *         repeated in this order for each book found by the search. As such, the number of books can be determined by dividing the length of the ArrayList by 11
      */
     public static ArrayList<Object> lookForaBook(String searchText, String searchType) {
         ArrayList<Object> bookInfo = new ArrayList<>();
         int rowCount = 0;
+        ResultSet result = null;
         try {
-            ResultSet result = statement.executeQuery(String.format("SELECT * FROM project.book natural join project.publishes WHERE " + searchType + " = '%s'", searchText));
+            if (searchType.equals("author")) {
+
+            } else if (searchType.equals("genre")) {
+
+            } else {
+                result = statement.executeQuery(String.format("SELECT * FROM project.book natural join project.publishes WHERE " + searchType + " = '%s'", searchText));
+            }
             String isbn = null;
             while (result.next()) {
                 rowCount++; // count results
@@ -366,27 +375,23 @@ public class DatabaseQueries {
                 bookInfo.add(result.getString("stock"));
                 bookInfo.add(result.getString("pub_name"));
                 bookInfo.add(result.getString("year"));
+                // get author info
+                bookInfo.add(lookForaAuthor(isbn));
+                // get genres
+                bookInfo.add(lookForaGenre(isbn));
             }
-            // get author info
-            bookInfo.add(lookForaAuthor(isbn));
-            // get genres
-            bookInfo.add(lookForaGenre(isbn));
 
             // We can find more than one book given the parameters.
-            if (rowCount >= 1) return bookInfo; // book found
-
-            if (rowCount == 0) return null; // no isbn found
-
-            // whaaaaaat (more that one or less than 0 ISBNs found??)
-            bookInfo.clear();
-            bookInfo.add("-1");
-            System.out.println("Houston, we gotta problem in lookForaBook");
-            return bookInfo;
+            if (rowCount >= 1) {
+                return bookInfo; // book found
+            } else {
+                return null; // no isbn found
+            }
 
         } catch (SQLException e) {
             e.printStackTrace();
+            return null;
         }
-        return null;
     }
 
     /**
@@ -395,9 +400,11 @@ public class DatabaseQueries {
      * @param isbn The ISBN used to search for the authors.
      * @return An ArrayList containing the authors' first and last name.
      */
-    public static ArrayList<String> lookForaAuthor(String isbn) {
+    public static ArrayList<String> lookForaAuthor(String isbn) throws SQLException {
         ArrayList<String> authInfo = new ArrayList<>();
         int rowCount = 0;
+        // Needed for what is being done in lookForABook
+        statement = connection.createStatement();
 
         try{
             ResultSet result = statement.executeQuery(String.format("SELECT * FROM project.author natural join project.writes WHERE isbn =%s", isbn));
@@ -422,7 +429,9 @@ public class DatabaseQueries {
      * @param isbn The ISBN used to search for the genres.
      * @return An ArrayList containing the names of the genres for the given ISBN.
      */
-    public static ArrayList<String> lookForaGenre(String isbn) {
+    public static ArrayList<String> lookForaGenre(String isbn) throws SQLException {
+        statement = connection.createStatement();
+        // Needed for what is being done in lookForABook
         ArrayList<String> genreInfo = new ArrayList<>();
         int rowCount = 0;
 

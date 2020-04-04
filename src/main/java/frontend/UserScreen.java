@@ -13,8 +13,12 @@ public class UserScreen extends JFrame implements ActionListener {
     private static JTextField userSearchTF = new JTextField();
     private static final JComboBox<String> searchFilters = new JComboBox<>(FrontEndUtilities.searchFilterArr);
     private static final JComboBox<String> resultFilters = new JComboBox<>(FrontEndUtilities.resultFilterArr);
-    private JPanel searchResult = new JPanel();
+    private JPanel searchResult = new JPanel(new GridLayout(1, 1));
+    private ArrayList<JButton> bookButtons = new ArrayList<>();
     private Container c = this.getContentPane();
+    private JScrollPane scrollResults = new JScrollPane(searchResult,
+            JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+            JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
     public UserScreen() {
         JLabel totalPrice = new JLabel("$0.00", JLabel.CENTER);
@@ -104,6 +108,8 @@ public class UserScreen extends JFrame implements ActionListener {
         con.fill = GridBagConstraints.HORIZONTAL;
         con.gridx = 2;
         userSearchTF.setPreferredSize(new Dimension(200, 20));
+        userSearchTF.setMinimumSize(new Dimension(200, 20));
+        userSearchTF.setMaximumSize(new Dimension(200, 20));
         searchAndResults.add(userSearchTF, con);
 
         con.fill = GridBagConstraints.NONE;
@@ -130,8 +136,11 @@ public class UserScreen extends JFrame implements ActionListener {
         con.fill = GridBagConstraints.BOTH;
         con.anchor = GridBagConstraints.CENTER;
         searchResult.setBorder(BorderFactory.createLineBorder(Color.black));
-
-        searchAndResults.add(searchResult, con);
+        searchResult.setSize(500, 600);
+        for (JButton btn: bookButtons) {
+            searchResult.add(btn);
+        }
+        searchAndResults.add(scrollResults, con);
 
         searchAndResults.setMinimumSize(searchResultDimension);
 
@@ -157,6 +166,9 @@ public class UserScreen extends JFrame implements ActionListener {
      */
     private void search() {
         String searchText = userSearchTF.getText();
+        searchResult.removeAll();
+        searchResult.repaint();
+        bookButtons = new ArrayList<>();
 
         // TODO make this a label
         if (searchText.isEmpty()) {
@@ -172,46 +184,64 @@ public class UserScreen extends JFrame implements ActionListener {
 
         // Execute the search.
         ArrayList<Object> results = DatabaseQueries.lookForaBook(searchText, searchTerm);
-
-        if (searchResult == null) {
-            System.out.println("Did not find any books matching that ISBN, please try again!");
+        if (results == null) {
+            // TODO make this a label
+            System.out.println("Did not find any books, please try again!");
         } else {
-            JButton book = FrontEndUtilities.formatButton("");
-            book.setMinimumSize(new Dimension(600, 100));
-            StringBuilder text = new StringBuilder();
-            text.append("<html>");
-            text.append("<u>ISBN:</u> " + results.get(0).toString() + "<br/>");
-            text.append("<u>Title:</u> " + results.get(1).toString() + "<br/>");
-            text.append("<u>Author(s):</u> ");
-            String[] authors = results.get(9).toString().split(",");
-            int count = 0;
-            for (String curr: authors) {
-                if (count == 0 && count == authors.length - 1) {
-                    text.append(curr, 1, curr.length() - 1);
-                } else if (count == authors.length - 1) {
-                    text.append(curr, 0, curr.length() - 1);
-                } else if (count == 0) {
-                    text.append(curr.substring(1));
-                } else {
-                    text.append(curr + ", ");
-                }
-                count++;
+            searchResult.setLayout(new GridLayout(results.size() / 11, 1));
+            System.out.println(results.size());
+            for (int i = 0; i < results.size() / 11; i++) {
+                createBook(results, i * 11);
             }
-            text.append("<br/><u>Edition:</u> " + results.get(2).toString() + "<br/>");
-            text.append("<u>Page Count:</u> " + results.get(3).toString() + "<br/>");
-            text.append("<u>Price:</u> $" + results.get(4).toString() + "<br/>");
-            text.append("<u>Stock:</u> " + results.get(6).toString() + "<br/>");
-            text.append("<u>Publisher:</u> " + results.get(7).toString() + "<br/>");
-            text.append("<u>Year:</u> " + results.get(8).toString() + "<br/>");
-            text.append("</html>");
-            book.setText(text.toString());
-            System.out.println(text);
-            searchResult.add(book);
+        }
+        for (JButton btn: bookButtons) {
+            searchResult.add(btn);
         }
 
         this.invalidate();
         this.validate();
         this.repaint();
+
+    }
+
+    /**
+     * Creates and adds a book as a button after a search has been completed.
+     * TODO Register an ActionListener on the JButtons such that they can be added to the cart on click.
+     *
+     * @param results The data used to construct a book JButton.
+     */
+    private void createBook(ArrayList<Object> results, int i) {
+        JButton book = FrontEndUtilities.formatButton("");
+        book.setMinimumSize(new Dimension(400, 100));
+        StringBuilder text = new StringBuilder();
+        text.append("<html>");
+        text.append("<u>ISBN:</u> " + results.get(i).toString() + "<br/>");
+        text.append("<u>Title:</u> " + results.get(i + 1).toString() + "<br/>");
+        text.append("<u>Author(s):</u> ");
+        String[] authors = results.get(i + 9).toString().split(",");
+        int count = 0;
+        for (String curr: authors) {
+            if (count == 0 && count == authors.length - 1) {
+                text.append(curr, 1, curr.length() - 1);
+            } else if (count == authors.length - 1) {
+                text.append(curr, 0, curr.length() - 1);
+            } else if (count == 0) {
+                text.append(curr.substring(1) + ", ");
+            } else {
+                text.append(curr + ", ");
+            }
+            count++;
+        }
+        text.append("<br/><u>Edition:</u> " + results.get(i + 2).toString() + "<br/>");
+        text.append("<u>Page Count:</u> " + results.get(i + 3).toString() + "<br/>");
+        text.append("<u>Price:</u> $" + results.get(i + 4).toString() + "<br/>");
+        text.append("<u>Stock:</u> " + results.get(i + 6).toString() + "<br/>");
+        text.append("<u>Publisher:</u> " + results.get(i + 7).toString() + "<br/>");
+        text.append("<u>Year:</u> " + results.get(i + 8).toString() + "<br/>");
+        text.append("</html>");
+        book.setText(text.toString());
+        book.setHorizontalAlignment(SwingConstants.LEFT);
+        bookButtons.add(book);
 
     }
 
