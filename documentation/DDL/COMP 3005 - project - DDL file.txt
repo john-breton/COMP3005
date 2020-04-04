@@ -34,7 +34,7 @@ CREATE TABLE project.librarian (
 );
 
 CREATE TABLE project.publisher (
-    name 		character varying(200) PRIMARY KEY,
+    pub_name 	character varying(200) PRIMARY KEY,
     email_add 	character varying(30),
     phone_num 	numeric(10,0),
     bank_acc 	numeric(15,0)
@@ -42,7 +42,7 @@ CREATE TABLE project.publisher (
 
 CREATE TABLE project.book (
     isbn 		numeric(13,0) PRIMARY KEY,
-    name 		character varying(200),
+    title 		character varying(200),
     version 	numeric(2,0),
     num_pages 	numeric(4,0),
     price 		numeric(5,2),
@@ -85,13 +85,13 @@ CREATE TABLE project.hasAdd (
 
 CREATE TABLE project.pubadd (
     add_id 		SERIAL NOT NULL REFERENCES project.address(add_id),
-    pub_name 	character varying(200) REFERENCES project.publisher(name) UNIQUE,
+    pub_name 	character varying(200) REFERENCES project.publisher UNIQUE,
 
     CONSTRAINT 	pubadd_pkey PRIMARY KEY (add_id, pub_name)
 );
 
 CREATE TABLE project.publishes (
-    pub_name 	character varying(200) REFERENCES project.publisher(name) NOT NULL,
+    pub_name 	character varying(200) REFERENCES project.publisher NOT NULL,
     isbn 		numeric(13,0) REFERENCES project.book(isbn) NOT NULL UNIQUE,
     year 		numeric(4,0),
 

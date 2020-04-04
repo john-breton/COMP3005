@@ -5,7 +5,7 @@ package backend;
  */
 
 import java.sql.*;
-import java.util.*;
+import java.util.ArrayList;
 
 /**
  * The backend.LookForaBook class represents the back-end for the util.LookInnaBook application.
@@ -18,8 +18,8 @@ import java.util.*;
 public class DatabaseQueries {
 
     // Just putting this here so we can change it when we test.
-    private static final String USER = "postgres";
-    private static final String DATABASE = "lookinnabook";
+    private static final String USER = "ryan";
+    private static final String DATABASE = "LookInnaBook";
     public static Connection connection;
     public static Statement statement;
 
@@ -254,7 +254,7 @@ public class DatabaseQueries {
      */
     public static boolean updateUser(String username, String password, String firstName, String lastName, String email) {
         try {
-            int rowsAffected = 0;
+            int rowsAffected;
             if (!password.isEmpty())
                 rowsAffected = statement.executeUpdate("UPDATE project.user SET password = '" + password + "', first_name = '" + firstName + "', last_name = '" + lastName + "', email = '" + email + "' WHERE user_name = '" + username.toLowerCase() + "'");
             else
@@ -336,6 +336,48 @@ public class DatabaseQueries {
     }
 
     /**
+     * Add book to the database.
+     *
+     * @param isbn      the isbn
+     * @param title     the title
+     * @param version   the version
+     * @param pageCount the page count
+     * @param year      the year
+     * @param stock     the stock
+     * @param genres    the genres
+     * @param price     the price
+     * @param royalty   the royalty
+     * @param authors   the authors
+     * @param publisher the publisher
+     * @return 0 if successful update of all attributes, 1 if error with the author information, 2 if error with the genre information, 3 if error with publisher information, 4 if error with book information
+     */
+    public static int addBook(String isbn, String title, String version, String pageCount, String year, String stock, String[] genres, String price, String royalty, String[] authors, String publisher) {
+        try {
+            // ensure strings don't contain illegal characters
+            title = title.replaceAll("'", "");
+            publisher = publisher.replaceAll("'", "");
+            // attempt to insert book info
+            if (!statement.executeQuery(String.format("SELECT * FROM project.book WHERE isbn = %s", isbn)).next()) { // ensure the book doesn't already exist
+                if (statement.executeQuery(String.format("SELECT * FROM project.publisher WHERE pub_name = '%s'", publisher)).next() && // make sure publisher exists
+                    statement.executeUpdate(String.format("INSERT INTO project.book values (%s,'%s',%s,%s,%s,%s,%s)", isbn, title, version, pageCount, price, royalty, stock)) == 1) { // add the book
+                    // attempt to insert into publishes info
+                    if(addPublishes(publisher, isbn, year)) {
+                        // attempt insert of genre info
+                        if (updateGenre(isbn, genres)) {
+                            // attempt insert of author info
+                            if (updateAuthor(isbn, authors)) {
+                                return 0;
+                            } else return 1;
+                        } else return 2;
+                    } else return 3;
+                } else return 3;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }return 4;
+    }
+
+    /**
      * Pretty sure this searches for a book. I mean I hope that's what it does because that's what I'm using it for.
      * TODO Expand options to allow searches to be conducted using different parameters. Maybe a switch and a mode variable can be used?
      *
@@ -348,7 +390,7 @@ public class DatabaseQueries {
      *                   5: By Genre "genre"
      *                   6: By Author "author"
      * @return An ArrayList containing containing book information. [1] = isbn, [2] = title, [3] = version, [4] = page count, [5] = price, [6] = royalty, [7] = stock, [8] = publisher name, [9] = year, [10] = author info (ArrayList), [11] = genre info (ArrayList),
-     *         repeated in this order for each book found by the search. As such, the number of books can be determined by dividing the length of the ArrayList by 11
+     * repeated in this order for each book found by the search. As such, the number of books can be determined by dividing the length of the ArrayList by 11
      */
     public static ArrayList<Object> lookForaBook(String searchText, String searchType) {
         ArrayList<Object> bookInfo = new ArrayList<>();
@@ -406,7 +448,7 @@ public class DatabaseQueries {
         // Needed for what is being done in lookForABook
         statement = connection.createStatement();
 
-        try{
+        try {
             ResultSet result = statement.executeQuery(String.format("SELECT * FROM project.author natural join project.writes WHERE isbn =%s", isbn));
 
             while (result.next()) {
@@ -435,7 +477,7 @@ public class DatabaseQueries {
         ArrayList<String> genreInfo = new ArrayList<>();
         int rowCount = 0;
 
-        try{
+        try {
             ResultSet result = statement.executeQuery(String.format("SELECT * FROM project.genre natural join project.hasgenre WHERE isbn = %s", isbn));
 
             while (result.next()) {
@@ -495,6 +537,34 @@ public class DatabaseQueries {
         return 4;
     }
 
+    private static boolean addPublisher(String name, String email, String phoneNum, String bankAcc) {
+        try {
+            int rowCount = statement.executeUpdate(String.format("INSERT INTO project.publisher values ('%s','%s', %s, %s);", name, email, phoneNum, bankAcc));
+            return rowCount == 1;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    /**
+     * Adds a publishes relation to the database, the publisher and book must already be present in order to be successful.
+     *
+     * @param name
+     * @param isbn
+     * @param year
+     * @return true if successful, false otherwise
+     */
+    private static boolean addPublishes(String name, String isbn, String year) {
+        try {
+            int rowCount = statement.executeUpdate(String.format("INSERT INTO project.publishes values ('%s', %s, %s);", name, isbn, year));
+            return rowCount == 1;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
     /**
      * Update a book's publisher within the database
      *
@@ -506,11 +576,8 @@ public class DatabaseQueries {
     private static boolean updatePublisher(String isbn, String publisher, String year) {
         boolean result = false;
         try {
-            statement.executeUpdate("UPDATE project.publishes " +
-                    "SET year = '" + year + "'," +
-                    "pub_name = '" + publisher + "'" +
-                    "WHERE isbn = '" + isbn + "'");
-            result = true;
+            int rowCount = statement.executeUpdate(String.format("UPDATE project.publishes SET year = '%s', pub_name = '%s' WHERE isbn = '%s'", year, publisher, isbn));
+            result = (rowCount == 1);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -528,7 +595,7 @@ public class DatabaseQueries {
         try {
             statement.executeUpdate("DELETE FROM project.hasgenre WHERE isbn = '" + isbn + "'"); // delete all the book's current genre info in order to update
             for (String s : genres) {
-                s = s.trim();
+                s = s.replaceAll("'", "").trim();
                 // attempt to insert the genre info into the genre entity, do nothing if the genre already exists
                 statement.executeUpdate("INSERT INTO project.genre " +
                         "VALUES ('" + s + "')" +
@@ -556,15 +623,19 @@ public class DatabaseQueries {
         try {
             statement.executeUpdate("DELETE FROM project.writes WHERE isbn = '" + isbn + "'"); // delete all authors from the current book
             for (String s : authors) {
-                String[] names = s.trim().split(" ");
+                s = s.replaceAll("\\s+", " ");
+                String[] names = s.trim().replaceAll("'", "").split(" ");
+
                 // attempt to insert the author's names into the database, do nothing if that author already exists
-                statement.executeUpdate("INSERT INTO project.author " +
-                        "VALUES ('" + names[0].trim() + "', '" + names[1].trim() + "')" +
-                        "ON CONFLICT (auth_fn, auth_ln) DO NOTHING");
-                // attempt to insert the relationship between author and book into the database, do nothing if the relationship already exists
-                statement.execute("INSERT INTO project.writes " +
-                        "VALUES ('" + names[0].trim() + "', '" + names[1].trim() + "', '" + isbn + "')" +
-                        "ON CONFLICT (auth_fn, auth_ln, isbn) DO NOTHING");
+                if (names.length == 2) { // else invalid, dont even bother adding
+                    statement.executeUpdate("INSERT INTO project.author " +
+                            "VALUES ('" + names[0].trim() + "', '" + names[1].trim() + "')" +
+                            "ON CONFLICT (auth_fn, auth_ln) DO NOTHING");
+                    // attempt to insert the relationship between author and book into the database, do nothing if the relationship already exists
+                    statement.execute("INSERT INTO project.writes " +
+                            "VALUES ('" + names[0].trim() + "', '" + names[1].trim() + "', '" + isbn + "')" +
+                            "ON CONFLICT (auth_fn, auth_ln, isbn) DO NOTHING");
+                }
             }
             return true;
         } catch (SQLException e) {

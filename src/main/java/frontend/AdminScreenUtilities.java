@@ -406,4 +406,119 @@ public class AdminScreenUtilities extends AdminScreen {
         }
     }
 
+    /**
+     * Retrieves information from the GUI and sends it to the DB to be inserted
+     *
+     * @return true if successful, false otherwise
+     */
+    public static boolean addBook(){
+        // check all fields are not empty
+        if(newISBNTF.getText().isEmpty() ||
+                newBookTitleTF.getText().isEmpty() ||
+                newBookVersionTF.getText().isEmpty() ||
+                newBookNumPagesTF.getText().isEmpty() ||
+                newBookYearTF.getText().isEmpty() ||
+                newBookStockTF.getText().isEmpty() ||
+                newBookGenreTF.getText().isEmpty() ||
+                newBookPriceTF.getText().isEmpty() ||
+                newBookRoyaltyTF.getText().isEmpty() ||
+                newBookAuthorNameTF.getText().isEmpty() ||
+                newBookPublisherTF.getText().isEmpty()){
+            addBookErrorLabel.setText("Book Addition Failed. Please make all fields are filled out properly");
+            return false;
+        }
+
+        // check all fields are valid
+        // ISBN can only be numbers && must be 13 characters
+        try {
+            if(newISBNTF.getText().length() != 13)
+                throw new IllegalArgumentException();
+            Double.parseDouble(newISBNTF.getText());
+        }catch(IllegalArgumentException e){
+            if(e instanceof NumberFormatException)
+                addBookErrorLabel.setText("Book Addition Failed. ISBN cannot contain letters or spaces");
+            else addBookErrorLabel.setText("Book Addition Failed. ISBN must be 13 digits");
+            return false;
+        }
+        // version can only be numbers
+        try {
+            Double.parseDouble(newBookVersionTF.getText());
+        }catch(NumberFormatException e){
+            addBookErrorLabel.setText("Book Addition Failed. Version cannot contain letters or spaces");
+            return false;
+        }
+        // Page Count can only be numbers
+        try {
+            Double.parseDouble(newBookNumPagesTF.getText());
+        }catch(NumberFormatException e){
+            addBookErrorLabel.setText("Book Addition Failed. Page Count cannot contain letters or spaces");
+            return false;
+        }
+        // Stock can only be numbers
+        try {
+            Double.parseDouble(newBookStockTF.getText());
+        }catch(NumberFormatException e){
+            addBookErrorLabel.setText("Book Addition Failed. Stock cannot contain letters or spaces");
+            return false;
+        }
+        // Year can only be numbers && must be 4 characters
+        try {
+            if(newBookYearTF.getText().length() != 4)
+                throw new IllegalArgumentException();
+            Double.parseDouble(newBookYearTF.getText());
+        }catch(IllegalArgumentException e){
+            if(e instanceof NumberFormatException)
+                addBookErrorLabel.setText("Book Addition Failed. Year cannot contain letters or spaces");
+            else addBookErrorLabel.setText("Book Addition Failed. Year must be in the format: YYYY");
+            return false;
+        }
+        // Price can only be numbers
+        try {
+            Double.parseDouble(newBookPriceTF.getText());
+        }catch(NumberFormatException e){
+            addBookErrorLabel.setText("Book Addition Failed. Price cannot contain letters or spaces");
+            return false;
+        }
+        // Royalty can only be numbers
+        try {
+            if(Double.parseDouble(newBookRoyaltyTF.getText()) > 100.0)
+                throw new IllegalArgumentException();
+        }catch(IllegalArgumentException e){
+            if(e instanceof NumberFormatException)
+                addBookErrorLabel.setText("Book Addition Failed. Royalty cannot contain letters or spaces");
+            else addBookErrorLabel.setText("Book Addition Failed. Royalty cannot be greater than 100%");
+            return false;
+        }
+
+        newBookGenreTF.setText(newBookGenreTF.getText().replaceAll("\\s+", ","));
+        String[] genres = newBookGenreTF.getText().split(",");
+        String[] authors = newBookAuthorNameTF.getText().split(",");
+
+        switch(DatabaseQueries.addBook(newISBNTF.getText(), newBookTitleTF.getText(), newBookVersionTF.getText(), newBookNumPagesTF.getText(), newBookYearTF.getText(), newBookStockTF.getText(), genres, newBookPriceTF.getText(), newBookRoyaltyTF.getText(), authors, newBookPublisherTF.getText()))
+        {
+            case 1 -> {addBookErrorLabel.setText("There was an error with the given authors."); return false;}
+            case 2 -> {addBookErrorLabel.setText("There was an error with the given genres."); return false;}
+            case 3 -> {addBookErrorLabel.setText("There was an error with the given publisher. Make sure to add publishers BEFORE books"); return false;}
+            case 4 -> {addBookErrorLabel.setText("A book with that ISBN already exists."); return false;}
+            default -> {return true;}
+        }
+    }
+
+    public static boolean addPublisher(){
+        if(newISBNTF.getText().isEmpty() ||
+                newBookTitleTF.getText().isEmpty() ||
+                newBookVersionTF.getText().isEmpty() ||
+                newBookNumPagesTF.getText().isEmpty() ||
+                newBookYearTF.getText().isEmpty() ||
+                newBookStockTF.getText().isEmpty() ||
+                newBookGenreTF.getText().isEmpty() ||
+                newBookPriceTF.getText().isEmpty() ||
+                newBookRoyaltyTF.getText().isEmpty() ||
+                newBookAuthorNameTF.getText().isEmpty() ||
+                newBookPublisherTF.getText().isEmpty()) {
+            addBookErrorLabel.setText("Book Addition Failed. Please make all fields are filled out properly");
+            return false;
+        }
+        return false;
+    }
 }

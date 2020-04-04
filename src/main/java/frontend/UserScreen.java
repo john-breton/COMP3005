@@ -10,7 +10,7 @@ import java.util.ArrayList;
 
 public class UserScreen extends JFrame implements ActionListener {
 
-    private static JTextField userSearchTF = new JTextField();
+    private static final JTextField userSearchTF = new JTextField();
     private static final JComboBox<String> searchFilters = new JComboBox<>(FrontEndUtilities.searchFilterArr);
     private static final JComboBox<String> resultFilters = new JComboBox<>(FrontEndUtilities.resultFilterArr);
     private JPanel searchResult = new JPanel(new GridLayout(1, 1));
@@ -24,6 +24,7 @@ public class UserScreen extends JFrame implements ActionListener {
         JLabel totalPrice = new JLabel("$0.00", JLabel.CENTER);
         this.setPreferredSize(new Dimension(798, 850));
         if (this.getJMenuBar() != null) this.getJMenuBar().setVisible(false);
+        Container c = this.getContentPane();
         c.removeAll();
 
         searchFilters.setBackground(Color.WHITE);
