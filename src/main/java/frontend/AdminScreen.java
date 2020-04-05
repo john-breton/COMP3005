@@ -575,6 +575,7 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
             addNewPublisherPanel.add(newPublisherPhoneLabel, pubCon);
             pubCon.gridx = 5;
             pubCon.gridwidth = 2;
+            newPublisherPhoneTF.setToolTipText("FORMAT: xxx xxx xxxx");
             addNewPublisherPanel.add(newPublisherPhoneTF, pubCon);
 
             pubCon.gridy = 4;
@@ -638,6 +639,7 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
             addNewPublisherPanel.add(newPublisherBankAccountLabel, pubCon);
             pubCon.gridx = 3;
             pubCon.gridwidth = 4;
+            newPublisherBankAccountTF.setToolTipText("15 digit number");
             addNewPublisherPanel.add(newPublisherBankAccountTF, pubCon);
 
             pubCon.gridwidth = 2;
@@ -1558,14 +1560,18 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
                     }
                 } // Admin Edit Books Screen
                 case "Add Book" -> {
+                    confirmNewBookAddition.setText("");
                     if(AdminScreenUtilities.addBook()) {
                         defaultAdminViewFields();
                         confirmNewBookAddition.setText("New Book Added");
                     }
                 }// Admin Add Book Screen
                 case "Add Publisher" -> {
+                    confirmNewPublisherAddition.setText("");
+                    if(AdminScreenUtilities.addPublisher()) {
                     defaultAdminViewFields();
                     confirmNewPublisherAddition.setText("New Publisher Added");
+                }
                 } // Admin Add Publisher Screen
                 case "Add User" -> {
                     defaultAdminViewFields();

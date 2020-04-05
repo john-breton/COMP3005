@@ -2,6 +2,7 @@ package frontend;
 
 import backend.DatabaseQueries;
 
+import javax.xml.crypto.Data;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Objects;
@@ -504,21 +505,91 @@ public class AdminScreenUtilities extends AdminScreen {
         }
     }
 
-    public static boolean addPublisher(){
-        if(newISBNTF.getText().isEmpty() ||
-                newBookTitleTF.getText().isEmpty() ||
-                newBookVersionTF.getText().isEmpty() ||
-                newBookNumPagesTF.getText().isEmpty() ||
-                newBookYearTF.getText().isEmpty() ||
-                newBookStockTF.getText().isEmpty() ||
-                newBookGenreTF.getText().isEmpty() ||
-                newBookPriceTF.getText().isEmpty() ||
-                newBookRoyaltyTF.getText().isEmpty() ||
-                newBookAuthorNameTF.getText().isEmpty() ||
-                newBookPublisherTF.getText().isEmpty()) {
-            addBookErrorLabel.setText("Book Addition Failed. Please make all fields are filled out properly");
+    /**
+     * Inserts publisher information to the database
+     *
+     * @return true if successful, false otherwise
+     */
+    public static boolean addPublisher() {
+        if (newPublisherNameTF.getText().isEmpty() ||
+                newPublisherEmailTF.getText().isEmpty() ||
+                newPublisherStreetNumTF.getText().isEmpty() ||
+                newPublisherStreetNameTF.getText().isEmpty() ||
+                newPublisherCityTF.getText().isEmpty() ||
+                pubProvinceCB.getSelectedIndex() == 0 ||
+                newPublisherCountryTF.getText().isEmpty() ||
+                newPublisherPostalCodeTF.getText().isEmpty() ||
+                newPublisherBankAccountTF.getText().isEmpty()) {
+            addPublisherErrorLabel.setText("Publisher Addition Failed. Please make all required fields are filled out properly");
             return false;
         }
+
+        // check all fields are valid
+        // email must contain an '@'....or else wtf did they provide
+        if (!newPublisherEmailTF.getText().contains("@")) {
+            addPublisherErrorLabel.setText("Publisher Addition Failed. The email provided is not valid.");
+            return false;
+        }
+        // phone can only be numbers and must be 10 digits long
+        try {
+            if(!newPublisherPhoneTF.getText().isEmpty()) {
+                newPublisherPhoneTF.setText(newPublisherPhoneTF.getText().replaceAll("\\s+", ""));
+                if (newPublisherPhoneTF.getText().length() != 10) {
+                    addPublisherErrorLabel.setText("Publisher Addition Failed. Phone Number must be 10 digits long");
+                    return false;
+                }
+                Double.parseDouble(newPublisherPhoneTF.getText());
+            }
+        } catch (NumberFormatException e) {
+            addPublisherErrorLabel.setText("Publisher Addition Failed. Phone Number cannot contain letters");
+            return false;
+        }
+        // Street number can only be numbers
+        try {
+            Double.parseDouble(newPublisherStreetNumTF.getText());
+        } catch (NumberFormatException e) {
+            addPublisherErrorLabel.setText("Publisher Addition Failed. Street Number cannot contain letters or spaces");
+            return false;
+        }
+        // City can only be letters
+        if(FrontEndUtilities.check(newPublisherCityTF.getText())){
+            addPublisherErrorLabel.setText("Publisher Addition Failed. City cannot contain numbers, spaces or special characters");
+            return false;
+        }
+        // Country can only be letters
+        if(FrontEndUtilities.check(newPublisherCountryTF.getText())){
+            addPublisherErrorLabel.setText("Publisher Addition Failed. Country cannot contain numbers, spaces or special characters");
+            return false;
+        }
+        // Bank Acc can only be numbers && must be 15 digits
+        try {
+            newPublisherBankAccountTF.setText(newPublisherBankAccountTF.getText().replaceAll("\\s+", ""));
+            if (newPublisherBankAccountTF.getText().length() != 15) {
+                addPublisherErrorLabel.setText("Invalid bank account number");
+                return false;
+            }
+            Double.parseDouble(newPublisherBankAccountTF.getText());
+        } catch (NumberFormatException e) {
+            addPublisherErrorLabel.setText("Publisher Addition Failed. Bank Account cannot contain letters or spaces");
+            return false;
+        }
+        // Postal Code must be 6 digits
+        if (newPublisherPostalCodeTF.getText().length() != 6) {
+            addPublisherErrorLabel.setText("Invalid postal code");
+            return false;
+        }
+
+
+
+        newPublisherNameTF.setText(newPublisherNameTF.getText().replaceAll("'", ""));
+        // attempt to add publisher
+        if (DatabaseQueries.addPublisher(newPublisherNameTF.getText(), newPublisherEmailTF.getText(), newPublisherPhoneTF.getText(), newPublisherBankAccountTF.getText())) {
+            // add address
+            DatabaseQueries.addAddress(newPublisherStreetNumTF.getText(), newPublisherStreetNameTF.getText(), newPublisherApartmentTF.getText(), newPublisherCityTF.getText(), pubProvinceCB.getSelectedItem().toString(), newPublisherCountryTF.getText(), newPublisherPostalCodeTF.getText());
+            //associate publisher with the address
+            return DatabaseQueries.addPubAdd(newPublisherNameTF.getText());
+        }
+        addPublisherErrorLabel.setText("Publisher Addition Failed. Publisher already exists.");
         return false;
     }
 }
