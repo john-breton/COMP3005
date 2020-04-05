@@ -7,21 +7,23 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class UserScreen extends JFrame implements ActionListener {
 
     private static final JTextField userSearchTF = new JTextField();
     private static final JComboBox<String> searchFilters = new JComboBox<>(FrontEndUtilities.searchFilterArr);
     private static final JComboBox<String> resultFilters = new JComboBox<>(FrontEndUtilities.resultFilterArr);
-    private JPanel searchResult = new JPanel(new GridLayout(1, 1));
+    private final ButtonGroup cartItems = new ButtonGroup();
+    private final JLabel errorLabel = new JLabel("");
+    private final JLabel totalPrice;
+    private final JPanel searchResult = new JPanel(new GridLayout(1, 1));
+    private final JPanel cart = new JPanel(new GridLayout(1, 1));
     private ArrayList<JButton> bookButtons = new ArrayList<>();
-    private Container c = this.getContentPane();
-    private JScrollPane scrollResults = new JScrollPane(searchResult,
-            JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-            JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+    private final ArrayList<JToggleButton> cartButtons = new ArrayList<>();
 
     public UserScreen() {
-        JLabel totalPrice = new JLabel("$0.00", JLabel.CENTER);
+        totalPrice = new JLabel("$0.00", JLabel.CENTER);
         this.setPreferredSize(new Dimension(798, 850));
         if (this.getJMenuBar() != null) this.getJMenuBar().setVisible(false);
         Container c = this.getContentPane();
@@ -48,6 +50,7 @@ public class UserScreen extends JFrame implements ActionListener {
         JLabel searchLabel = new JLabel("Search: ");
         JLabel cartLabel = new JLabel("Cart: ");
         JLabel filterLabel = new JLabel("Sort by: ");
+
         JLabel totalPriceLabel = new JLabel("Total Price: ");
 
         // Buttons
@@ -63,9 +66,6 @@ public class UserScreen extends JFrame implements ActionListener {
         checkoutButton.addActionListener(this);
         searchButton.addActionListener(this);
         logoutButton.addActionListener(this);
-
-        // ScrollPanes
-        JScrollPane currentCart = new JScrollPane();
 
         /* Setup Panels */
         // Price panel
@@ -127,6 +127,8 @@ public class UserScreen extends JFrame implements ActionListener {
         con.gridx = 1;
         con.insets = everythingElse;
         searchAndResults.add(resultFilters, con);
+        con.gridx = 2;
+        searchAndResults.add(errorLabel, con);
 
         con.gridx = 0;
         con.gridy = 3;
@@ -137,10 +139,14 @@ public class UserScreen extends JFrame implements ActionListener {
         con.fill = GridBagConstraints.BOTH;
         con.anchor = GridBagConstraints.CENTER;
         searchResult.setBorder(BorderFactory.createLineBorder(Color.black));
+        cart.setBorder(BorderFactory.createLineBorder(Color.black));
         searchResult.setSize(500, 600);
-        for (JButton btn: bookButtons) {
+        for (JButton btn : bookButtons) {
             searchResult.add(btn);
         }
+        JScrollPane scrollResults = new JScrollPane(searchResult,
+                JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         searchAndResults.add(scrollResults, con);
 
         searchAndResults.setMinimumSize(searchResultDimension);
@@ -150,6 +156,9 @@ public class UserScreen extends JFrame implements ActionListener {
         cartLabel.setAlignmentX(JPanel.LEFT_ALIGNMENT);
         cartPanel.add(cartLabel, BorderLayout.PAGE_START);
         cartPanel.add(checkoutPanel, BorderLayout.PAGE_END);
+        JScrollPane currentCart = new JScrollPane(cart,
+                JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         cartPanel.add(currentCart, BorderLayout.CENTER);
         cartPanel.setPreferredSize(cartDimension);
 
@@ -170,80 +179,143 @@ public class UserScreen extends JFrame implements ActionListener {
         searchResult.removeAll();
         searchResult.repaint();
         bookButtons = new ArrayList<>();
+        errorLabel.setText("");
 
         // TODO make this a label
         if (searchText.isEmpty()) {
-            System.out.println("There's nothing here to search with!");
+            errorLabel.setText("There's nothing here to search with!");
             return;
         }
-        String searchTerm = searchFilters.getSelectedItem().toString().toLowerCase();
-        if (searchTerm.equals("title")) {
-            searchTerm = "name";
-        } else if (searchTerm.equals("publisher")) {
+        String searchTerm = Objects.requireNonNull(searchFilters.getSelectedItem()).toString().toLowerCase();
+        if (searchTerm.equals("publisher")) {
             searchTerm = "pub_name";
+        } else if (searchTerm.equals("genre")) {
+            searchTerm = "name";
         }
 
         // Execute the search.
         ArrayList<Object> results = DatabaseQueries.lookForaBook(searchText, searchTerm);
         if (results == null) {
-            // TODO make this a label
-            System.out.println("Did not find any books, please try again!");
+            errorLabel.setText("Did not find any books, please try again!");
         } else {
-            searchResult.setLayout(new GridLayout(results.size() / 11, 1));
-            System.out.println(results.size());
+            if (results.size() / 11 > 4) {
+                searchResult.setLayout(new GridLayout(results.size() / 11, 1));
+            } else {
+                searchResult.setLayout(new GridLayout(4, 1));
+            }
             for (int i = 0; i < results.size() / 11; i++) {
                 createBook(results, i * 11);
             }
-        }
-        for (JButton btn: bookButtons) {
-            searchResult.add(btn);
+            for (JButton btn : bookButtons) {
+                searchResult.add(btn);
+            }
         }
 
         this.invalidate();
         this.validate();
         this.repaint();
-
     }
 
     /**
      * Creates and adds a book as a button after a search has been completed.
-     * TODO Register an ActionListener on the JButtons such that they can be added to the cart on click.
      *
      * @param results The data used to construct a book JButton.
      */
     private void createBook(ArrayList<Object> results, int i) {
         JButton book = FrontEndUtilities.formatButton("");
-        book.setMinimumSize(new Dimension(400, 100));
+        book.setMinimumSize(new Dimension(400, 50));
+        book.addActionListener(this);
         StringBuilder text = new StringBuilder();
         text.append("<html>");
-        text.append("<u>ISBN:</u> " + results.get(i).toString() + "<br/>");
-        text.append("<u>Title:</u> " + results.get(i + 1).toString() + "<br/>");
+        text.append("<u>ISBN:</u> ").append(results.get(i).toString()).append("<br/>");
+        text.append("<u>Title:</u> ").append(results.get(i + 1).toString()).append("<br/>");
         text.append("<u>Author(s):</u> ");
         String[] authors = results.get(i + 9).toString().split(",");
         int count = 0;
-        for (String curr: authors) {
+        for (String curr : authors) {
             if (count == 0 && count == authors.length - 1) {
                 text.append(curr, 1, curr.length() - 1);
             } else if (count == authors.length - 1) {
                 text.append(curr, 0, curr.length() - 1);
             } else if (count == 0) {
-                text.append(curr.substring(1) + ", ");
+                text.append(curr.substring(1)).append(", ");
             } else {
-                text.append(curr + ", ");
+                text.append(curr).append(", ");
             }
             count++;
         }
-        text.append("<br/><u>Edition:</u> " + results.get(i + 2).toString() + "<br/>");
-        text.append("<u>Page Count:</u> " + results.get(i + 3).toString() + "<br/>");
-        text.append("<u>Price:</u> $" + results.get(i + 4).toString() + "<br/>");
-        text.append("<u>Stock:</u> " + results.get(i + 6).toString() + "<br/>");
-        text.append("<u>Publisher:</u> " + results.get(i + 7).toString() + "<br/>");
-        text.append("<u>Year:</u> " + results.get(i + 8).toString() + "<br/>");
+        text.append("<br/><u>Edition:</u> ").append(results.get(i + 2).toString()).append("<br/>");
+        text.append("<u>Page Count:</u> ").append(results.get(i + 3).toString()).append("<br/>");
+        text.append("<u>Price:</u> $").append(results.get(i + 4).toString()).append("<br/>");
+        text.append("<u>Stock:</u> ").append(results.get(i + 6).toString()).append("<br/>");
+        text.append("<u>Publisher:</u> ").append(results.get(i + 7).toString()).append("<br/>");
+        text.append("<u>Year:</u> ").append(results.get(i + 8).toString()).append("<br/>");
         text.append("</html>");
         book.setText(text.toString());
         book.setHorizontalAlignment(SwingConstants.LEFT);
         bookButtons.add(book);
+    }
 
+    /**
+     * Add an item to the user's cart.
+     *
+     * @param text The text that will be parsed to create the cart item.
+     */
+    private void addToCart(String text) {
+        String[] splitEmUp = text.split("Title");
+        String title = splitEmUp[1].substring(6);
+        StringBuilder usefulTitle = new StringBuilder();
+        int i = 0;
+        while ((title.charAt(i) != '<')) {
+            usefulTitle.append(title.charAt(i));
+            i++;
+        }
+        // Book already in cart
+        for (JToggleButton btn : cartButtons) {
+            if (btn.getName().equals(usefulTitle.toString())) {
+                return;
+            }
+        }
+        // Book was not in cart.
+        JToggleButton item = new JToggleButton("<html><u>Title</u>: " + usefulTitle.toString() + "<br/><u>Quantity</u>: 1</html>");
+        item.setBackground(Color.WHITE);
+        item.setHorizontalAlignment(SwingConstants.LEFT);
+        item.setName(usefulTitle.toString());
+        if (cartButtons.size() > 4) {
+            cart.setLayout(new GridLayout(cartButtons.size() + 1, 1));
+        } else {
+            cart.setLayout(new GridLayout(4, 1));
+        }
+        cartItems.add(item);
+        cartButtons.add(item);
+        for (JToggleButton btn : cartButtons) {
+            cart.add(btn);
+        }
+        priceUpdate(text);
+
+        this.invalidate();
+        this.validate();
+        this.repaint();
+    }
+
+    /**
+     * Update the total price of a user's cart.
+     *
+     * @param text The text that will be parsed to find the price of the book.
+     */
+    private void priceUpdate(String text) {
+        String[] splitEmUp = text.split("Price");
+        String price = splitEmUp[1].substring(7);
+        StringBuilder usefulPrice = new StringBuilder();
+        int i = 0;
+        while ((price.charAt(i) != '<')) {
+            usefulPrice.append(price.charAt(i));
+            i++;
+        }
+        double currPrice = Double.parseDouble(totalPrice.getText().substring(1));
+        double lastPrice = Double.parseDouble(usefulPrice.toString());
+        currPrice += lastPrice;
+        totalPrice.setText("$" + currPrice);
     }
 
     /**
@@ -263,7 +335,7 @@ public class UserScreen extends JFrame implements ActionListener {
                 new CheckoutScreen(); // User Screen
             }
             case "Search" -> search(); // User screen
-            default -> System.out.println("Error");
+            default -> addToCart(((JButton) o).getText());
         }
     }
 }

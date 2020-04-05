@@ -18,8 +18,8 @@ import java.util.ArrayList;
 public class DatabaseQueries {
 
     // Just putting this here so we can change it when we test.
-    private static final String USER = "ryan";
-    private static final String DATABASE = "LookInnaBook";
+    private static final String USER = "postgres";
+    private static final String DATABASE = "lookinnabook";
     public static Connection connection;
     public static Statement statement;
 
@@ -398,29 +398,53 @@ public class DatabaseQueries {
         ResultSet result = null;
         try {
             if (searchType.equals("author")) {
-
-            } else if (searchType.equals("genre")) {
+                // TODO Actually finish this.
+            } else if (searchType.equals("name")) {
+                String isbn = null;
+                result = statement.executeQuery(String.format("SELECT * FROM project.hasgenre WHERE " + searchType + " = '%s'", searchText));
+                while(result.next()) {
+                    isbn = result.getString("isbn");
+                    statement = connection.createStatement();
+                    ResultSet result2 = statement.executeQuery(String.format("SELECT * FROM project.book natural join project.publishes WHERE isbn = '%s'", isbn));
+                    while (result2.next()) {
+                        rowCount++; // count results
+                        isbn = result2.getString("isbn");
+                        bookInfo.add(isbn);
+                        bookInfo.add(result2.getString("title"));
+                        bookInfo.add(result2.getString("version"));
+                        bookInfo.add(result2.getString("num_pages"));
+                        bookInfo.add(result2.getString("price"));
+                        bookInfo.add(result2.getString("royalty"));
+                        bookInfo.add(result2.getString("stock"));
+                        bookInfo.add(result2.getString("pub_name"));
+                        bookInfo.add(result2.getString("year"));
+                        // get author info
+                        bookInfo.add(lookForaAuthor(isbn));
+                        // get genres
+                        bookInfo.add(lookForaGenre(isbn));
+                    }
+                }
 
             } else {
                 result = statement.executeQuery(String.format("SELECT * FROM project.book natural join project.publishes WHERE " + searchType + " = '%s'", searchText));
-            }
-            String isbn = null;
-            while (result.next()) {
-                rowCount++; // count results
-                isbn = result.getString("isbn");
-                bookInfo.add(isbn);
-                bookInfo.add(result.getString("name"));
-                bookInfo.add(result.getString("version"));
-                bookInfo.add(result.getString("num_pages"));
-                bookInfo.add(result.getString("price"));
-                bookInfo.add(result.getString("royalty"));
-                bookInfo.add(result.getString("stock"));
-                bookInfo.add(result.getString("pub_name"));
-                bookInfo.add(result.getString("year"));
-                // get author info
-                bookInfo.add(lookForaAuthor(isbn));
-                // get genres
-                bookInfo.add(lookForaGenre(isbn));
+                String isbn = null;
+                while (result.next()) {
+                    rowCount++; // count results
+                    isbn = result.getString("isbn");
+                    bookInfo.add(isbn);
+                    bookInfo.add(result.getString("title"));
+                    bookInfo.add(result.getString("version"));
+                    bookInfo.add(result.getString("num_pages"));
+                    bookInfo.add(result.getString("price"));
+                    bookInfo.add(result.getString("royalty"));
+                    bookInfo.add(result.getString("stock"));
+                    bookInfo.add(result.getString("pub_name"));
+                    bookInfo.add(result.getString("year"));
+                    // get author info
+                    bookInfo.add(lookForaAuthor(isbn));
+                    // get genres
+                    bookInfo.add(lookForaGenre(isbn));
+                }
             }
 
             // We can find more than one book given the parameters.
