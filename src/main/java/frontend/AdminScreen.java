@@ -9,7 +9,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class AdminScreen extends JFrame implements ActionListener, ChangeListener {
-    protected static final JCheckBox billingSameAsShipping = new JCheckBox("Billing Address is the same as Shipping Address");
+    protected static final JCheckBox billingSameAsShipping = new JCheckBox("Billing Address is the same as Shipping Address"),
+            adminBillingSameAsShipping = new JCheckBox("Billing Address is the same as Shipping Address");
     protected static final JTextField billStreetNumTF = new JTextField(),
             billStreetNameTF = new JTextField(),
             billApartmentTF = new JTextField(10),
@@ -24,7 +25,8 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
             billAdminProvinceCB = new JComboBox<>(FrontEndUtilities.provincesArr),
             editShippingProvinceCB = new JComboBox<>(FrontEndUtilities.provincesArr),
             editBillProvinceCB = new JComboBox<>(FrontEndUtilities.provincesArr);
-    protected static final JCheckBox isUserAdminCB = new JCheckBox("Is the user an admin?");
+    protected static final JCheckBox isUserAdminCB = new JCheckBox("Is the user an admin?"),
+            newIsUserAdminCB = new JCheckBox("Is the user an admin?");
     protected static final JCheckBox editBillingSameAsShipping = new JCheckBox("Billing Address is the same as Shipping Address");
     // AdminScreen
     // addBook
@@ -207,6 +209,7 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
         confirmNewPublisherAddition.setText("");
 
         // addUser
+        newIsUserAdminCB.setSelected(false);
         newAdminUsernameTF.setText("");
         newAdminPasswordTF.setText("");
         confirmAdminPasswordTF.setText("");
@@ -704,15 +707,13 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
                 billAdminPostalCodeLabel = new JLabel("Postal Code: ", JLabel.RIGHT);
 
         /* JCheckBoxes */
-        JCheckBox billingSameAsShipping = new JCheckBox("Billing Address is the same as Shipping Address");
-        billingSameAsShipping.setSelected(true); // selected by default
-        JCheckBox isUserAdminCB = new JCheckBox("Is the user an admin?");
+        adminBillingSameAsShipping.setSelected(true); // selected by default
 
         /* ActionListeners */
         logoutAddUserButton.addActionListener(this);
         addUserButton.addActionListener(this);
-        billingSameAsShipping.addChangeListener(e -> {
-            boolean sameAsBilling = !billingSameAsShipping.isSelected();
+        adminBillingSameAsShipping.addChangeListener(e -> {
+            boolean sameAsBilling = !adminBillingSameAsShipping.isSelected();
             billAdminStreetNumTF.setEnabled(sameAsBilling);
             billAdminStreetNameTF.setEnabled(sameAsBilling);
             billAdminApartmentTF.setEnabled(sameAsBilling);
@@ -721,14 +722,13 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
             billAdminCountryTF.setEnabled(sameAsBilling);
             billAdminPostalCodeTF.setEnabled(sameAsBilling);
         });
-        isUserAdminCB.addChangeListener(e -> {
-            boolean admin = isUserAdminCB.isSelected();
+        newIsUserAdminCB.addChangeListener(e -> {
+            boolean admin = newIsUserAdminCB.isSelected();
             salaryAdminTF.setEnabled(admin);
             if (admin) {
                 salaryAdminLabel.setText("*Salary: ");
                 shippingAdminStreetNumLabel.setText("Street Number: ");
                 shippingAdminStreetNameLabel.setText("Street Name: ");
-                shippingAdminApartmentLabel.setText("Apartment: ");
                 shippingAdminCityLabel.setText("City: ");
                 shippingAdminProvinceLabel.setText("Province: ");
                 shippingAdminCountryLabel.setText("Country: ");
@@ -737,7 +737,7 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
                 salaryAdminLabel.setText("Salary: ");
                 shippingAdminStreetNumLabel.setText("*Street Number: ");
                 shippingAdminStreetNameLabel.setText("*Street Name: ");
-                shippingAdminApartmentLabel.setText("*Apartment: ");
+                shippingAdminApartmentLabel.setText("Apartment: ");
                 shippingAdminCityLabel.setText("*City: ");
                 shippingAdminProvinceLabel.setText("*Province: ");
                 shippingAdminCountryLabel.setText("*Country: ");
@@ -789,7 +789,7 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
             newUserPanel.add(newAdminUsernameLabel, userCon);
             userCon.gridx = 4;
             userCon.gridwidth = 2;
-            newUserPanel.add(isUserAdminCB, userCon);
+            newUserPanel.add(newIsUserAdminCB, userCon);
             userCon.gridx = 2;
             newUserPanel.add(newAdminUsernameTF, userCon);
 
@@ -901,7 +901,7 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
             newUserPanel.add(billingAdminAddressLabel, userCon);
             userCon.gridx = 3;
             userCon.gridwidth = 4;
-            newUserPanel.add(billingSameAsShipping, userCon);
+            newUserPanel.add(adminBillingSameAsShipping, userCon);
 
             userCon.gridy = 16;
             userCon.gridx = 1;
@@ -1569,13 +1569,16 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
                 case "Add Publisher" -> {
                     confirmNewPublisherAddition.setText("");
                     if(AdminScreenUtilities.addPublisher()) {
-                    defaultAdminViewFields();
-                    confirmNewPublisherAddition.setText("New Publisher Added");
-                }
+                        defaultAdminViewFields();
+                        confirmNewPublisherAddition.setText("New Publisher Added");
+                    }
                 } // Admin Add Publisher Screen
                 case "Add User" -> {
-                    defaultAdminViewFields();
-                    confirmAdminReg.setText("New User Added");
+                    confirmAdminReg.setText("");
+                    if(AdminScreenUtilities.addLibrarian()) {
+                        defaultAdminViewFields();
+                        confirmAdminReg.setText("New User Added");
+                    }
                 } // Admin Add User Screen
                 default -> System.out.println("Error");
             }

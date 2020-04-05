@@ -18,8 +18,8 @@ import java.util.ArrayList;
 public class DatabaseQueries {
 
     // Just putting this here so we can change it when we test.
-    private static final String USER = "postgres";
-    private static final String DATABASE = "lookinnabook";
+    private static final String USER = "ryan";
+    private static final String DATABASE = "LookInnaBook";
     public static Connection connection;
     public static Statement statement;
 
@@ -271,9 +271,9 @@ public class DatabaseQueries {
         try {
             int rowsAffected;
             if (!password.isEmpty())
-                rowsAffected = statement.executeUpdate("UPDATE project.user SET password = '" + password + "', first_name = '" + firstName + "', last_name = '" + lastName + "', email = '" + email + "' WHERE user_name = '" + username.toLowerCase() + "'");
+                rowsAffected = statement.executeUpdate(String.format("UPDATE project.user SET password = '%s', first_name = '%s', last_name = '%s', email = '%s' WHERE user_name = '%s'", password, firstName, lastName, email, username.toLowerCase()));
             else
-                rowsAffected = statement.executeUpdate("UPDATE project.user SET first_name = '" + firstName + "', last_name = '" + lastName + "', email = '" + email + "' WHERE user_name = '" + username.toLowerCase() + "'");
+                rowsAffected = statement.executeUpdate(String.format("UPDATE project.user SET first_name = '%s', last_name = '%s', email = '%s' WHERE user_name = '%s'", firstName, lastName, email, username.toLowerCase()));
 
             if (rowsAffected == 1) { // means a row was updated
                 return true;
