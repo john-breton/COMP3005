@@ -3,8 +3,8 @@ package startup;/*
  * All rights reserved.
  */
 
-import com.google.gson.*;
 import backend.DatabaseQueries;
+import com.google.gson.*;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -26,9 +26,8 @@ import java.util.stream.Stream;
 @SuppressWarnings("JavaDoc")
 public class uploadBookData {
 
-    private static Statement statement = null;
-    private static final String DATABASE = "lookinnabook";
-    private static final String USER = "postgres";
+    private static final String DATABASE = "LookInnaBook";
+    private static final String USER = "ryan";
     static String titleObject;
     static BigInteger isbnObject;
     static JsonArray authorsObject;
@@ -41,7 +40,7 @@ public class uploadBookData {
     public static void main(String[] args) {
         try {
             Connection connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/" + DATABASE, USER, "");
-            statement = connection.createStatement();
+            Statement statement = connection.createStatement();
 
             // emptyDB
             StringBuilder resetDB = new StringBuilder();
@@ -53,7 +52,7 @@ public class uploadBookData {
             statement.executeUpdate("Insert into project.user (user_name, password) values ('" + USER + "', '" + USER + "');" +
                     "insert into project.librarian values ('" + USER + "', 300.00);");
 
-        }catch (SQLException | IOException e) {
+        } catch (SQLException | IOException e) {
             e.printStackTrace();
         }
 
@@ -61,91 +60,73 @@ public class uploadBookData {
         System.out.println("Database has been updated");
     }
 
-    public uploadBookData(){
-        try{
+    public uploadBookData() {
+        try {
             FileReader file = new FileReader("documentation/bookdata.json");
             JsonArray arr = JsonParser.parseReader(file).getAsJsonArray();
 
             arr.forEach(book -> {
                 parseBookObject((JsonObject) book);
 
-                if(titleObject != null && isbnObject != null && pgCntObject != -1 && yearObject != -1 && authorsObject != null &&
-                    publishersObject != null && genresObject != null)
-                {
-                    addBook(isbnObject, titleObject, pgCntObject);
-                    addGenre(genresObject);
-                    addAuthor(authorsObject, isbnObject);
+                if (titleObject != null && isbnObject != null && pgCntObject != -1 && yearObject != -1 && authorsObject != null &&
+                        publishersObject != null && genresObject != null) {
                     addPublisher(publishersObject);
-                    addHasGenre(isbnObject, genresObject);
-                    addWrites(authorsObject, isbnObject);
-                    addPublishes(publishersObject, yearObject, isbnObject);
+                    addBook(isbnObject, titleObject, pgCntObject);
                 }
             });
 
             // populate DB with users + addresses
-            for(int i = 0; i < 1000; i++)
+            for (int i = 0; i < 1000; i++)
                 addUsers();
 
-        }catch (FileNotFoundException e){
+        } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
     }
 
     /**
      * adds a new book to the database
+     *
      * @param isbn
      * @param title
      * @param pgCnt
      */
     private void addBook(BigInteger isbn, String title, int pgCnt) {
-        try {
-            int version = 1;
-            Random r = new Random();
-            int price = r.nextInt(998) + 1;
-            double royalty = (r.nextInt(99) + 1) / 1.0;
-            int stock = r.nextInt(1000) + 1;
+        int version = 1;
+        Random r = new Random();
+        int price = r.nextInt(998) + 1;
+        double royalty = (r.nextInt(99) + 1) / 1.0;
+        int stock = r.nextInt(1000) + 1;
+        StringBuilder genres = new StringBuilder();
+        StringBuilder authors = new StringBuilder();
+        StringBuilder publishers = new StringBuilder();
 
-            statement.executeUpdate(String.format("INSERT INTO project.book values(%s,'%s',%d,%d,%d,%s,%d)", isbn, title, version, pgCnt, price, royalty, stock));
-        } catch (SQLException e) {
-            if(!e.toString().equals("org.postgresql.util.PSQLException: ERROR: duplicate key value violates unique constraint \"book_pkey\"\n" +
-                    "  Detail: Key (isbn)=(" + isbn + ") already exists.")){
-                System.out.println("Book Error Code: " + e.getErrorCode());
-            }
+        for (JsonElement g : genresObject) {
+            genres.append(" ").append(g.toString());
         }
-    }
+        for (JsonElement a : authorsObject) {
+            authors.append(" ").append(a.toString());
+        }
+        for (JsonElement p : publishersObject) {
+            publishers.append(" ").append(p.toString());
+        }
 
-    /**
-     * Adds a new genre to the database
-     * @param genres
-     */
-    private void addGenre(JsonArray genres) {
-        genres.forEach(g -> {
-            try {
-                statement.executeUpdate("INSERT INTO project.genre values ('" + g.toString().replaceAll("\"", "") + "');");
-            } catch (SQLException e) {
-                if(!e.toString().equals("org.postgresql.util.PSQLException: ERROR: duplicate key value violates unique constraint \"genre_pkey\"\n" +
-                        "  Detail: Key (name)=(" + g.toString().replaceAll("\"", "") + ") already exists.")){
-                    System.out.println("Genre Error Code: " + e.getErrorCode());
-                }
-            }
-        });
-    }
-
-    private void addHasGenre(BigInteger isbn, JsonArray genres){
-        genres.forEach(g -> {
-            try {
-                statement.executeUpdate("INSERT INTO project.hasgenre values ('" + g.toString().replaceAll("\"", "") + "', '" + isbn + "');");
-            } catch (SQLException e) {
-                if(!e.toString().equals("org.postgresql.util.PSQLException: ERROR: duplicate key value violates unique constraint \"hasgenre_pkey\"\n" +
-                        "  Detail: Key (name, isbn)=(" + g.toString().replaceAll("\"", "") + ", " + isbn + ") already exists.")){
-                    System.out.println("HasGenre Error Code: " + e.getErrorCode());
-                }
-            }
-        });
+        DatabaseQueries.addBook(String.valueOf(isbn),
+                title,
+                String.valueOf(version),
+                String.valueOf(pgCnt),
+                String.valueOf(yearObject),
+                String.valueOf(stock),
+                genres.toString().trim().split(" "),
+                String.valueOf(price),
+                String.valueOf(royalty),
+                authors.toString().trim().split(" "),
+                publishers.toString().trim().replaceAll("\"", ""));
     }
 
     /**
      * Adds a new publisher to the database
+     *
      * @param publishers
      */
     private void addPublisher(JsonArray publishers) {
@@ -155,75 +136,12 @@ public class uploadBookData {
         long bankAcc = (long) (100000000000000L + r.nextFloat() * 900000000000000L);
 
         publishers.forEach(p -> {
-            String newP = p.getAsString().replaceAll("'","");
-            try {
-                statement.executeUpdate(String.format("INSERT INTO project.publisher values ('%s','%s', %d, %d);", newP, defaultEmail, phoneNum, bankAcc));
-            } catch (SQLException e) {
-                if(!e.toString().equals("org.postgresql.util.PSQLException: ERROR: duplicate key value violates unique constraint \"publisher_pkey\"\n" +
-                        "  Detail: Key (pub_name)=(" + newP + ") already exists.")){
-                    System.out.println("Publisher Error Code: " + e.getErrorCode());
-                }
-            }
+            String newP = p.getAsString().replaceAll("'", "");
+            DatabaseQueries.addPublisher(newP, defaultEmail, String.valueOf(phoneNum), String.valueOf(bankAcc));
         });
     }
 
-    private void addPublishes(JsonArray publishers, int year, BigInteger isbn){
-        publishers.forEach(p -> {
-            String newP = p.getAsString().replaceAll("'","");
-            try {
-                statement.executeUpdate("INSERT INTO project.publishes values ('" + newP + "', '" + isbn + "', '" + year + "');");
-            } catch (SQLException e) {
-                if(!e.toString().equals("org.postgresql.util.PSQLException: ERROR: duplicate key value violates unique constraint \"publishes_pkey\"\n" +
-                        "  Detail: Key (pub_name, isbn)=(" + newP + ", " + isbn + ") already exists.") &&
-                        !e.toString().equals("org.postgresql.util.PSQLException: ERROR: duplicate key value violates unique constraint \"publishes_isbn_key\"\n" +
-                "  Detail: Key (isbn)=(" + isbn + ") already exists.")){
-                    System.out.println("Publishes Error Code: " + e.getErrorCode());
-                }
-            }
-        });
-    }
-
-    /**
-     * Adds a new author to the database
-     * @param authors
-     */
-    private void addAuthor(JsonArray authors, BigInteger isbn) {
-        authors.forEach(a -> {
-            String newA = a.getAsString().replaceAll("'","");
-            String[] names = newA.split(" ");
-            String firstName = names[0];
-            String lastName = names[names.length-1];
-            try {
-                statement.executeUpdate("INSERT INTO project.author values ('" + firstName + "', '" + lastName + "');" +
-                        "INSERT INTO project.writes values ('" + firstName + "', '" + lastName + "', '" + isbn + "');");
-            } catch (SQLException e) {
-                if(!e.toString().equals("org.postgresql.util.PSQLException: ERROR: duplicate key value violates unique constraint \"author_pkey\"\n" +
-                        "  Detail: Key (auth_fn, auth_ln)=(" + firstName + ", " + lastName + ") already exists.")){
-                    System.out.println("Author Error Code: " + e.getErrorCode());
-                }
-            }
-        });
-
-    }
-
-    private void addWrites(JsonArray authors, BigInteger isbn){
-        authors.forEach(a -> {
-            String newA = a.getAsString().replaceAll("'","");
-            String[] names = newA.split(" ");
-            String firstName = names[0];
-            String lastName = names[names.length-1];
-            try {
-                statement.executeUpdate("INSERT INTO project.writes values ('" + firstName + "', '" + lastName + "', '" + isbn + "');");
-            } catch (SQLException e) {
-                if(!e.toString().equals("org.postgresql.util.PSQLException: ERROR: duplicate key value violates unique constraint \"writes_pkey\"\n" +
-                        "  Detail: Key (auth_fn, auth_ln, isbn)=(" + firstName + ", " + lastName + ", " + isbn + ") already exists.")){
-                    System.out.println("Writes Error Code: " + e.getErrorCode());
-                }
-            }
-        });
-    }
-
-    private void addUsers(){
+    private void addUsers() {
         Random r = new Random();
         String[] firstName = {"Adam", "Alex", "Aaron", "Ben", "Carl", "Dan", "David", "Edward", "Fred", "Frank", "George", "Hal", "Hank", "Ike", "John", "Jack", "Joe", "Larry", "Monte", "Matthew", "Mark", "Nathan", "Otto", "Paul", "Peter", "Roger", "Roger", "Steve", "Thomas", "Tim", "Ty", "Victor", "Walter", "Aiden", "Aidan", "Ayden", "Brad", "Bradley", "Connor", "Cathy", "Denver", "Daisere", "Evelynn", "Farah", "Gus", "Hale", "Iziac", "Jill", "Kyle", "Leah", "Monty", "Nathan", "Orion", "Penelope", "Quinn", "Ryan", "Stacey", "Tracy", "Umar", "Vern", "William", "Xia", "Yanny", "Zelda"};
         String[] lastName = {"Anderson", "Ashwoon", "Aikin", "Bateman", "Bongard", "Bowers", "Boyd", "Cannon", "Cast", "Deitz", "Dewalt", "Ebner", "Frick", "Hancock", "Haworth", "Hesch", "Hoffman", "Kassing", "Knutson", "Lawless", "Lawicki", "Mccord", "McCormack", "Miller", "Myers", "Nugent", "Ortiz", "Orwig", "Paiser", "Pettigrew", "Quinn", "Quizoz", "Ramachandran", "Resnick", "Sagar", "Schickowski", "Schiebel", "Sellon", "Severson", "Shaffer", "Solberg", "Soloman", "Sonderling", "Soukup", "Soulis", "Stahl", "Sweeney", "Tandy", "Trebil", "Trusela", "Trussel", "Turco", "Uddin", "Uflan", "Ulrich", "Upson", "Vader", "Vail", "Valente", "VanZandt", "Vanderpoel", "Ventotla", "Vogal", "Wagle", "Wagner", "Wakefield", "Weinstein", "Weiss", "Yang", "Yates", "Yocum", "Zeaser", "Zeller", "Ziegler", "Bauer", "Baxster", "Casal", "Cataldi", "Caswell", "Celedon", "Chambers", "Chapman", "Christensen", "Darnell", "Davidson", "Davis", "DeLorenzo", "Dinkins", "Doran", "Dugelman", "Dugan", "Duffman", "Eastman", "Ferro", "Ferry", "Fletcher", "Fietzer", "Hylan", "Hydinger", "Illingsworth", "Ingram", "Irwin", "Jagtap", "Jenson", "Johnson", "Johnsen", "Jones", "Jurgenson", "Kalleg", "Kaskel", "Keller", "Leisinger", "LePage", "Lewis", "Linde", "Lulloff", "Maki", "Martin", "McGinnis", "Mills", "Moody", "Moore", "Napier", "Nelson", "Norquist", "Nuttle", "Olson", "Ostrander", "Reamer", "Reardon", "Reyes", "Rice", "Ripka", "Roberts", "Rogers", "Root", "Sandstrom", "Sawyer", "Schlicht", "Schmitt", "Schwager", "Schutz", "Schuster", "Tapia", "Thompson", "Tiernan", "Tisler"};
@@ -242,16 +160,16 @@ public class uploadBookData {
         int streetNum = (int) (100L + r.nextFloat() * 900L); // 3 digit street num
         boolean isBilling = trueFalse[r.nextInt(2)];
         //generate postal code
-        for(int i = 0; i < 3; i++){
+        for (int i = 0; i < 3; i++) {
             postalCode.append(letters[r.nextInt(letters.length)]).append(numbers[r.nextInt(numbers.length)]);
         }
         // user deets
         String userFirstName = firstName[r.nextInt(firstName.length)];
         String userLastName = lastName[r.nextInt(lastName.length)];
-        String username = userFirstName.substring(0,1).toLowerCase() + userLastName.substring(0, 3).toLowerCase(); // username is 1st letter of first name + first 3 letters of last name
+        String username = userFirstName.substring(0, 1).toLowerCase() + userLastName.substring(0, 3).toLowerCase(); // username is 1st letter of first name + first 3 letters of last name
         Integer salary = null;
         int defaultSal = 30000;
-        if(trueFalse[r.nextInt(2)] && (username.contains("r"))) // decide if the user is an admin
+        if (trueFalse[r.nextInt(2)] && (username.contains("r"))) // decide if the user is an admin
             salary = defaultSal;
         String streetid = streetID[r.nextInt(streetID.length)];
         String apt = apartment[r.nextInt(apartment.length)];
@@ -259,29 +177,24 @@ public class uploadBookData {
         String prov = provincesArr[r.nextInt(provincesArr.length)];
         String count = country[r.nextInt(country.length)];
 
-        try {
-            statement.executeUpdate(String.format("Insert into project.user values ('%s', '%s', '%s', '%s', '%s');insert into project.librarian values ('%s',%d);", username, username, userFirstName, userLastName, defaultEmail, username, salary));
-
+        if (DatabaseQueries.registerNewUser(username, username, userFirstName, userLastName, defaultEmail)) {
+            if (salary != null)
+                DatabaseQueries.updateAdmin(username, String.valueOf(salary));
             DatabaseQueries.addAddress(Integer.toString(streetNum), defaultStreetName + streetid, apt, city, prov, count, postalCode.toString());
             DatabaseQueries.addHasAdd(username, true, false);
 
-            if(!isBilling) { // need another address
+            if (!isBilling) { // need another address
                 streetNum = (int) (100L + r.nextFloat() * 900L);
                 DatabaseQueries.addAddress(Integer.toString(streetNum), defaultStreetName + streetID[r.nextInt(streetID.length)], apartment[r.nextInt(apartment.length)], cities[r.nextInt(cities.length)], provincesArr[r.nextInt(provincesArr.length)], country[r.nextInt(country.length)], postalCode.toString());
             } else {
                 DatabaseQueries.addAddress(Integer.toString(streetNum), defaultStreetName + streetid, apt, city, prov, count, postalCode.toString());
             }
             DatabaseQueries.addHasAdd(username, false, true);
-
-        } catch (SQLException e) {
-            if(e.toString().equals("org.postgresql.util.PSQLException: ERROR: duplicate key value violates unique constraint \"user_pkey\"\n" +
-                    "  Detail: Key (user_name)=('" + username + "') already exists."))
-            e.printStackTrace();
         }
     }
 
-    private static void parseBookObject(JsonObject book){
-        if(!(book.get("title") instanceof JsonNull) &&
+    private static void parseBookObject(JsonObject book) {
+        if (!(book.get("title") instanceof JsonNull) &&
                 !(book.get("isbn13") instanceof JsonNull) &&
                 !(book.get("authors") instanceof JsonNull) &&
                 !(book.get("year") instanceof JsonNull) &&
@@ -298,14 +211,17 @@ public class uploadBookData {
                 !book.get("title").getAsString().equals(" ")
         ) {
             titleObject = book.get("title").getAsString();
-            titleObject = titleObject.replaceAll("'","");
+            titleObject = titleObject.replaceAll("'", "");
             isbnObject = book.get("isbn13").getAsBigInteger();
             authorsObject = (JsonArray) book.get("authors");
-            try{ yearObject = book.get("year").getAsInt(); }catch(Exception ignored){}
+            try {
+                yearObject = book.get("year").getAsInt();
+            } catch (Exception ignored) {
+            }
             pgCntObject = book.get("page_count").getAsInt();
             genresObject = (JsonArray) book.get("tags");
             publishersObject = (JsonArray) book.get("publishers");
-        }else {
+        } else {
             titleObject = null;
             isbnObject = null;
             authorsObject = null;

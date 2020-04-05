@@ -1162,7 +1162,6 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
         /* JLabels */
         // Search
         JLabel searchUserLabel = new JLabel("Search Username:"),
-                editUserLabel = new JLabel("Edit:"),
                 // User info
                 editUserLoginCredLabel = new JLabel("Login Credentials: "),
                 editUserDetailLabel = new JLabel("User Details: "),
@@ -1177,7 +1176,7 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
                 editShippingAddressLabel = new JLabel("Shipping Address"),
                 editShippingStreetNumLabel = new JLabel("*Street Number: "),
                 editShippingStreetNameLabel = new JLabel("*Street Name: ", JLabel.RIGHT),
-                editShippingApartmentLabel = new JLabel("*Apartment: ", JLabel.RIGHT),
+                editShippingApartmentLabel = new JLabel("Apartment: ", JLabel.RIGHT),
                 editShippingCityLabel = new JLabel("*City: "),
                 editShippingProvinceLabel = new JLabel("*Province: ", JLabel.RIGHT),
                 editShippingCountryLabel = new JLabel("*Country: "),
@@ -1216,7 +1215,6 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
                 editSalaryLabel.setText("*Salary: ");
                 editShippingStreetNumLabel.setText("Street Number: ");
                 editShippingStreetNameLabel.setText("Street Name: ");
-                editShippingApartmentLabel.setText("Apartment: ");
                 editShippingCityLabel.setText("City: ");
                 editShippingProvinceLabel.setText("Province: ");
                 editShippingCountryLabel.setText("Country: ");
@@ -1225,7 +1223,6 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
                 editSalaryLabel.setText("Salary: ");
                 editShippingStreetNumLabel.setText("*Street Number: ");
                 editShippingStreetNameLabel.setText("*Street Name: ");
-                editShippingApartmentLabel.setText("*Apartment: ");
                 editShippingCityLabel.setText("*City: ");
                 editShippingProvinceLabel.setText("*Province: ");
                 editShippingCountryLabel.setText("*Country: ");
@@ -1296,14 +1293,12 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
             con.gridx = 1;
             editUserPanel.add(Box.createRigidArea(spacer), con);
 
-            con.gridy = 3;
-            editUserPanel.add(editUserLabel, con);
-
             con.gridy = 4;
             con.gridx = 1;
             con.gridwidth = 6;
             con.anchor = GridBagConstraints.LINE_END;
             con.fill = GridBagConstraints.HORIZONTAL;
+            editUserLoginCredLabel.setFont(editUserLoginCredLabel.getFont().deriveFont(Font.BOLD));
             editUserPanel.add(editUserLoginCredLabel, con);
 
             con.gridy = 5;
@@ -1364,14 +1359,10 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
             con.gridx = 1;
             editUserPanel.add(Box.createRigidArea(spacer), con);
 
-            con.gridy = 12;
-            con.gridx = 1;
-            con.gridwidth = 3;
-            editUserPanel.add(new JLabel("Address Information"), con);
-
             con.gridy = 13;
             con.gridx = 1;
             con.gridwidth = 3;
+            editShippingAddressLabel.setFont(editShippingAddressLabel.getFont().deriveFont(Font.BOLD));
             editUserPanel.add(editShippingAddressLabel, con);
 
             con.gridy = 14;
@@ -1420,6 +1411,7 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
             con.gridy = 18;
             con.gridx = 1;
             con.gridwidth = 2;
+            editBillingAddressLabel.setFont(editBillingAddressLabel.getFont().deriveFont(Font.BOLD));
             editUserPanel.add(editBillingAddressLabel, con);
             con.gridx = 3;
             con.gridwidth = 4;

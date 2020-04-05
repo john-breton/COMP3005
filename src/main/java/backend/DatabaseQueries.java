@@ -75,14 +75,7 @@ public class DatabaseQueries {
      */
     public static boolean registerNewUser(String username, String password, String first_name, String last_name, String email) {
         try {
-            statement.execute("INSERT into project.user " +
-                    "values ('" + username.toLowerCase() +
-                    "', '" + password +
-                    "', '" + first_name +
-                    "', '" + last_name +
-                    "', '" + email +
-                    "')");
-            return true;
+            return statement.executeUpdate(String.format("INSERT into project.user values ('%s', '%s', '%s', '%s', '%s') ON CONFLICT (user_name) DO NOTHING", username.toLowerCase(), password, first_name, last_name, email)) == 1;
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -325,19 +318,7 @@ public class DatabaseQueries {
     public static void updateAddress(String username, String num, String name, String apartment, String city, String prov, String country, String postalCode, boolean isShipping, boolean isBilling) {
         // attempt to update address
         try {
-            int rowsAffected = statement.executeUpdate("UPDATE project.address " +
-                    "SET street_num = '" + num + "'," +
-                    "street_name = '" + name + "'," +
-                    "apartment = '" + apartment + "'," +
-                    "city = '" + city + "'," +
-                    "province = '" + prov + "'," +
-                    "country = '" + country + "'," +
-                    "postal_code = '" + postalCode + "'" +
-                    "FROM project.hasadd " +
-                    "WHERE project.address.add_id = project.hasadd.add_id " +
-                    "AND project.hasadd.user_name = '" + username + "'" +
-                    "AND project.hasadd.isshipping = '" + isShipping + "'" +
-                    "RETURNING project.hasadd.add_id");
+            int rowsAffected = statement.executeUpdate(String.format("UPDATE project.address SET street_num = %s,street_name = '%s',apartment = '%s',city = '%s',province = '%s',country = '%s',postal_code = '%s' FROM project.hasadd WHERE project.address.add_id = project.hasadd.add_id AND project.hasadd.user_name = '%s'AND project.hasadd.isshipping = '%s'", num, name, apartment, city, prov, country, postalCode, username, isShipping));
 
             if (rowsAffected == 0) { //user doesn't have an address yet
                 if (addAddress(num, name, apartment, city, prov, country, postalCode)) {
@@ -588,7 +569,7 @@ public class DatabaseQueries {
     public static boolean addPublisher(String name, String email, String phoneNum, String bankAcc) {
         try {
             if(phoneNum.isEmpty()) phoneNum = null;
-            return statement.executeUpdate(String.format("INSERT INTO project.publisher values ('%s','%s', %s, %s);", name, email, phoneNum, bankAcc)) == 1;
+            return statement.executeUpdate(String.format("INSERT INTO project.publisher values ('%s','%s', %s, %s) ON CONFLICT (pub_name) DO NOTHING;", name, email, phoneNum, bankAcc)) == 1;
         } catch (SQLException e) {
             e.printStackTrace();
         }
