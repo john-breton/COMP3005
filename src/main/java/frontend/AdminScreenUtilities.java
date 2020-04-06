@@ -117,6 +117,7 @@ public class AdminScreenUtilities extends AdminScreen {
                 editShippingProvinceCB.getSelectedIndex() != 0 ||
                 !editShippingCountryTF.getText().isEmpty() ||
                 !editShippingPostalCodeTF.getText().isEmpty();
+
         boolean billingAttempt = !editBillStreetNumTF.getText().isEmpty() ||
                 !editBillStreetNameTF.getText().isEmpty() ||
                 !editBillApartmentTF.getText().isEmpty() ||
@@ -124,6 +125,7 @@ public class AdminScreenUtilities extends AdminScreen {
                 editBillProvinceCB.getSelectedIndex() != 0 ||
                 !editBillCountryTF.getText().isEmpty() ||
                 !editBillPostalCodeTF.getText().isEmpty();
+
         boolean addressAttempt = shippingAttempt || billingAttempt;
 
         // Check to see if the password matches the confirm password textfield.
@@ -150,6 +152,11 @@ public class AdminScreenUtilities extends AdminScreen {
             editUserErrorLabel.setText("Update Failed. Email cannot be blank.");
             return false;
         }
+        // Ensure the email field is valid.
+        if (!editEmailTF.getText().contains("@")) {
+            editUserErrorLabel.setText("Update Failed. Email not valid.");
+            return false;
+        }
         boolean sameShipAndBill = editBillingSameAsShipping.isSelected();
 
         // Check each of the address fields
@@ -160,10 +167,8 @@ public class AdminScreenUtilities extends AdminScreen {
                     editSalaryTF.setText(null);
                 // Ensure user fills out shipping address first
                 if (!shippingAttempt) {
-                    if (billingAttempt) {
-                        editUserErrorLabel.setText("Update Failed. Cannot have billing address without shipping address.");
-                        return false;
-                    }
+                    editUserErrorLabel.setText("Update Failed. Cannot have billing address without shipping address.");
+                    return false;
                 }
                 if (editShippingStreetNumTF.getText().length() == 0) {
                     editUserErrorLabel.setText("Update Failed. Shipping street number cannot be empty.");
@@ -645,7 +650,7 @@ public class AdminScreenUtilities extends AdminScreen {
         // attempt to add publisher
         if (DatabaseQueries.addPublisher(newPublisherNameTF.getText(), newPublisherEmailTF.getText(), newPublisherPhoneTF.getText(), newPublisherBankAccountTF.getText())) {
             // add address
-            DatabaseQueries.addAddress(newPublisherStreetNumTF.getText(), newPublisherStreetNameTF.getText(), newPublisherApartmentTF.getText(), newPublisherCityTF.getText(), pubProvinceCB.getSelectedItem().toString(), newPublisherCountryTF.getText(), newPublisherPostalCodeTF.getText());
+            DatabaseQueries.addAddress(newPublisherStreetNumTF.getText(), newPublisherStreetNameTF.getText(), newPublisherApartmentTF.getText(), newPublisherCityTF.getText(), Objects.requireNonNull(pubProvinceCB.getSelectedItem()).toString(), newPublisherCountryTF.getText(), newPublisherPostalCodeTF.getText());
             //associate publisher with the address
             return DatabaseQueries.addPubAdd(newPublisherNameTF.getText());
         }
@@ -709,6 +714,11 @@ public class AdminScreenUtilities extends AdminScreen {
         // Ensure the email field is not empty.
         if (emailAdminTF.getText().length() == 0) {
             addUserErrorLabel.setText("Registration Failed. Email cannot be blank.");
+            return false;
+        }
+        // Ensure the email field is valid
+        if (!emailAdminTF.getText().contains("@")) {
+            addUserErrorLabel.setText("Registration Failed. Email not valid.");
             return false;
         }
         boolean sameShipAndBill = adminBillingSameAsShipping.isSelected();
@@ -776,79 +786,79 @@ public class AdminScreenUtilities extends AdminScreen {
                     return false;
                 }
             } else if (salaryAdminTF.getText().isEmpty() && newIsUserAdminCB.isSelected()) {
-                    addUserErrorLabel.setText("Registration Failed. Admins need a salary.");
-                    return false;
-                }
-
-                // check validity
-                try {
-                    if (!billAdminStreetNumTF.getText().isEmpty()) Double.parseDouble(billAdminStreetNumTF.getText());
-                    if (!sameShipAndBill) {
-                        if (!billAdminStreetNumTF.getText().isEmpty())
-                            Double.parseDouble(billAdminStreetNumTF.getText());
-                    }
-                } catch (NumberFormatException ex) {
-                    addUserErrorLabel.setText("Registration Failed. Street numbers cannot contain letters.");
-                    return false;
-                }
-                try {
-                    if (newIsUserAdminCB.isSelected()) {
-                        Double.parseDouble(salaryAdminTF.getText());
-                    }
-                } catch (NumberFormatException e) {
-                    addUserErrorLabel.setText("Registration Failed. Salary cannot contain letters.");
-                    return false;
-                }
-                if (FrontEndUtilities.check(shippingAdminCityTF.getText())) {
-                    addUserErrorLabel.setText("Registration Failed. Shipping city cannot contain numerical values.");
-                    return false;
-                }
-                if (FrontEndUtilities.check(billAdminCityTF.getText())) {
-                    addUserErrorLabel.setText("Registration Failed. Billing city cannot contain numerical values.");
-                    return false;
-                }
-                if (FrontEndUtilities.check(shippingAdminCountryTF.getText())) {
-                    addUserErrorLabel.setText("Registration Failed. Shipping country cannot contain numerical values.");
-                    return false;
-                }
-                if (FrontEndUtilities.check(billAdminCountryTF.getText())) {
-                    addUserErrorLabel.setText("Registration Failed. Billing country cannot contain numerical values.");
-                    return false;
-                }
-                if (!shippingAdminPostalCodeTF.getText().isEmpty() && shippingAdminPostalCodeTF.getText().length() != 6) {
-                    addUserErrorLabel.setText("Registration Failed. Postal Codes must be 6 digits.");
-                    return false;
-                }
-                if (!sameShipAndBill && !billAdminPostalCodeTF.getText().isEmpty() && billAdminPostalCodeTF.getText().length() != 6) {
-                    addUserErrorLabel.setText("Registration Failed. Postal Codes must be 6 digits.");
-                    return false;
-                }
-            }
-
-
-            // Attempt to add the user to the database.
-            if (DatabaseQueries.registerNewUser(newAdminUsernameTF.getText(), new String(newAdminPasswordTF.getPassword()), firstNameAdminTF.getText(), lastNameAdminTF.getText(), emailAdminTF.getText())) {
-                DatabaseQueries.updateAdmin(newAdminUsernameTF.getText(), salaryAdminTF.getText());
-                confirmAdminReg.setText("Registration Successful");
-                confirmAdminReg.setForeground(Color.BLACK);
-            } else {
-                addUserErrorLabel.setText("Registration Failed. A user with that username is already registered in the system.");
+                addUserErrorLabel.setText("Registration Failed. Admins need a salary.");
                 return false;
             }
 
-            /* If we get here, the following insertion methods will not fail. */
-            // Add the shipping address and billing address.
-            if (addressAttempt) {
-                DatabaseQueries.addAddress(shippingAdminStreetNumTF.getText(), shippingAdminStreetNameTF.getText(), shippingAdminApartmentTF.getText(), shippingAdminCityTF.getText(), Objects.requireNonNull(shippingAdminProvinceCB.getSelectedItem()).toString(), shippingAdminCountryTF.getText(), shippingAdminPostalCodeTF.getText());
-                DatabaseQueries.addHasAdd(newAdminUsernameTF.getText(), true, false);
+            // check validity
+            try {
+                if (!billAdminStreetNumTF.getText().isEmpty()) Double.parseDouble(billAdminStreetNumTF.getText());
                 if (!sameShipAndBill) {
-                    // Need to add the billing address as a separate address.
-                    DatabaseQueries.addAddress(billAdminStreetNumTF.getText(), billAdminStreetNameTF.getText(), billAdminApartmentTF.getText(), billAdminCityTF.getText(), Objects.requireNonNull(billAdminProvinceCB.getSelectedItem()).toString(), billAdminCountryTF.getText(), billAdminPostalCodeTF.getText());
-                } else {
-                    DatabaseQueries.addAddress(shippingAdminStreetNumTF.getText(), shippingAdminStreetNameTF.getText(), shippingAdminApartmentTF.getText(), shippingAdminCityTF.getText(), Objects.requireNonNull(shippingAdminProvinceCB.getSelectedItem()).toString(), shippingAdminCountryTF.getText(), shippingAdminPostalCodeTF.getText());
+                    if (!billAdminStreetNumTF.getText().isEmpty())
+                        Double.parseDouble(billAdminStreetNumTF.getText());
                 }
-                DatabaseQueries.addHasAdd(newAdminUsernameTF.getText(), false, true);
+            } catch (NumberFormatException ex) {
+                addUserErrorLabel.setText("Registration Failed. Street numbers cannot contain letters.");
+                return false;
             }
+            try {
+                if (newIsUserAdminCB.isSelected()) {
+                    Double.parseDouble(salaryAdminTF.getText());
+                }
+            } catch (NumberFormatException e) {
+                addUserErrorLabel.setText("Registration Failed. Salary cannot contain letters.");
+                return false;
+            }
+            if (FrontEndUtilities.check(shippingAdminCityTF.getText())) {
+                addUserErrorLabel.setText("Registration Failed. Shipping city cannot contain numerical values.");
+                return false;
+            }
+            if (FrontEndUtilities.check(billAdminCityTF.getText())) {
+                addUserErrorLabel.setText("Registration Failed. Billing city cannot contain numerical values.");
+                return false;
+            }
+            if (FrontEndUtilities.check(shippingAdminCountryTF.getText())) {
+                addUserErrorLabel.setText("Registration Failed. Shipping country cannot contain numerical values.");
+                return false;
+            }
+            if (FrontEndUtilities.check(billAdminCountryTF.getText())) {
+                addUserErrorLabel.setText("Registration Failed. Billing country cannot contain numerical values.");
+                return false;
+            }
+            if (!shippingAdminPostalCodeTF.getText().isEmpty() && shippingAdminPostalCodeTF.getText().length() != 6) {
+                addUserErrorLabel.setText("Registration Failed. Postal Codes must be 6 digits.");
+                return false;
+            }
+            if (!sameShipAndBill && !billAdminPostalCodeTF.getText().isEmpty() && billAdminPostalCodeTF.getText().length() != 6) {
+                addUserErrorLabel.setText("Registration Failed. Postal Codes must be 6 digits.");
+                return false;
+            }
+        }
+
+
+        // Attempt to add the user to the database.
+        if (DatabaseQueries.registerNewUser(newAdminUsernameTF.getText(), new String(newAdminPasswordTF.getPassword()), firstNameAdminTF.getText(), lastNameAdminTF.getText(), emailAdminTF.getText())) {
+            DatabaseQueries.updateAdmin(newAdminUsernameTF.getText(), salaryAdminTF.getText());
+            confirmAdminReg.setText("Registration Successful");
+            confirmAdminReg.setForeground(Color.BLACK);
+        } else {
+            addUserErrorLabel.setText("Registration Failed. A user with that username is already registered in the system.");
+            return false;
+        }
+
+        /* If we get here, the following insertion methods will not fail. */
+        // Add the shipping address and billing address.
+        if (addressAttempt) {
+            DatabaseQueries.addAddress(shippingAdminStreetNumTF.getText(), shippingAdminStreetNameTF.getText(), shippingAdminApartmentTF.getText(), shippingAdminCityTF.getText(), Objects.requireNonNull(shippingAdminProvinceCB.getSelectedItem()).toString(), shippingAdminCountryTF.getText(), shippingAdminPostalCodeTF.getText());
+            DatabaseQueries.addHasAdd(newAdminUsernameTF.getText(), true, false);
+            if (!sameShipAndBill) {
+                // Need to add the billing address as a separate address.
+                DatabaseQueries.addAddress(billAdminStreetNumTF.getText(), billAdminStreetNameTF.getText(), billAdminApartmentTF.getText(), billAdminCityTF.getText(), Objects.requireNonNull(billAdminProvinceCB.getSelectedItem()).toString(), billAdminCountryTF.getText(), billAdminPostalCodeTF.getText());
+            } else {
+                DatabaseQueries.addAddress(shippingAdminStreetNumTF.getText(), shippingAdminStreetNameTF.getText(), shippingAdminApartmentTF.getText(), shippingAdminCityTF.getText(), Objects.requireNonNull(shippingAdminProvinceCB.getSelectedItem()).toString(), shippingAdminCountryTF.getText(), shippingAdminPostalCodeTF.getText());
+            }
+            DatabaseQueries.addHasAdd(newAdminUsernameTF.getText(), false, true);
+        }
         // Done.
         return true;
     }

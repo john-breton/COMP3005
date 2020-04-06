@@ -393,7 +393,7 @@ public class DatabaseQueries {
         int rowCount = 0;
         ResultSet result = null;
         try {
-            if (searchType.equals("author")) {
+            if(searchType.equals("author")) {
                 // TODO Actually finish this.
             } else if (searchType.equals("name")) {
                 String isbn = null;

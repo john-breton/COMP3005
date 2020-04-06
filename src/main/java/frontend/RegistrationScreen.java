@@ -348,6 +348,10 @@ public class RegistrationScreen extends JFrame implements ActionListener {
         if (emailTF.getText().length() == 0) {
             confirmRegistration.setText("Registration Failed. Email cannot be blank.");
             return false;
+        }// Ensure the email field is vaild.
+        if (!emailTF.getText().contains("@")) {
+            confirmRegistration.setText("Registration Failed. Email is not valid.");
+            return false;
         }
         boolean sameShipAndBill = billingSameAsShipping.isSelected();
 

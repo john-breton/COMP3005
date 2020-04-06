@@ -1593,7 +1593,7 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
     /**
      * Confirms the admin wants to exit the admin view
      */
-   private void confirmViewSwitch() {
+    private void confirmViewSwitch() {
         JButton cancelButton = FrontEndUtilities.formatButton("Cancel");
         JButton userButton = FrontEndUtilities.formatButton("Customer View");
 
@@ -1643,28 +1643,28 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
                     confirmBookEditLabel.setText("");
                 }// Admin Edit Books Screen
                 case "Update Book" -> {
-                    if(AdminScreenUtilities.sendEditBookData()) {
+                    if (AdminScreenUtilities.sendEditBookData()) {
                         defaultAdminViewFields();
                         confirmBookEditLabel.setText("Book Updated");
                     }
                 } // Admin Edit Books Screen
                 case "Add Book" -> {
                     confirmNewBookAddition.setText("");
-                    if(AdminScreenUtilities.addBook()) {
+                    if (AdminScreenUtilities.addBook()) {
                         defaultAdminViewFields();
                         confirmNewBookAddition.setText("New Book Added");
                     }
                 }// Admin Add Book Screen
                 case "Add Publisher" -> {
                     confirmNewPublisherAddition.setText("");
-                    if(AdminScreenUtilities.addPublisher()) {
+                    if (AdminScreenUtilities.addPublisher()) {
                         defaultAdminViewFields();
                         confirmNewPublisherAddition.setText("New Publisher Added");
                     }
                 } // Admin Add Publisher Screen
                 case "Add User" -> {
                     confirmAdminReg.setText("");
-                    if(AdminScreenUtilities.addLibrarian()) {
+                    if (AdminScreenUtilities.addLibrarian()) {
                         defaultAdminViewFields();
                         confirmAdminReg.setText("New User Added");
                     }
