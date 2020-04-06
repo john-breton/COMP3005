@@ -340,7 +340,7 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
         JButton addBookButton = FrontEndUtilities.formatButton("Add Book");
 
         /* JLabels */
-        JLabel newBookLabel = new JLabel("Enter Book Information (All fields are required, insert \"0\" if unknown):"),
+        JLabel newBookLabel = new JLabel("Enter Book Information (All fields are required, insert \"0\" if unknown)"),
                 newISBNLabel = new JLabel("ISBN: ", JLabel.RIGHT), // this doesn't work and idk why
                 newBookTitleLabel = new JLabel("Title: "),
                 newBookVersionLabel = new JLabel("Version: "),
@@ -349,11 +349,29 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
                 newBookPriceLabel = new JLabel("Price:"),
                 newBookRoyaltyLabel = new JLabel("Royalty (%): ", JLabel.RIGHT),
                 newBookStockLabel = new JLabel("Stock: ", JLabel.RIGHT),
-                newBookAuthorLabel = new JLabel("Author(s) "),
+                newBookAuthorLabel = new JLabel("Author(s)"),
                 newBookAuthorNameLabel = new JLabel("Name: "),
-                newBookPublisherLabel = new JLabel("Publisher (be sure to add new publishers before adding books): "),
+                newBookPublisherLabel = new JLabel("Publisher (be sure to add new publishers before adding books)"),
                 newBookYearLabel = new JLabel("Year (YYYY): "),
-                accountingLabel = new JLabel("Accounting ");
+                accountingLabel = new JLabel("Accounting");
+        //Bold Labels
+        newBookLabel.setFont(newBookLabel.getFont().deriveFont(Font.BOLD));
+        newBookAuthorLabel.setFont(newBookAuthorLabel.getFont().deriveFont(Font.BOLD));
+        newBookPublisherLabel.setFont(newBookPublisherLabel.getFont().deriveFont(Font.BOLD));
+        accountingLabel.setFont(accountingLabel.getFont().deriveFont(Font.BOLD));
+
+        // ToolTipText
+        newBookYearTF.setToolTipText("Format: YYYY (If year is < 1000, add leading 0's)");
+        newBookGenreTF.setToolTipText("Enter genres, separated by a \",\". No genre can contain a \" \"");
+        newBookAuthorNameTF.setToolTipText("Enter author's names, separated by a \",\"");
+        newBookTitleTF.setToolTipText("Enter the book's title, avoid using 's");
+        newISBNTF.setToolTipText("Enter the book's unique 13-digit ISBN");
+        newBookVersionTF.setToolTipText("Enter the book's numeric version number");
+        newBookNumPagesTF.setToolTipText("Enter the book's page count");
+        newBookStockTF.setToolTipText("Enter the book's current stock");
+        newBookPriceTF.setToolTipText("Enter the book's numeric price, ignore currency symbols");
+        newBookRoyaltyTF.setToolTipText("Enter the book's royalty in percentage (ex 50 = 50%)");
+        newBookPublisherTF.setToolTipText("Enter the book's publisher's name ensure proper punctuation.");
 
         /* ActionListeners */
         logoutAddBookButton.addActionListener(this);
@@ -410,7 +428,6 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
             bookCon.gridx = 1;
             addNewBookPanel.add(newBookYearLabel, bookCon);
             bookCon.gridx = 2;
-            newBookYearTF.setToolTipText("If year is < 1000, add leading 0's");
             addNewBookPanel.add(newBookYearTF, bookCon);
             bookCon.gridx = 3;
             addNewBookPanel.add(newBookStockLabel, bookCon);
@@ -422,7 +439,6 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
             addNewBookPanel.add(newBookGenreLabel, bookCon);
             bookCon.gridx = 2;
             bookCon.gridwidth = 3;
-            newBookGenreTF.setToolTipText("Enter genres, separated by a \",\". No genre can contain a \" \"");
             newBookGenreTF.setLineWrap(true);
             newBookGenreTF.setWrapStyleWord(true);
             addNewBookPanel.add(new JScrollPane(newBookGenreTF), bookCon);
@@ -461,7 +477,6 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
             addNewBookPanel.add(newBookAuthorNameLabel, bookCon);
             bookCon.gridx = 2;
             bookCon.gridwidth = 3;
-            newBookAuthorNameTF.setToolTipText("Enter author's names, separated by a \",\"");
             newBookAuthorNameTF.setLineWrap(true);
             newBookAuthorNameTF.setWrapStyleWord(true);
             addNewBookPanel.add(new JScrollPane(newBookAuthorNameTF), bookCon);
@@ -512,9 +527,9 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
         JButton addPublisherButton = FrontEndUtilities.formatButton("Add Publisher");
 
         /* JLabels */
-        JLabel newPublisherLabel = new JLabel("Enter Publisher Information (required fields indicated by *): "),
+        JLabel newPublisherLabel = new JLabel("Enter Publisher Information (required fields indicated by *)"),
                 newPublisherNameLabel = new JLabel("*Name: "),
-                newPublisherAddressLabel = new JLabel("*Address: "),
+                newPublisherAddressLabel = new JLabel("Address"),
                 newPublisherStreetNumLabel = new JLabel("*Street Number:"),
                 newPublisherStreetNameLabel = new JLabel("*Street Name:", JLabel.RIGHT),
                 newPublisherApartmentLabel = new JLabel("Apartment:", JLabel.RIGHT),
@@ -525,6 +540,24 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
                 newPublisherEmailLabel = new JLabel("*Email: "),
                 newPublisherPhoneLabel = new JLabel("Phone: ", JLabel.RIGHT),
                 newPublisherBankAccountLabel = new JLabel("*Bank Account Number: ");
+
+        // Bold Labels
+        newPublisherLabel.setFont(newPublisherLabel.getFont().deriveFont(Font.BOLD));
+        newPublisherAddressLabel.setFont(newPublisherAddressLabel.getFont().deriveFont(Font.BOLD));
+        newPublisherBankAccountLabel.setFont(newPublisherBankAccountLabel.getFont().deriveFont(Font.BOLD));
+
+        // ToolTipText
+        newPublisherNameTF.setToolTipText("Enter the publisher's name, ensure proper punctuation");
+        newPublisherEmailTF.setToolTipText("Enter the publisher's email, ensure validity");
+        newPublisherBankAccountTF.setToolTipText("Enter the publishers 15 digit bank account number");
+        newPublisherPhoneTF.setToolTipText("Enter the publisher's 10- digit phone number (optional)");
+        newPublisherStreetNumTF.setToolTipText("Enter the publisher's street number (cannot contain letters)");
+        newPublisherStreetNameTF.setToolTipText("Enter the publisher's street name");
+        newPublisherApartmentTF.setToolTipText("Enter the publisher's apartment identifier (optional)");
+        newPublisherCityTF.setToolTipText("Enter the publisher's city");
+        pubProvinceCB.setToolTipText("Select the publisher's province");
+        newPublisherCountryTF.setToolTipText("Enter the publisher's country");
+        newPublisherPostalCodeTF.setToolTipText("Enter the publisher's postal code (must be 6-digits)");
 
         /* ActionListeners */
         logoutAddPublisherButton.addActionListener(this);
@@ -578,7 +611,6 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
             addNewPublisherPanel.add(newPublisherPhoneLabel, pubCon);
             pubCon.gridx = 5;
             pubCon.gridwidth = 2;
-            newPublisherPhoneTF.setToolTipText("FORMAT: xxx xxx xxxx");
             addNewPublisherPanel.add(newPublisherPhoneTF, pubCon);
 
             pubCon.gridy = 4;
@@ -642,7 +674,6 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
             addNewPublisherPanel.add(newPublisherBankAccountLabel, pubCon);
             pubCon.gridx = 3;
             pubCon.gridwidth = 4;
-            newPublisherBankAccountTF.setToolTipText("15 digit number");
             addNewPublisherPanel.add(newPublisherBankAccountTF, pubCon);
 
             pubCon.gridwidth = 2;
@@ -678,8 +709,8 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
 
         /* JLabels */
         // Admin info
-        JLabel newUserLoginCred = new JLabel("Login Credentials: "),
-                newUserDetailLabel = new JLabel("User Details: "),
+        JLabel newUserLoginCred = new JLabel("Login Credentials"),
+                newUserDetailLabel = new JLabel("User Details"),
                 newAdminUsernameLabel = new JLabel("*Username: "),
                 newAdminPasswordLabel = new JLabel("*Password: "),
                 confirmAdminPasswordLabel = new JLabel("*Confirm Password: ", JLabel.RIGHT),
@@ -705,6 +736,35 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
                 billAdminProvinceLabel = new JLabel("Province: ", JLabel.RIGHT),
                 billAdminCountryLabel = new JLabel("Country: "),
                 billAdminPostalCodeLabel = new JLabel("Postal Code: ", JLabel.RIGHT);
+
+        // Bold Label
+        newUserLoginCred.setFont(newUserLoginCred.getFont().deriveFont(Font.BOLD));
+        newUserDetailLabel.setFont(newUserDetailLabel.getFont().deriveFont(Font.BOLD));
+        shippingAdminAddressLabel.setFont(shippingAdminAddressLabel.getFont().deriveFont(Font.BOLD));
+        billingAdminAddressLabel.setFont(billingAdminAddressLabel.getFont().deriveFont(Font.BOLD));
+
+        // ToolTipText
+        newAdminUsernameTF.setToolTipText("Enter a unique username");
+        newAdminPasswordTF.setToolTipText("Enter a password");
+        confirmAdminPasswordTF.setToolTipText("Confirm the password, ensure they match");
+        firstNameAdminTF.setToolTipText("Enter the user's first name");
+        lastNameAdminTF.setToolTipText("Enter the user's last name");
+        emailAdminTF.setToolTipText("Enter the user's email, ensure validity");
+        salaryAdminTF.setToolTipText("Enter the admin's salary");
+        shippingAdminStreetNumTF.setToolTipText("Enter the user's shipping street number, if necessary");
+        shippingAdminStreetNameTF.setToolTipText("Enter the the user's shipping street name, if necessary");
+        shippingAdminApartmentTF.setToolTipText("Enter the user's shipping apartment identifier, if necessary");
+        shippingAdminCityTF.setToolTipText("Enter the user's shipping city, if necessary");
+        shippingAdminCountryTF.setToolTipText("the user's shipping country, if necessary");
+        shippingAdminPostalCodeTF.setToolTipText("Enter the user's shipping postal code, if necessary");
+        shippingAdminProvinceCB.setToolTipText("Select the user's shipping province");
+        billAdminStreetNumTF.setToolTipText("Enter the user's billing street number, if necessary");
+        billAdminStreetNameTF.setToolTipText("Enter the the user's billing street name, if necessary");
+        billAdminApartmentTF.setToolTipText("Enter the user's billing apartment identifier, if necessary");
+        billAdminCityTF.setToolTipText("Enter the user's billing city, if necessary");
+        billAdminCountryTF.setToolTipText("the user's billing country, if necessary");
+        billAdminPostalCodeTF.setToolTipText("Enter the user's billing postal code, if necessary");
+        billAdminProvinceCB.setToolTipText("Select the user's billing province");
 
         /* JCheckBoxes */
         adminBillingSameAsShipping.setSelected(true); // selected by default
@@ -842,11 +902,6 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
             userCon.gridx = 1;
             newUserPanel.add(Box.createRigidArea(spacer), userCon);
 
-            userCon.gridy = 9;
-            userCon.gridx = 1;
-            userCon.gridwidth = 3;
-            newUserPanel.add(new JLabel("Address Information"), userCon);
-
             userCon.gridy = 10;
             userCon.gridx = 1;
             userCon.gridwidth = 3;
@@ -972,7 +1027,7 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
         JButton searchBookButton = FrontEndUtilities.formatButton("Search Books");
 
         /* JLabel */
-        JLabel editBookLabel = new JLabel("Edit Book Information (All fields are required, insert \"0\" if unknown): "),
+        JLabel editBookLabel = new JLabel("Edit Book Information (All fields are required, insert \"0\" if unknown)"),
                 searchISBNLabel = new JLabel("Search ISBNs"),
                 editISBNLabel = new JLabel("Book ISBN: ", JLabel.RIGHT),
                 editBookTitleLabel = new JLabel("Title: "),
@@ -984,9 +1039,28 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
                 editBookStockLabel = new JLabel("Stock: ", JLabel.RIGHT),
                 editBookAuthorLabel = new JLabel("Author(s) "),
                 editBookAuthorNameLabel = new JLabel("Names: "),
-                editBookPublisherLabel = new JLabel("Publisher (be sure to add new publishers before editing books): "),
+                editBookPublisherLabel = new JLabel("Publisher (be sure to add new publishers before editing books)"),
                 editBookYearLabel = new JLabel("Year (YYYY): "),
-                accountingLabel = new JLabel("Accounting: ");
+                accountingLabel = new JLabel("Accounting");
+
+        // Bold labels
+        editBookLabel.setFont(editBookLabel.getFont().deriveFont(Font.BOLD));
+        editBookAuthorLabel.setFont(editBookAuthorLabel.getFont().deriveFont(Font.BOLD));
+        accountingLabel.setFont(accountingLabel.getFont().deriveFont(Font.BOLD));
+        editBookPublisherLabel.setFont(editBookPublisherLabel.getFont().deriveFont(Font.BOLD));
+
+        // ToolTipText
+        editBookSearchTF.setToolTipText("Enter the book's unique 13-digit ISBN");
+        editBookYearTF.setToolTipText("Format: YYYY (If year is < 1000, add leading 0's)");
+        editBookGenreTF.setToolTipText("Edit genres, separated by a \",\". No genre can contain a \" \"");
+        editBookAuthorTF.setToolTipText("Edit author's names, separated by a \",\"");
+        editBookTitleTF.setToolTipText("Edit the book's title, avoid using 's");
+        editBookVersionTF.setToolTipText("Edit the book's numeric version number");
+        editBookNumPagesTF.setToolTipText("Edit the book's page count");
+        editBookStockTF.setToolTipText("Edit the book's current stock");
+        editBookPriceTF.setToolTipText("Edit the book's numeric price, ignore currency symbols");
+        editBookRoyaltyTF.setToolTipText("Edit the book's royalty in percentage (ex 50 = 50%)");
+        editBookPublisherTF.setToolTipText("Edit the book's publisher's name ensure proper punctuation.");
 
         /* ActionListeners */
         logoutButton.addActionListener(this);
@@ -1163,8 +1237,8 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
         // Search
         JLabel searchUserLabel = new JLabel("Search Username:"),
                 // User info
-                editUserLoginCredLabel = new JLabel("Login Credentials: "),
-                editUserDetailLabel = new JLabel("User Details: "),
+                editUserLoginCredLabel = new JLabel("Login Credentials"),
+                editUserDetailLabel = new JLabel("User Details"),
                 editUsernameLabel = new JLabel("Username: "),
                 editPasswordLabel = new JLabel("New Password: "),
                 editConfirmPasswordLabel = new JLabel("Confirm Password: ", JLabel.RIGHT),
@@ -1190,6 +1264,28 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
                 editBillProvinceLabel = new JLabel("Province: ", JLabel.RIGHT),
                 editBillCountryLabel = new JLabel("Country: "),
                 editBillPostalCodeLabel = new JLabel("Postal Code: ", JLabel.RIGHT);
+
+        // ToolTipText
+        editPasswordTF.setToolTipText("Edit the user's password");
+        confirmEditPasswordTF.setToolTipText("Confirm the password, ensure they match");
+        editFirstNameTF.setToolTipText("Edit the user's first name");
+        editLastNameTF.setToolTipText("Edit the user's last name");
+        editEmailTF.setToolTipText("Edit the user's email, ensure validity");
+        editSalaryTF.setToolTipText("Edit the admin's salary");
+        editShippingStreetNumTF.setToolTipText("Edit the user's shipping street number, if necessary");
+        editShippingStreetNameTF.setToolTipText("Edit the the user's shipping street name, if necessary");
+        editShippingApartmentTF.setToolTipText("Edit the user's shipping apartment identifier, if necessary");
+        editShippingCityTF.setToolTipText("Edit the user's shipping city, if necessary");
+        editShippingCountryTF.setToolTipText("Edit the user's shipping country, if necessary");
+        editShippingPostalCodeTF.setToolTipText("Edit the user's shipping postal code, if necessary");
+        editShippingProvinceCB.setToolTipText("Select the user's shipping province");
+        editBillStreetNumTF.setToolTipText("Edit the user's billing street number, if necessary");
+        editBillStreetNameTF.setToolTipText("Edit the the user's billing street name, if necessary");
+        editBillApartmentTF.setToolTipText("Edit the user's billing apartment identifier, if necessary");
+        editBillCityTF.setToolTipText("Edit the user's billing city, if necessary");
+        editBillCountryTF.setToolTipText("Edit the user's billing country, if necessary");
+        editBillPostalCodeTF.setToolTipText("Edit the user's billing postal code, if necessary");
+        editBillProvinceCB.setToolTipText("Select the user's billing province");
 
         /* JCheckBoxes */
         editBillingSameAsShipping.setSelected(true); // selected by default
@@ -1329,6 +1425,7 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
             con.gridy = 8;
             con.gridx = 1;
             con.gridwidth = 3;
+            editUserDetailLabel.setFont(editUserDetailLabel.getFont().deriveFont(Font.BOLD));
             editUserPanel.add(editUserDetailLabel, con);
 
             con.gridy = 9;
