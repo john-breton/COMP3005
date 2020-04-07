@@ -400,7 +400,7 @@ public class DatabaseQueries {
                 // TODO Actually finish this.
             } else if (searchType.equals("name")) {
                 String isbn = null;
-                result = statement.executeQuery(String.format("SELECT * FROM project.hasgenre WHERE " + searchType + " = '%s'", searchText));
+                result = statement.executeQuery(String.format("SELECT * FROM project.hasgenre WHERE '%s' = '%s'", searchType, searchText));
                 while(result.next()) {
                     isbn = result.getString("isbn");
                     statement = connection.createStatement();
@@ -627,7 +627,7 @@ public class DatabaseQueries {
         try {
             statement.executeUpdate("DELETE FROM project.hasgenre WHERE isbn = '" + isbn + "'"); // delete all the book's current genre info in order to update
             for (String s : genres) {
-                s = s.replaceAll("'", "").trim();
+                s = s.replaceAll("['\"]", "").trim();
                 // attempt to insert the genre info into the genre entity, do nothing if the genre already exists
                 statement.executeUpdate("INSERT INTO project.genre " +
                         "VALUES ('" + s + "')" +
@@ -656,16 +656,16 @@ public class DatabaseQueries {
             statement.executeUpdate("DELETE FROM project.writes WHERE isbn = '" + isbn + "'"); // delete all authors from the current book
             for (String s : authors) {
                 s = s.replaceAll("\\s+", " ");
-                String[] names = s.trim().replaceAll("'", "").split(" ");
+                String[] names = s.trim().replaceAll("['\"]", "").split(" ");
 
                 // attempt to insert the author's names into the database, do nothing if that author already exists
-                if (names.length == 2) { // else invalid, dont even bother adding
+                if (names.length >= 2) { // else invalid, dont even bother adding
                     statement.executeUpdate("INSERT INTO project.author " +
-                            "VALUES ('" + names[0].trim() + "', '" + names[1].trim() + "')" +
+                            "VALUES ('" + names[0].trim() + "', '" + names[names.length-1].trim() + "')" +
                             "ON CONFLICT (auth_fn, auth_ln) DO NOTHING");
                     // attempt to insert the relationship between author and book into the database, do nothing if the relationship already exists
                     statement.execute("INSERT INTO project.writes " +
-                            "VALUES ('" + names[0].trim() + "', '" + names[1].trim() + "', '" + isbn + "')" +
+                            "VALUES ('" + names[0].trim() + "', '" + names[names.length-1].trim() + "', '" + isbn + "')" +
                             "ON CONFLICT (auth_fn, auth_ln, isbn) DO NOTHING");
                 }
             }
