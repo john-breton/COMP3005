@@ -18,8 +18,8 @@ import java.util.ArrayList;
 public class DatabaseQueries {
 
     // Just putting this here so we can change it when we test.
-    private static final String USER = "ryan";
-    private static final String DATABASE = "LookInnaBook";
+    private static final String USER = "postgres";
+    private static final String DATABASE = "lookinnabook";
     public static Connection connection;
     public static Statement statement;
 
@@ -75,7 +75,9 @@ public class DatabaseQueries {
      */
     public static boolean registerNewUser(String username, String password, String first_name, String last_name, String email) {
         try {
-            return statement.executeUpdate(String.format("INSERT into project.user values ('%s', '%s', '%s', '%s', '%s') ON CONFLICT (user_name) DO NOTHING", username.toLowerCase(), password, first_name, last_name, email)) == 1;
+            boolean temp = statement.executeUpdate(String.format("INSERT into project.user values ('%s', '%s', '%s', '%s', '%s') ON CONFLICT (user_name) DO NOTHING", username.toLowerCase(), password, first_name, last_name, email)) == 1;
+            DatabaseQueries.registerCart(username);
+            return temp;
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -147,6 +149,7 @@ public class DatabaseQueries {
             e.printStackTrace();
         }
     }
+
 
     /**
      * Adds a relationship between a publisher and address in the database
@@ -671,5 +674,21 @@ public class DatabaseQueries {
             e.printStackTrace();
         }
         return false;
+    }
+
+    /**
+     * Register a cart for every new user added to the service.
+     *
+     * @param username The username to be associated with the cart.
+     */
+    public static void registerCart(String username) {
+        try {
+            statement = connection.createStatement();
+            statement.execute("INSERT into project.bask_manage " +
+                    "values ('" + username +
+                    "', currval('project.basket_basket_id_seq'))");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }

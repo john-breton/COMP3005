@@ -1,7 +1,9 @@
 DROP Schema project CASCADE;
 DROP FUNCTION IF EXISTS delete_old_admin();
 DROP FUNCTION IF EXISTS order_more_books(numeric);
+DROP FUNCTION IF EXISTS create_cart();
 DROP TRIGGER IF EXISTS delete_admin ON project.librarian;
+DROP TRIGGER IF EXISTS new_cart ON project.user;
 
 -- Schema 
 
@@ -149,7 +151,7 @@ CREATE TABLE project.hasgenre (
 );
 
 -- Functions
-CREATE FUNCTION delete_old_admin() RETURNS trigger
+CREATE OR REPLACE FUNCTION delete_old_admin() RETURNS trigger
     LANGUAGE plpgsql
     AS $$
 BEGIN
@@ -159,15 +161,24 @@ END;
 $$;;
 
 CREATE OR REPLACE FUNCTION order_more_books(searchISBN numeric(13,0))
-RETURNS BOOLEAN AS $$
+    RETURNS BOOLEAN AS $$
 BEGIN
-RETURN 10 > (
-    SELECT stock
-    FROM project.book
-    WHERE isbn = searchISBN
+    RETURN 10 > (
+        SELECT stock
+        FROM project.book
+        WHERE isbn = searchISBN
     );
 END;
 $$ 	LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION create_cart() RETURNS trigger
+    LANGUAGE plpgsql
+AS $$
+BEGIN
+    INSERT INTO project.basket default values;
+    RETURN NULL;
+END;
+$$;;
 
 -- Triggers
 
@@ -177,3 +188,6 @@ FOR EACH ROW
 WHEN (new.salary IS NULL)
 EXECUTE PROCEDURE delete_old_admin();
 
+CREATE TRIGGER new_cart
+AFTER INSERT ON project.user
+EXECUTE PROCEDURE create_cart();
