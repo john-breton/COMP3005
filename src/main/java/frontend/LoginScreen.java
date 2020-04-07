@@ -96,12 +96,12 @@ public class LoginScreen extends JFrame implements ActionListener {
 
         userButton.addActionListener(e -> {
             this.dispose();
-            new UserScreen();
+            new UserScreen(FrontEndUtilities.usernameField.getText());
             dialog.setVisible(false);
         });
         adminButton.addActionListener(e -> {
             this.dispose();
-            new AdminScreen();
+            new AdminScreen(FrontEndUtilities.usernameField.getText());
             dialog.setVisible(false);
         });
 
@@ -122,7 +122,7 @@ public class LoginScreen extends JFrame implements ActionListener {
             if (validCred[1]) {
                 adminScreenChoice();
             } else {
-                new UserScreen();
+                new UserScreen(FrontEndUtilities.usernameField.getText());
             }
             this.dispose();
         } else FrontEndUtilities.loginSuccess.setText("Login not successful. Please try again.");

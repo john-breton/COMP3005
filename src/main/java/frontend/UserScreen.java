@@ -21,8 +21,10 @@ public class UserScreen extends JFrame implements ActionListener {
     private final JPanel cart = new JPanel(new GridLayout(1, 1));
     private ArrayList<JButton> bookButtons = new ArrayList<>();
     private final ArrayList<JToggleButton> cartButtons = new ArrayList<>();
+    private static String username;
 
-    public UserScreen() {
+    public UserScreen(String username) {
+        this.username = username;
         totalPrice = new JLabel("$0.00", JLabel.CENTER);
         this.setPreferredSize(new Dimension(798, 850));
         if (this.getJMenuBar() != null) this.getJMenuBar().setVisible(false);
@@ -168,6 +170,7 @@ public class UserScreen extends JFrame implements ActionListener {
 
 
         c.add(userView);
+        checkForExistingCart(this.username);
         FrontEndUtilities.configureFrame(this);
     }
 
@@ -316,6 +319,13 @@ public class UserScreen extends JFrame implements ActionListener {
         double lastPrice = Double.parseDouble(usefulPrice.toString());
         currPrice += lastPrice;
         totalPrice.setText("$" + currPrice);
+    }
+
+    /**
+     * Check if a user has an existing cart with items within it.
+     */
+    private void checkForExistingCart(String username) {
+        
     }
 
     /**

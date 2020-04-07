@@ -125,7 +125,11 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
             currentISBNLabel = new JLabel(""),
             confirmBookEditLabel = new JLabel("", JLabel.RIGHT);
 
-    public AdminScreen() {
+    // Admin username
+    private static String username;
+
+    public AdminScreen(String username) {
+        this.username = username;
         Container c = this.getContentPane();
         this.setPreferredSize(new Dimension(950, 800));
         c.removeAll();
@@ -1606,7 +1610,7 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
 
         userButton.addActionListener(e -> {
             this.dispose();
-            new UserScreen();
+            new UserScreen(username);
             dialog.setVisible(false);
         });
         cancelButton.addActionListener(e -> dialog.setVisible(false));

@@ -691,4 +691,8 @@ public class DatabaseQueries {
             e.printStackTrace();
         }
     }
+
+    public static void checkForCart(String username) {
+
+    }
 }
