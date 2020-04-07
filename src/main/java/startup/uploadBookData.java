@@ -107,7 +107,7 @@ public class uploadBookData {
             genres.append(" ").append(g.toString());
         }
         for (JsonElement a : authorsObject) {
-            authors.append(" ").append(a.toString());
+            authors.append("\t").append(a.toString());
         }
         for (JsonElement p : publishersObject) {
             publishers.append(" ").append(p.toString());
@@ -122,7 +122,7 @@ public class uploadBookData {
                 genres.toString().trim().split(" "),
                 String.valueOf(price),
                 String.valueOf(royalty),
-                authors.toString().trim().split(" "),
+                authors.toString().trim().split("\t"),
                 publishers.toString().trim().replaceAll("\"", ""));
     }
 
