@@ -30,7 +30,7 @@ public class CheckoutScreen extends JFrame implements ActionListener {
      * TODO: Possibly add a cart view during checkout, but we could also not... Maybe. But that's a "if I feel like it" feature.
      */
     public CheckoutScreen(String username, String orderCost) {
-        this.username = username;
+        CheckoutScreen.username = username;
         Container c = this.getContentPane();
         // Clear GUI in order to reload
         this.setPreferredSize(new Dimension(800, 800));

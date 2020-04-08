@@ -1,9 +1,12 @@
 package frontend;
 
 
+import backend.DatabaseQueries;
+
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.xml.crypto.Data;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -28,6 +31,7 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
     protected static final JCheckBox isUserAdminCB = new JCheckBox("Is the user an admin?"),
             newIsUserAdminCB = new JCheckBox("Is the user an admin?");
     protected static final JCheckBox editBillingSameAsShipping = new JCheckBox("Billing Address is the same as Shipping Address");
+    /* JTextFields*/
     // AdminScreen
     // addBook
     protected static final JTextField newISBNTF = new JTextField(15),
@@ -112,18 +116,22 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
             editBillCountryTF = new JTextField(15),
             editBillPostalCodeTF = new JTextField(15);
     // Admin
-    protected static final JLabel confirmNewBookAddition = new JLabel("", JLabel.RIGHT),
-            confirmNewPublisherAddition = new JLabel("", JLabel.RIGHT),
-            confirmAdminReg = new JLabel("", JLabel.RIGHT),
+    protected static final JLabel confirmNewBookAddition = new JLabel("", JLabel.CENTER),
+            confirmNewPublisherAddition = new JLabel("", JLabel.CENTER),
+            confirmAdminReg = new JLabel("", JLabel.CENTER),
             addUserErrorLabel = new JLabel("", JLabel.CENTER),
             addBookErrorLabel = new JLabel("", JLabel.CENTER),
             addPublisherErrorLabel = new JLabel("", JLabel.CENTER),
             editUserErrorLabel = new JLabel("", JLabel.CENTER),
             currentUserNameLabel = new JLabel(""),
-            confirmUserEditLabel = new JLabel("", JLabel.RIGHT),
+            confirmUserEditLabel = new JLabel("", JLabel.CENTER),
             editBookErrorLabel = new JLabel("", JLabel.CENTER),
             currentISBNLabel = new JLabel(""),
-            confirmBookEditLabel = new JLabel("", JLabel.RIGHT);
+            confirmBookEditLabel = new JLabel("", JLabel.CENTER);
+
+    /* JButtons */
+    protected static final JButton deleteUserButton = FrontEndUtilities.formatButton("Delete User"),
+            deleteBookButton = FrontEndUtilities.formatButton("Delete Book");
 
     // Admin username
     private final String username;
@@ -253,6 +261,7 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
         editBookPublisherTF.setText("");
         editBookErrorLabel.setText("");
         confirmBookEditLabel.setText("");
+        deleteBookButton.setEnabled(false);
 
         // editUser
         isUserAdminCB.setSelected(false);
@@ -281,6 +290,7 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
         editBillProvinceCB.setSelectedIndex(0);
         editUserErrorLabel.setText("");
         confirmUserEditLabel.setText("");
+        deleteUserButton.setEnabled(false);
 
         // reports
 
@@ -1070,6 +1080,7 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
         logoutButton.addActionListener(this);
         updateBookButton.addActionListener(this);
         searchBookButton.addActionListener(this);
+        deleteBookButton.addActionListener(this);
 
         // Setup editBookPanel
         {
@@ -1113,10 +1124,16 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
             con.gridwidth = 3;
             con.anchor = GridBagConstraints.LINE_START;
             editBookPanel.add(editBookLabel, con);
+            con.gridx = 5;
+            con.fill = GridBagConstraints.NONE;
+            con.anchor = GridBagConstraints.CENTER;
+            editBookPanel.add(deleteBookButton, con);
 
             con.gridy = 4;
             con.gridx = 1;
             con.gridwidth = 1;
+            con.fill = GridBagConstraints.HORIZONTAL;
+            con.anchor = GridBagConstraints.LINE_START;
             editBookPanel.add(editBookTitleLabel, con);
             con.gridx = 2;
             editBookPanel.add(editBookTitleTF, con);
@@ -1298,6 +1315,7 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
         logoutButton.addActionListener(this);
         confirmButton.addActionListener(this);
         searchButton.addActionListener(this);
+        deleteUserButton.addActionListener(this);
         editBillingSameAsShipping.addChangeListener(e -> {
             boolean sameAsBilling = !editBillingSameAsShipping.isSelected();
             editBillStreetNumTF.setEnabled(sameAsBilling);
@@ -1355,6 +1373,7 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
             isUserAdminCB.setEnabled(false);
             editBillingSameAsShipping.setEnabled(false);
             editShippingProvinceCB.setEnabled(false);
+            deleteUserButton.setEnabled(false);
 
             GridBagConstraints con = new GridBagConstraints();
             Dimension spacer = new Dimension(35, 35);
@@ -1370,7 +1389,6 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
             editUserPanel.add(editUserErrorLabel, con);
             con.gridx = 7;
             con.gridwidth = 2;
-            con.anchor = GridBagConstraints.FIRST_LINE_END;
             editUserPanel.add(confirmButton, con);
 
             con.gridy = 1;
@@ -1380,12 +1398,13 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
             con.anchor = GridBagConstraints.LINE_END;
             con.fill = GridBagConstraints.HORIZONTAL;
             editUserPanel.add(searchUserLabel, con);
-            con.gridwidth = 2;
+            con.gridwidth = 3;
             con.gridx = 2;
             editUserPanel.add(editUserSearchTF, con);
-            con.gridwidth = 1;
-            con.gridx = 4;
+            con.gridwidth = 2;
+            con.gridx = 5;
             editUserPanel.add(searchButton, con);
+            con.gridwidth = 1;
             con.gridx = 7;
             editUserPanel.add(confirmUserEditLabel, con);
 
@@ -1400,9 +1419,15 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
             con.fill = GridBagConstraints.HORIZONTAL;
             editUserLoginCredLabel.setFont(editUserLoginCredLabel.getFont().deriveFont(Font.BOLD));
             editUserPanel.add(editUserLoginCredLabel, con);
+            con.gridx = 7;
+            con.fill = GridBagConstraints.NONE;
+            con.anchor = GridBagConstraints.CENTER;
+            editUserPanel.add(deleteUserButton, con);
 
             con.gridy = 5;
             con.gridx = 1;
+            con.anchor = GridBagConstraints.LINE_END;
+            con.fill = GridBagConstraints.HORIZONTAL;
             editUserPanel.add(editUsernameLabel, con);
             con.gridx = 4;
             con.gridwidth = 2;
@@ -1621,6 +1646,44 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
     }
 
     /**
+     * Confirms the admin wants to exit the admin view
+     */
+    private void confirmDelete(String option) {
+        JButton cancelButton = FrontEndUtilities.formatButton("Cancel");
+        JButton deleteButton = FrontEndUtilities.formatButton("Delete");
+
+        Object[] options = {deleteButton, cancelButton};
+        final JOptionPane screenChoice = new JOptionPane("", JOptionPane.PLAIN_MESSAGE, JOptionPane.YES_NO_OPTION, null, options, options[1]);
+        if(option.equals("user"))
+            screenChoice.setMessage("Are you sure you wish to delete " + currentUserNameLabel.getText() + "?\nThis cannot be reversed.");
+        if(option.equals("book"))
+            screenChoice.setMessage("Are you sure you wish to delete " + currentISBNLabel.getText() + "?\nThis cannot be reversed.");
+        screenChoice.setIcon(FrontEndUtilities.WINDOW_ICON);
+        final JDialog dialog = screenChoice.createDialog("Admin");
+        dialog.setContentPane(screenChoice);
+        dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+
+        deleteButton.addActionListener(e -> {
+            dialog.dispose();
+            if(((String) screenChoice.getMessage()).contains(currentUserNameLabel.getText()) && !currentUserNameLabel.getText().isEmpty()) {
+                DatabaseQueries.deleteEntity("user", "user_name", currentUserNameLabel.getText());
+                defaultAdminViewFields();
+                editUserErrorLabel.setText("User Deleted");
+            }else if(((String) screenChoice.getMessage()).contains(currentISBNLabel.getText()) && !currentISBNLabel.getText().isEmpty()){
+                DatabaseQueries.deleteEntity("book", "isbn", currentISBNLabel.getText());
+                defaultAdminViewFields();
+                editBookErrorLabel.setText("Book Deleted");
+            }
+            dialog.setVisible(false);
+        });
+        cancelButton.addActionListener(e -> dialog.setVisible(false));
+
+        dialog.pack();
+        dialog.setLocationRelativeTo(null);
+        dialog.setVisible(true);
+    }
+
+    /**
      * Implements ActionListeners for GUI components
      *
      * @param e The ActionEvent that was triggered via a JButton.
@@ -1673,6 +1736,8 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
                         confirmAdminReg.setText("New User Added");
                     }
                 } // Admin Add User Screen
+                case "Delete User" -> {confirmDelete("user");} // Admin Screen
+                case "Delete Book" -> {confirmDelete("book");} // Admin Screen
                 default -> System.out.println("Error");
             }
         }

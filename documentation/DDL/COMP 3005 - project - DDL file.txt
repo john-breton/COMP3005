@@ -30,8 +30,10 @@ CREATE TABLE project.user (
 );
 
 CREATE TABLE project.librarian (
-    user_name 	character varying(16) REFERENCES project.user(user_name) PRIMARY KEY,
-    salary 		numeric(8,2)
+    user_name 	character varying(16) REFERENCES project.user(user_name) ON DELETE CASCADE,
+    salary 		numeric(8,2),
+
+    CONSTRAINT librarian_pkey PRIMARY KEY (user_name)
 );
 
 CREATE TABLE project.address (
@@ -79,14 +81,14 @@ CREATE TABLE project.order (
 CREATE TABLE project.writes (
     auth_fn character varying(20),
     auth_ln character varying(40),
-    isbn 	numeric(13,0) REFERENCES project.book(isbn),
+    isbn 	numeric(13,0) REFERENCES project.book(isbn) ON DELETE CASCADE,
 
     CONSTRAINT writes_pkey PRIMARY KEY (auth_fn, auth_ln, isbn),
     CONSTRAINT writes_fkey FOREIGN KEY (auth_fn, auth_ln) REFERENCES project.author
 );
 
 CREATE TABLE project.publishes (
-    isbn 		numeric(13,0) REFERENCES project.book(isbn) NOT NULL,
+    isbn 		numeric(13,0) REFERENCES project.book(isbn) ON DELETE CASCADE,
     pub_name 	character varying(200) REFERENCES project.publisher NOT NULL,
     year 		numeric(4,0),
 
@@ -95,7 +97,7 @@ CREATE TABLE project.publishes (
 
 CREATE TABLE project.hasgenre (
     name 	character varying(150) REFERENCES project.genre(name),
-    isbn	numeric(13,0) REFERENCES project.book(isbn),
+    isbn	numeric(13,0) REFERENCES project.book(isbn) ON DELETE CASCADE,
 
     CONSTRAINT	hasgenre_pkey PRIMARY KEY (name, isbn)
 
@@ -103,7 +105,7 @@ CREATE TABLE project.hasgenre (
 
 CREATE TABLE project.bask_item (
     basket_id 	SERIAL NOT NULL REFERENCES project.basket(basket_id),
-    isbn 		numeric(13,0) REFERENCES project.book(isbn),
+    isbn 		numeric(13,0) REFERENCES project.book(isbn) ON DELETE CASCADE,
     quantity 	integer,
 
     CONSTRAINT bask_item_pkey PRIMARY KEY (basket_id, isbn)
@@ -117,7 +119,7 @@ CREATE TABLE project.checkout (
 );
 
 CREATE TABLE project.bask_manage (
-    user_name 	character varying(16) REFERENCES project.user(user_name),
+    user_name 	character varying(16) REFERENCES project.user(user_name) ON DELETE CASCADE,
     basket_id 	SERIAL NOT NULL REFERENCES project.basket(basket_id),
 
     CONSTRAINT bask_manage_pkey PRIMARY KEY (basket_id)
@@ -136,7 +138,7 @@ CREATE TABLE project.ordadd (
 
 CREATE TABLE project.hasAdd (
     add_id 		SERIAL NOT NULL REFERENCES project.address(add_id),
-    user_name 	character varying(16) NOT NULL REFERENCES project.user(user_name),
+    user_name 	character varying(16) NOT NULL REFERENCES project.user(user_name) ON DELETE CASCADE,
     isshipping 	boolean NOT NULL,
 
     CONSTRAINT 	hasadd_pkey PRIMARY KEY (add_id),
@@ -145,7 +147,7 @@ CREATE TABLE project.hasAdd (
 
 CREATE TABLE project.pubadd (
     add_id 		SERIAL NOT NULL REFERENCES project.address(add_id),
-    pub_name 	character varying(200) REFERENCES project.publisher UNIQUE,
+    pub_name 	character varying(200) REFERENCES project.publisher,
 
     CONSTRAINT 	pubadd_pkey PRIMARY KEY (pub_name)
 );

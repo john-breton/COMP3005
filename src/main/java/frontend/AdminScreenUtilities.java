@@ -29,6 +29,9 @@ public class AdminScreenUtilities extends AdminScreen {
         } else if (update.get(0).equals("-1")) {
             defaultAdminViewFields();
             editUserErrorLabel.setText("Big boy error...contact someone");
+        } else if(editUserSearchTF.getText().equals(username)){
+            defaultAdminViewFields();
+            editUserErrorLabel.setText("You cannot edit your own information.");
         } else {
             Iterator<Object> itr = update.iterator();
             editUserErrorLabel.setText(""); // reset errors
@@ -103,6 +106,7 @@ public class AdminScreenUtilities extends AdminScreen {
             isUserAdminCB.setEnabled(true);
             editBillingSameAsShipping.setEnabled(true);
             editShippingProvinceCB.setEnabled(true);
+            deleteUserButton.setEnabled(true);
         }
     }
 
@@ -363,6 +367,7 @@ public class AdminScreenUtilities extends AdminScreen {
             editBookYearTF.setEnabled(true);
             editBookAuthorTF.setEnabled(true);
             editBookGenreTF.setEnabled(true);
+            deleteBookButton.setEnabled(true);
         }
     }
 
