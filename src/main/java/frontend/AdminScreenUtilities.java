@@ -29,7 +29,7 @@ public class AdminScreenUtilities extends AdminScreen {
         } else if (update.get(0).equals("-1")) {
             defaultAdminViewFields();
             editUserErrorLabel.setText("Big boy error...contact someone");
-        } else if(editUserSearchTF.getText().equals(username)){
+        } else if (editUserSearchTF.getText().equals(username)) {
             defaultAdminViewFields();
             editUserErrorLabel.setText("You cannot edit your own information.");
         } else {

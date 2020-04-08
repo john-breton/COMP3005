@@ -6,7 +6,6 @@ import backend.DatabaseQueries;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import javax.xml.crypto.Data;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -134,7 +133,7 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
             deleteBookButton = FrontEndUtilities.formatButton("Delete Book");
 
     // Admin username
-    private final String username;
+    protected static String username;
 
     public AdminScreen(String username) {
         this.username = username;
@@ -1654,9 +1653,9 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
 
         Object[] options = {deleteButton, cancelButton};
         final JOptionPane screenChoice = new JOptionPane("", JOptionPane.PLAIN_MESSAGE, JOptionPane.YES_NO_OPTION, null, options, options[1]);
-        if(option.equals("user"))
+        if (option.equals("user"))
             screenChoice.setMessage("Are you sure you wish to delete " + currentUserNameLabel.getText() + "?\nThis cannot be reversed.");
-        if(option.equals("book"))
+        if (option.equals("book"))
             screenChoice.setMessage("Are you sure you wish to delete " + currentISBNLabel.getText() + "?\nThis cannot be reversed.");
         screenChoice.setIcon(FrontEndUtilities.WINDOW_ICON);
         final JDialog dialog = screenChoice.createDialog("Admin");
@@ -1665,11 +1664,11 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
 
         deleteButton.addActionListener(e -> {
             dialog.dispose();
-            if(((String) screenChoice.getMessage()).contains(currentUserNameLabel.getText()) && !currentUserNameLabel.getText().isEmpty()) {
+            if (((String) screenChoice.getMessage()).contains(currentUserNameLabel.getText()) && !currentUserNameLabel.getText().isEmpty()) {
                 DatabaseQueries.deleteEntity("user", "user_name", currentUserNameLabel.getText());
                 defaultAdminViewFields();
                 editUserErrorLabel.setText("User Deleted");
-            }else if(((String) screenChoice.getMessage()).contains(currentISBNLabel.getText()) && !currentISBNLabel.getText().isEmpty()){
+            } else if (((String) screenChoice.getMessage()).contains(currentISBNLabel.getText()) && !currentISBNLabel.getText().isEmpty()) {
                 DatabaseQueries.deleteEntity("book", "isbn", currentISBNLabel.getText());
                 defaultAdminViewFields();
                 editBookErrorLabel.setText("Book Deleted");
@@ -1736,8 +1735,8 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
                         confirmAdminReg.setText("New User Added");
                     }
                 } // Admin Add User Screen
-                case "Delete User" -> {confirmDelete("user");} // Admin Screen
-                case "Delete Book" -> {confirmDelete("book");} // Admin Screen
+                case "Delete User" -> confirmDelete("user"); // Admin Screen
+                case "Delete Book" -> confirmDelete("book"); // Admin Screen
                 default -> System.out.println("Error");
             }
         }

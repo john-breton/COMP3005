@@ -31,7 +31,7 @@ public class UserScreen extends JFrame implements ActionListener {
     private final JPanel searchResult = new JPanel(new GridLayout(1, 1));
     private final JPanel cart = new JPanel(new GridLayout(1, 1));
     private ArrayList<JButton> bookButtons = new ArrayList<>();
-    private ArrayList<JToggleButton> cartButtons = new ArrayList<>();
+    private final ArrayList<JToggleButton> cartButtons = new ArrayList<>();
     private final String username;
     private String cartID;
 
@@ -351,7 +351,7 @@ public class UserScreen extends JFrame implements ActionListener {
     /**
      * Update the total price of a user's cart.
      *
-     * @param text The text that will be parsed to find the price of the book.
+     * @param text     The text that will be parsed to find the price of the book.
      * @param increase True if the price should be increased, false if it should be decreased.
      */
     private void priceUpdate(String text, boolean increase) {
@@ -405,7 +405,7 @@ public class UserScreen extends JFrame implements ActionListener {
     private void quantityUpdate(boolean increase) {
         if (!cartButtons.isEmpty()) {
             JToggleButton item = null;
-            for (JToggleButton btn: cartButtons) {
+            for (JToggleButton btn : cartButtons) {
                 if (btn.isSelected()) {
                     item = btn;
                 }
@@ -423,7 +423,6 @@ public class UserScreen extends JFrame implements ActionListener {
                 usefulQuantity.append(quantity.charAt(i));
                 i++;
             }
-            i = 0;
             int realQuantity = Integer.parseInt(usefulQuantity.toString());
             item.setText(findQuantity[0] + "</u><u>Quantity</u>: " + (realQuantity + (increase ? 1 : -1)) + "</html>");
             if (realQuantity == 1 && !increase) {

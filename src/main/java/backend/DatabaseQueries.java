@@ -18,8 +18,8 @@ import java.util.ArrayList;
 public class DatabaseQueries {
 
     // Just putting this here so we can change it when we test.
-    private static final String USER = "postgres";
-    private static final String DATABASE = "lookinnabook";
+    private static final String USER = "ryan";
+    private static final String DATABASE = "LookInnaBook";
     public static Connection connection;
     public static Statement statement;
 
@@ -343,7 +343,7 @@ public class DatabaseQueries {
     public static boolean registerNewUser(String username, String password, String first_name, String last_name, String email) {
         try {
             boolean temp = statement.executeUpdate(String.format("INSERT into project.user values ('%s', '%s', '%s', '%s', '%s') ON CONFLICT (user_name) DO NOTHING", username.toLowerCase(), password, first_name, last_name, email)) == 1;
-            if(temp)
+            if (temp)
                 DatabaseQueries.registerCart(username.toLowerCase());
             return temp;
         } catch (SQLException e) {
@@ -730,41 +730,10 @@ public class DatabaseQueries {
     }
 
     /**
-     * Deletes an entity from a relation in the schema project
-     * @param from table name
-     * @param where attribute name
-     * @param identifier unique identifier
-     */
-    public static void deleteEntity(String from, String where, String identifier){
-        try {
-            statement.executeUpdate(String.format("DELETE FROM project.%s WHERE %s = '%s'", from, where, identifier));
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * Counts the number of addresses currently in the database.
-     *
-     * @return The total number of addresses currently stored, as an int.
-     */
-    public static void addToCart(String cartID, String isbn) {
-        try {
-            statement = connection.createStatement();
-            statement.execute("INSERT into project.bask_item " +
-                    "values ('" + cartID +
-                    "', '" + isbn + "', 0)");
-            updateQuantity(cartID, isbn, true);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
      * Increase or decrease the quantity of a cart item.
      *
-     * @param cartID The id of the cart that this item belongs to.
-     * @param isbn The isbn corresponding to the item that will be increased.
+     * @param cartID   The id of the cart that this item belongs to.
+     * @param isbn     The isbn corresponding to the item that will be increased.
      * @param increase
      */
     public static void updateQuantity(String cartID, String isbn, boolean increase) {
@@ -780,7 +749,27 @@ public class DatabaseQueries {
         }
     }
 
-    public static String getCartID(String username) {
+    /**
+     * Deletes an entity from a relation in the schema project
+     *
+     * @param from       table name
+     * @param where      attribute name
+     * @param identifier unique identifier
+     */
+    public static void deleteEntity(String from, String where, String identifier) {
+        try {
+            statement.executeUpdate(String.format("DELETE FROM project.%s WHERE %s = '%s'", from, where, identifier));
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Counts the number of addresses currently in the database.
+     *
+     * @return The total number of addresses currently stored, as an int.
+     */
+    public static int countAddresses() {
         try {
             ResultSet result = statement.executeQuery("SELECT COUNT(*) from project.address");
             result.next();

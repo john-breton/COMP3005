@@ -20,7 +20,7 @@ public class CheckoutScreen extends JFrame implements ActionListener {
     final JComboBox<String> checkoutShippingProvinceCB = new JComboBox<>(FrontEndUtilities.provincesArr),
             checkoutBillingProvinceCB = new JComboBox<>(FrontEndUtilities.provincesArr);
 
-    private String username;
+    private final String username;
 
     /**
      * Creates the "Checkout" interface for the userScreen
@@ -30,7 +30,9 @@ public class CheckoutScreen extends JFrame implements ActionListener {
      * TODO: Possibly add a cart view during checkout, but we could also not... Maybe. But that's a "if I feel like it" feature.
      */
     public CheckoutScreen(String username, String orderCost) {
-        CheckoutScreen.username = username;
+        checkoutShippingProvinceCB.setBackground(Color.WHITE);
+        checkoutBillingProvinceCB.setBackground(Color.WHITE);
+        this.username = username;
         Container c = this.getContentPane();
         // Clear GUI in order to reload
         this.setPreferredSize(new Dimension(800, 800));
