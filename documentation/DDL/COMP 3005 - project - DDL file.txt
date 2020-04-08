@@ -151,6 +151,15 @@ CREATE TABLE project.pubadd (
 );
 
 -- Functions
+CREATE OR REPLACE FUNCTION delete_cart_item() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+    DELETE FROM project.bask_item WHERE quantity = 0;
+    RETURN NULL;
+END;
+$$;;
+
 CREATE OR REPLACE FUNCTION delete_old_admin() RETURNS trigger
     LANGUAGE plpgsql
     AS $$
@@ -181,6 +190,11 @@ END;
 $$;;
 
 -- Triggers
+CREATE TRIGGER delete_item
+AFTER UPDATE ON project.bask_item
+FOR EACH ROW
+WHEN (new.quantity = 0)
+EXECUTE PROCEDURE delete_cart_item();
 
 CREATE TRIGGER delete_admin
 AFTER UPDATE OR INSERT ON project.librarian

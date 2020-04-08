@@ -126,7 +126,7 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
             confirmBookEditLabel = new JLabel("", JLabel.RIGHT);
 
     // Admin username
-    private String username;
+    private final String username;
 
     public AdminScreen(String username) {
         this.username = username;

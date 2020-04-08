@@ -18,8 +18,8 @@ import java.util.ArrayList;
 public class DatabaseQueries {
 
     // Just putting this here so we can change it when we test.
-    private static final String USER = "ryan";
-    private static final String DATABASE = "LookInnaBook";
+    private static final String USER = "postgres";
+    private static final String DATABASE = "lookinnabook";
     public static Connection connection;
     public static Statement statement;
 
@@ -390,12 +390,12 @@ public class DatabaseQueries {
     public static ArrayList<Object> lookForaBook(String searchText, String searchType) {
         ArrayList<Object> bookInfo = new ArrayList<>();
         int rowCount = 0;
-        ResultSet result = null;
+        ResultSet result;
         try {
             if (searchType.equals("author")) {
                 // TODO Actually finish this.
             } else if (searchType.equals("name")) {
-                String isbn = null;
+                String isbn;
                 result = statement.executeQuery("SELECT * FROM project.hasgenre WHERE name = '" + searchText + "'");
                 while (result.next()) {
                     isbn = result.getString("isbn");
@@ -421,7 +421,7 @@ public class DatabaseQueries {
 
             } else {
                 result = statement.executeQuery(String.format("SELECT * FROM project.book natural join project.publishes WHERE " + searchType + " = '%s'", searchText));
-                String isbn = null;
+                String isbn;
                 while (result.next()) {
                     rowCount++; // count results
                     isbn = result.getString("isbn");
@@ -727,16 +727,27 @@ public class DatabaseQueries {
             statement.execute("INSERT into project.bask_item " +
                     "values ('" + cartID +
                     "', '" + isbn + "', 0)");
-            updateQuantity(isbn);
+            updateQuantity(cartID, isbn, true);
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    public static void updateQuantity(String isbn) {
+    /**
+     * Increase or decrease the quantity of a cart item.
+     *
+     * @param cartID The id of the cart that this item belongs to.
+     * @param isbn The isbn corresponding to the item that will be increased.
+     * @param increase
+     */
+    public static void updateQuantity(String cartID, String isbn, boolean increase) {
         try {
             statement = connection.createStatement();
-            statement.executeUpdate("UPDATE project.bask_item SET quantity = quantity + 1 WHERE isbn = '" + isbn + "'");
+            if (increase) {
+                statement.executeUpdate("UPDATE project.bask_item SET quantity = quantity + 1 WHERE isbn = '" + isbn + "' AND basket_id = '" + cartID + "'");
+            } else {
+                statement.executeUpdate("UPDATE project.bask_item SET quantity = quantity - 1 WHERE isbn = '" + isbn + "' AND basket_id = '" + cartID + "'");
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }

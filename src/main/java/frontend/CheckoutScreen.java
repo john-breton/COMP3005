@@ -20,7 +20,7 @@ public class CheckoutScreen extends JFrame implements ActionListener {
     final JComboBox<String> checkoutShippingProvinceCB = new JComboBox<>(FrontEndUtilities.provincesArr),
             checkoutBillingProvinceCB = new JComboBox<>(FrontEndUtilities.provincesArr);
 
-    private static String username;
+    private String username;
 
     /**
      * Creates the "Checkout" interface for the userScreen
@@ -348,6 +348,13 @@ public class CheckoutScreen extends JFrame implements ActionListener {
     }
 
     /**
+     * Place an order for books within a user's cart.
+     */
+    private void placeOrder() {
+
+    }
+
+    /**
      * Implements ActionListeners for GUI components
      *
      * @param e The ActionEvent that was triggered via a JButton.
@@ -362,7 +369,7 @@ public class CheckoutScreen extends JFrame implements ActionListener {
                     this.dispose();
                     new UserScreen(username); // checkoutScreen
                 }
-                case "Confirm Order" -> System.out.println("Order Submitted"); // checkoutScreen
+                case "Confirm Order" -> placeOrder(); // checkoutScreen
                 default -> System.out.println("Error");
             }
         }
