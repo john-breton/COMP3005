@@ -64,105 +64,6 @@ public class DatabaseQueries {
     }
 
     /**
-     * Inserts a new user into the database.
-     *
-     * @param username   The username for the new user.
-     * @param password   The password for the new user.
-     * @param first_name The first name of the new user.
-     * @param last_name  The last name of the new user.
-     * @param email      The email address for the new user.
-     * @return True if the insertion was successful, false otherwise.
-     */
-    public static boolean registerNewUser(String username, String password, String first_name, String last_name, String email) {
-        try {
-            boolean temp = statement.executeUpdate(String.format("INSERT into project.user values ('%s', '%s', '%s', '%s', '%s') ON CONFLICT (user_name) DO NOTHING", username.toLowerCase(), password, first_name, last_name, email)) == 1;
-            if(temp)
-                DatabaseQueries.registerCart(username);
-            return temp;
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-
-    /**
-     * Counts the number of addresses currently in the database.
-     *
-     * @return The total number of addresses currently stored, as an int.
-     */
-    public static int countAddresses() {
-        try {
-            ResultSet result = statement.executeQuery("SELECT COUNT(*) from project.address");
-            result.next();
-            return Integer.parseInt(result.getString("count"));
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return -1;
-    }
-
-    /**
-     * Add an address into the database.
-     *
-     * @param streetNum  The street number of the address.
-     * @param streetName The street name of the address.
-     * @param apartment  The apartment number of the address (can be null).
-     * @param city       The city of the address.
-     * @param province   The province of the address.
-     * @param country    The country of the address.
-     * @param postalCode The postal code of the address.
-     * @return True if the insertion was successful, false otherwise.
-     */
-    public static boolean addAddress(String streetNum, String streetName, String apartment, String city, String province, String country, String postalCode) {
-        try {
-            statement.execute("INSERT into project.address " +
-                    "values (nextval('project.address_add_id_seq'), " +
-                    "'" + streetNum +
-                    "', '" + streetName +
-                    "', '" + apartment +
-                    "', '" + city +
-                    "', '" + province +
-                    "', '" + country +
-                    "', '" + postalCode +
-                    "')");
-            return true;
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-
-    /**
-     * Add a hasAdd relation into the database.
-     *
-     * @param username   The username associated with the address.
-     * @param isShipping True if the address is a shipping address, false otherwise.
-     */
-    public static void addHasAdd(String username, boolean isShipping) {
-        try {
-            statement.execute(String.format("INSERT into project.hasadd values (currval('project.address_add_id_seq'), '%s', %s)", username, isShipping));
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-
-    /**
-     * Adds a relationship between a publisher and address in the database
-     *
-     * @param pub_name
-     * @return true if a valid relationship was created, false otherwise
-     */
-    public static boolean addPubAdd(String pub_name) {
-        try {
-            return statement.executeUpdate(String.format("INSERT into project.pubadd values (currval('project.address_add_id_seq'), '%s')", pub_name)) == 1;
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-
-    /**
      * Query user information from the database.
      *
      * @param username The username that was entered.
@@ -246,130 +147,6 @@ public class DatabaseQueries {
             e.printStackTrace();
         }
         return addInfo;
-    }
-
-    /**
-     * Query the user information from the edit user screen to find and update a user.
-     * lookForaUser() should be invoked BEFORE this method to ensure the user is already present in the database
-     *
-     * @param username  The username that was entered
-     * @param password  The new password that was entered
-     * @param firstName The first name that was entered
-     * @param lastName  The last name that was entered
-     * @param email     The email that was entered
-     * @return ArrayList of the updated user credentials (or added credentials but we don't want this), null otherwise
-     */
-    public static boolean updateUser(String username, String password, String firstName, String lastName, String email) {
-        try {
-            int rowsAffected;
-            if (!password.isEmpty())
-                rowsAffected = statement.executeUpdate(String.format("UPDATE project.user SET password = '%s', first_name = '%s', last_name = '%s', email = '%s' WHERE user_name = '%s'", password, firstName, lastName, email, username.toLowerCase()));
-            else
-                rowsAffected = statement.executeUpdate(String.format("UPDATE project.user SET first_name = '%s', last_name = '%s', email = '%s' WHERE user_name = '%s'", firstName, lastName, email, username.toLowerCase()));
-
-            if (rowsAffected == 1) { // means a row was updated
-                return true;
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return false;
-    }
-
-    /**
-     * Query the admin info to update/ add an admin
-     *
-     * @param username username to be updated
-     * @param salary   new salary
-     */
-    public static void updateAdmin(String username, String salary) {
-        try {
-            if (salary == null || salary.isEmpty()) {
-                statement.executeUpdate("UPDATE project.librarian " +
-                        "SET salary = NULL " +
-                        "WHERE user_name = '" + username + "'");
-            } else {
-                statement.executeUpdate("INSERT INTO project.librarian " +
-                        "values('" + username + "','" + salary + "') " +
-                        "ON CONFLICT (user_name) DO UPDATE SET salary = '" + salary + "'");
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * Query the addresses to update user's address
-     *
-     * @param username   the username
-     * @param num        the num
-     * @param name       the name
-     * @param apartment  the apartment
-     * @param city       the city
-     * @param prov       the province
-     * @param country    the country
-     * @param postalCode the postal code
-     * @param isShipping the is shipping
-     */
-    public static void updateAddress(String username, String num, String name, String apartment, String city, String prov, String country, String postalCode, boolean isShipping) {
-        // attempt to update address
-        try {
-            int rowsAffected = statement.executeUpdate(String.format("UPDATE project.address SET street_num = %s,street_name = '%s',apartment = '%s',city = '%s',province = '%s',country = '%s',postal_code = '%s' FROM project.hasadd WHERE project.address.add_id = project.hasadd.add_id AND project.hasadd.user_name = '%s'AND project.hasadd.isshipping = '%s'", num, name, apartment, city, prov, country, postalCode, username, isShipping));
-
-            if (rowsAffected == 0) { //user doesn't have an address yet
-                if (addAddress(num, name, apartment, city, prov, country, postalCode)) {
-                    addHasAdd(username, isShipping);
-                }
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * Add book to the database.
-     *
-     * @param isbn      the isbn
-     * @param title     the title
-     * @param version   the version
-     * @param pageCount the page count
-     * @param year      the year
-     * @param stock     the stock
-     * @param genres    the genres
-     * @param price     the price
-     * @param royalty   the royalty
-     * @param authors   the authors
-     * @param publisher the publisher
-     * @return 0 if successful update of all attributes, 1 if error with the author information, 2 if error with the genre information, 3 if error with publisher information, 4 if error with book information
-     */
-    public static int addBook(String isbn, String title, String version, String pageCount, String year, String stock, String[] genres, String price, String royalty, String[] authors, String publisher) {
-        try {
-            // ensure strings don't contain illegal characters
-            title = title.replaceAll("['\"]", "");
-            publisher = publisher.replaceAll("['\"]", "");
-            // attempt to insert book info
-            if (!statement.executeQuery(String.format("SELECT * FROM project.book WHERE isbn = %s", isbn)).next()) { // ensure the book doesn't already exist
-                if (statement.executeQuery(String.format("SELECT * FROM project.publisher WHERE pub_name = '%s'", publisher)).next() && // make sure publisher exists
-                        statement.executeUpdate(String.format("INSERT INTO project.book values (%s,'%s',%s,%s,%s,%s,%s)", isbn, title, version, pageCount, price, royalty, stock)) == 1) { // add the book
-                    // attempt to insert into publishes info
-                    if (addPublishes(publisher, isbn, year)) {
-                        // attempt insert of genre info
-                        if (updateGenre(isbn, genres)) {
-                            // attempt insert of author info
-                            if (updateAuthor(isbn, authors)) {
-                                return 0;
-                            } else return 1;
-                        } else return 2;
-                    } else return 3;
-                } else return 3;
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return 4;
     }
 
     /**
@@ -512,43 +289,166 @@ public class DatabaseQueries {
         return null;
     }
 
+    public static String getCartID(String username) {
+        try {
+            ResultSet result = statement.executeQuery("SELECT * FROM project.bask_manage WHERE user_name = '" + username + "'");
+            result.next();
+            return result.getString("basket_id");
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     /**
-     * Update a book's information within the database
+     * Retrieve the items in a user's cart, if the user has an items to retrieve.
      *
-     * @param isbn      the current isbn (can't be changed)
-     * @param title     the new title
-     * @param version   the new version
-     * @param pageCount the new page count
-     * @param year      the new year
-     * @param stock     the new stock
-     * @param genres    the new genres
-     * @param price     the new price
-     * @param royalty   the new royalty
-     * @param authors   the new authors
-     * @param publisher the new publisher
+     * @param username THe username used to retrieve the cart for.
+     * @return The ISBN and quantity of each item in the user cart, or null if no items were found.
+     */
+    public static ArrayList<String> checkForCart(String username) {
+        int rowCount = 0;
+        ArrayList<String> cartInfo = new ArrayList<>();
+        try {
+            ResultSet result = statement.executeQuery("SELECT * FROM project.bask_manage NATURAL JOIN project.bask_item WHERE project.bask_manage.user_name = '" + username + "'");
+            while (result.next()) {
+                if (rowCount == 0) {
+                    cartInfo.add(result.getString("basket_id"));
+                }
+                rowCount++;
+                cartInfo.add(result.getString("isbn"));
+                cartInfo.add(result.getString("quantity"));
+            }
+            if (rowCount >= 1) {
+                return cartInfo;
+            } else {
+                return null;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
+     * Inserts a new user into the database.
+     *
+     * @param username   The username for the new user.
+     * @param password   The password for the new user.
+     * @param first_name The first name of the new user.
+     * @param last_name  The last name of the new user.
+     * @param email      The email address for the new user.
+     * @return True if the insertion was successful, false otherwise.
+     */
+    public static boolean registerNewUser(String username, String password, String first_name, String last_name, String email) {
+        try {
+            boolean temp = statement.executeUpdate(String.format("INSERT into project.user values ('%s', '%s', '%s', '%s', '%s') ON CONFLICT (user_name) DO NOTHING", username.toLowerCase(), password, first_name, last_name, email)) == 1;
+            if(temp)
+                DatabaseQueries.registerCart(username.toLowerCase());
+            return temp;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    /**
+     * Add an address into the database.
+     *
+     * @param streetNum  The street number of the address.
+     * @param streetName The street name of the address.
+     * @param apartment  The apartment number of the address (can be null).
+     * @param city       The city of the address.
+     * @param province   The province of the address.
+     * @param country    The country of the address.
+     * @param postalCode The postal code of the address.
+     * @return True if the insertion was successful, false otherwise.
+     */
+    public static boolean addAddress(String streetNum, String streetName, String apartment, String city, String province, String country, String postalCode) {
+        try {
+            statement.execute("INSERT into project.address " +
+                    "values (nextval('project.address_add_id_seq'), " +
+                    "'" + streetNum +
+                    "', '" + streetName +
+                    "', '" + apartment +
+                    "', '" + city +
+                    "', '" + province +
+                    "', '" + country +
+                    "', '" + postalCode +
+                    "')");
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    /**
+     * Add a hasAdd relation into the database.
+     *
+     * @param username   The username associated with the address.
+     * @param isShipping True if the address is a shipping address, false otherwise.
+     */
+    public static void addHasAdd(String username, boolean isShipping) {
+        try {
+            statement.execute(String.format("INSERT into project.hasadd values (currval('project.address_add_id_seq'), '%s', %s)", username.toLowerCase(), isShipping));
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Adds a relationship between a publisher and address in the database
+     *
+     * @param pub_name
+     * @return true if a valid relationship was created, false otherwise
+     */
+    public static boolean addPubAdd(String pub_name) {
+        try {
+            return statement.executeUpdate(String.format("INSERT into project.pubadd values (currval('project.address_add_id_seq'), '%s')", pub_name)) == 1;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    /**
+     * Add book to the database.
+     *
+     * @param isbn      the isbn
+     * @param title     the title
+     * @param version   the version
+     * @param pageCount the page count
+     * @param year      the year
+     * @param stock     the stock
+     * @param genres    the genres
+     * @param price     the price
+     * @param royalty   the royalty
+     * @param authors   the authors
+     * @param publisher the publisher
      * @return 0 if successful update of all attributes, 1 if error with the author information, 2 if error with the genre information, 3 if error with publisher information, 4 if error with book information
      */
-    public static int updateBook(String isbn, String title, String version, String pageCount, String year, String stock, String[] genres, String price, String royalty, String[] authors, String publisher) {
+    public static int addBook(String isbn, String title, String version, String pageCount, String year, String stock, String[] genres, String price, String royalty, String[] authors, String publisher) {
         try {
-            // attempt update of book info
-            statement.executeUpdate("UPDATE project.book " +
-                    "SET name = '" + title + "'," +
-                    "version = '" + version + "'," +
-                    "num_pages = '" + pageCount + "'," +
-                    "price = '" + price + "'," +
-                    "royalty = '" + royalty + "'," +
-                    "stock = '" + stock + "'" +
-                    "WHERE isbn = '" + isbn + "'");
-            // attempt update of publisher info
-            if (updatePublisher(isbn, publisher, year)) {
-                // attempt update of genre ino
-                if (updateGenre(isbn, genres)) {
-                    // attempt update of author info
-                    if (updateAuthor(isbn, authors)) {
-                        return 0;
-                    } else return 1;
-                } else return 2;
-            } else return 3;
+            // ensure strings don't contain illegal characters
+            title = title.replaceAll("['\"]", "");
+            publisher = publisher.replaceAll("['\"]", "");
+            // attempt to insert book info
+            if (!statement.executeQuery(String.format("SELECT * FROM project.book WHERE isbn = %s", isbn)).next()) { // ensure the book doesn't already exist
+                if (statement.executeQuery(String.format("SELECT * FROM project.publisher WHERE pub_name = '%s'", publisher)).next() && // make sure publisher exists
+                        statement.executeUpdate(String.format("INSERT INTO project.book values (%s,'%s',%s,%s,%s,%s,%s)", isbn, title, version, pageCount, price, royalty, stock)) == 1) { // add the book
+                    // attempt to insert into publishes info
+                    if (addPublishes(publisher, isbn, year)) {
+                        // attempt insert of genre info
+                        if (updateGenre(isbn, genres)) {
+                            // attempt insert of author info
+                            if (updateAuthor(isbn, authors)) {
+                                return 0;
+                            } else return 1;
+                        } else return 2;
+                    } else return 3;
+                } else return 3;
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -590,6 +490,155 @@ public class DatabaseQueries {
             e.printStackTrace();
         }
         return false;
+    }
+
+    /**
+     * Register a cart for every new user added to the service.
+     *
+     * @param username The username to be associated with the cart.
+     */
+    public static void registerCart(String username) {
+        try {
+            statement = connection.createStatement();
+            statement.execute(String.format("INSERT into project.bask_manage values ('%s', currval('project.basket_basket_id_seq'))", username));
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Attempts to add an item to a cart.
+     *
+     * @param cartID The ID of the cart that the item will be added to.
+     * @param isbn   The ISBN of the book that is being added to the cart.
+     */
+    public static void addToCart(String cartID, String isbn) {
+        try {
+            statement = connection.createStatement();
+            statement.execute("INSERT into project.bask_item " +
+                    "values ('" + cartID +
+                    "', '" + isbn + "', 0)");
+            updateQuantity(isbn);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Query the user information from the edit user screen to find and update a user.
+     * lookForaUser() should be invoked BEFORE this method to ensure the user is already present in the database
+     *
+     * @param username  The username that was entered
+     * @param password  The new password that was entered
+     * @param firstName The first name that was entered
+     * @param lastName  The last name that was entered
+     * @param email     The email that was entered
+     * @return ArrayList of the updated user credentials (or added credentials but we don't want this), null otherwise
+     */
+    public static boolean updateUser(String username, String password, String firstName, String lastName, String email) {
+        try {
+            int rowsAffected;
+            if (!password.isEmpty())
+                rowsAffected = statement.executeUpdate(String.format("UPDATE project.user SET password = '%s', first_name = '%s', last_name = '%s', email = '%s' WHERE user_name = '%s'", password, firstName, lastName, email, username.toLowerCase()));
+            else
+                rowsAffected = statement.executeUpdate(String.format("UPDATE project.user SET first_name = '%s', last_name = '%s', email = '%s' WHERE user_name = '%s'", firstName, lastName, email, username.toLowerCase()));
+
+            if (rowsAffected == 1) { // means a row was updated
+                return true;
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
+    /**
+     * Query the admin info to update/ add an admin
+     *
+     * @param username username to be updated
+     * @param salary   new salary
+     */
+    public static void updateAdmin(String username, String salary) {
+        try {
+            if (salary == null || salary.isEmpty()) {
+                statement.executeUpdate("UPDATE project.librarian " +
+                        "SET salary = NULL " +
+                        "WHERE user_name = '" + username + "'");
+            } else {
+                statement.executeUpdate("INSERT INTO project.librarian " +
+                        "values('" + username + "','" + salary + "') " +
+                        "ON CONFLICT (user_name) DO UPDATE SET salary = '" + salary + "'");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Query the addresses to update user's address
+     *
+     * @param username   the username
+     * @param num        the num
+     * @param name       the name
+     * @param apartment  the apartment
+     * @param city       the city
+     * @param prov       the province
+     * @param country    the country
+     * @param postalCode the postal code
+     * @param isShipping the is shipping
+     */
+    public static void updateAddress(String username, String num, String name, String apartment, String city, String prov, String country, String postalCode, boolean isShipping) {
+        // attempt to update address
+        try {
+            int rowsAffected = statement.executeUpdate(String.format("UPDATE project.address SET street_num = %s,street_name = '%s',apartment = '%s',city = '%s',province = '%s',country = '%s',postal_code = '%s' FROM project.hasadd WHERE project.address.add_id = project.hasadd.add_id AND project.hasadd.user_name = '%s'AND project.hasadd.isshipping = '%s'", num, name, apartment, city, prov, country, postalCode, username, isShipping));
+
+            if (rowsAffected == 0) { //user doesn't have an address yet
+                if (addAddress(num, name, apartment, city, prov, country, postalCode)) {
+                    addHasAdd(username, isShipping);
+                }
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Update a book's information within the database
+     *
+     * @param isbn      the current isbn (can't be changed)
+     * @param title     the new title
+     * @param version   the new version
+     * @param pageCount the new page count
+     * @param year      the new year
+     * @param stock     the new stock
+     * @param genres    the new genres
+     * @param price     the new price
+     * @param royalty   the new royalty
+     * @param authors   the new authors
+     * @param publisher the new publisher
+     * @return 0 if successful update of all attributes, 1 if error with the author information, 2 if error with the genre information, 3 if error with publisher information, 4 if error with book information
+     */
+    public static int updateBook(String isbn, String title, String version, String pageCount, String year, String stock, String[] genres, String price, String royalty, String[] authors, String publisher) {
+        try {
+            // attempt update of book info
+            statement.executeUpdate(String.format("UPDATE project.book SET title = '%s',version = '%s',num_pages = '%s',price = '%s',royalty = '%s',stock = '%s'WHERE isbn = '%s'", title, version, pageCount, price, royalty, stock, isbn));
+            // attempt update of publisher info
+            if (updatePublisher(isbn, publisher, year)) {
+                // attempt update of genre ino
+                if (updateGenre(isbn, genres)) {
+                    // attempt update of author info
+                    if (updateAuthor(isbn, authors)) {
+                        return 0;
+                    } else return 1;
+                } else return 2;
+            } else return 3;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 4;
     }
 
     /**
@@ -671,68 +720,6 @@ public class DatabaseQueries {
         return false;
     }
 
-    /**
-     * Register a cart for every new user added to the service.
-     *
-     * @param username The username to be associated with the cart.
-     */
-    public static void registerCart(String username) {
-        try {
-            statement = connection.createStatement();
-            statement.execute(String.format("INSERT into project.bask_manage values ('%s', currval('project.basket_basket_id_seq'))", username));
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * Retrieve the items in a user's cart, if the user has an items to retrieve.
-     *
-     * @param username THe username used to retrieve the cart for.
-     * @return The ISBN and quantity of each item in the user cart, or null if no items were found.
-     */
-    public static ArrayList<String> checkForCart(String username) {
-        int rowCount = 0;
-        ArrayList<String> cartInfo = new ArrayList<>();
-        try {
-            ResultSet result = statement.executeQuery("SELECT * FROM project.bask_manage NATURAL JOIN project.bask_item WHERE project.bask_manage.user_name = '" + username + "'");
-            while (result.next()) {
-                if (rowCount == 0) {
-                    cartInfo.add(result.getString("basket_id"));
-                }
-                rowCount++;
-                cartInfo.add(result.getString("isbn"));
-                cartInfo.add(result.getString("quantity"));
-            }
-            if (rowCount >= 1) {
-                return cartInfo;
-            } else {
-                return null;
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    /**
-     * Attempts to add an item to a cart.
-     *
-     * @param cartID The ID of the cart that the item will be added to.
-     * @param isbn   The ISBN of the book that is being added to the cart.
-     */
-    public static void addToCart(String cartID, String isbn) {
-        try {
-            statement = connection.createStatement();
-            statement.execute("INSERT into project.bask_item " +
-                    "values ('" + cartID +
-                    "', '" + isbn + "', 0)");
-            updateQuantity(isbn);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
     public static void updateQuantity(String isbn) {
         try {
             statement = connection.createStatement();
@@ -742,14 +729,34 @@ public class DatabaseQueries {
         }
     }
 
-    public static String getCartID(String username) {
+    /**
+     * Deletes an entity from a relation in the schema project
+     * @param from table name
+     * @param where attribute name
+     * @param identifier unique identifier
+     */
+    public static void deleteEntity(String from, String where, String identifier){
         try {
-            ResultSet result = statement.executeQuery("SELECT * FROM project.bask_manage WHERE user_name = '" + username + "'");
-            result.next();
-            return result.getString("basket_id");
+            statement.executeUpdate(String.format("DELETE FROM project.%s WHERE %s = '%s'", from, where, identifier));
         } catch (SQLException e) {
             e.printStackTrace();
-            return null;
         }
     }
+
+    /**
+     * Counts the number of addresses currently in the database.
+     *
+     * @return The total number of addresses currently stored, as an int.
+     */
+    public static int countAddresses() {
+        try {
+            ResultSet result = statement.executeQuery("SELECT COUNT(*) from project.address");
+            result.next();
+            return Integer.parseInt(result.getString("count"));
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return -1;
+    }
+
 }
