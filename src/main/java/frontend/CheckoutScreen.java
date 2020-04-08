@@ -1,5 +1,7 @@
 package frontend;
 
+import backend.DatabaseQueries;
+
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
@@ -15,11 +17,26 @@ public class CheckoutScreen extends JFrame implements ActionListener {
     private final JTextField checkoutBillingCityTF = new JTextField(15);
     private final JTextField checkoutBillingCountryTF = new JTextField(15);
     private final JTextField checkoutBillingPostalCodeTF = new JTextField(15);
+    private final JTextField checkoutStreetNumTF = new JTextField(5);
+    private final JTextField checkoutStreetNameTF = new JTextField(15);
+    private final JTextField checkoutApartmentTF = new JTextField(5);
+    private final JTextField checkoutCityTF = new JTextField(15);
+    private final JTextField checkoutCountryTF = new JTextField(15);
+    private final JTextField checkoutPostalCodeTF = new JTextField(15);
+    private final JTextField checkoutCreditCardNumTF = new JTextField(15);
+    private final JTextField checkoutCreditCardExpTF = new JTextField(5);
+    private final JTextField checkoutCreditCardCVVTF = new JTextField(5);
 
     // JComboBoxes
     final JComboBox<String> checkoutShippingProvinceCB = new JComboBox<>(FrontEndUtilities.provincesArr),
             checkoutBillingProvinceCB = new JComboBox<>(FrontEndUtilities.provincesArr);
 
+    // JLabels
+    private final JLabel checkoutErrorLabel = new JLabel("", JLabel.CENTER);
+
+    private boolean sameAsBilling;
+
+    // Current username
     private final String username;
 
     /**
@@ -27,7 +44,7 @@ public class CheckoutScreen extends JFrame implements ActionListener {
      * Accepts new shipping and billing addresses
      * Accepts credit card details
      * <p>
-     * TODO: Possibly add a cart view during checkout, but we could also not... Maybe. But that's a "if I feel like it" feature.
+     * TODO: Possibly add a cart view during checkout, but we could also not... Maybe. But that's an "if I feel like it" feature.
      */
     public CheckoutScreen(String username, String orderCost) {
         checkoutShippingProvinceCB.setBackground(Color.WHITE);
@@ -35,7 +52,7 @@ public class CheckoutScreen extends JFrame implements ActionListener {
         this.username = username;
         Container c = this.getContentPane();
         // Clear GUI in order to reload
-        this.setPreferredSize(new Dimension(800, 800));
+        this.setPreferredSize(new Dimension(800, 500));
         if (this.getJMenuBar() != null) this.getJMenuBar().setVisible(false);
         c.removeAll();
 
@@ -82,7 +99,7 @@ public class CheckoutScreen extends JFrame implements ActionListener {
         cancelOrder.addActionListener(this);
         submitOrder.addActionListener(this);
         billingSameAsShipping.addActionListener(e -> {
-            boolean sameAsBilling = !billingSameAsShipping.isSelected();
+            sameAsBilling = !billingSameAsShipping.isSelected();
             checkoutBillingStreetNumTF.setEnabled(sameAsBilling);
             checkoutBillingStreetNameTF.setEnabled(sameAsBilling);
             checkoutBillingApartmentTF.setEnabled(sameAsBilling);
@@ -112,7 +129,6 @@ public class CheckoutScreen extends JFrame implements ActionListener {
             checkoutPanel.add(cancelOrder, con);
             con.gridx = 0;
             con.gridwidth = 8;
-            JLabel checkoutErrorLabel = new JLabel("", JLabel.CENTER);
             checkoutErrorLabel.setForeground(Color.red);
             con.fill = GridBagConstraints.HORIZONTAL;
             checkoutPanel.add(checkoutErrorLabel, con);
@@ -159,21 +175,18 @@ public class CheckoutScreen extends JFrame implements ActionListener {
             checkoutPanel.add(checkoutStreetNumLabel, con);
             con.gridx = 2;
             con.fill = GridBagConstraints.NONE;
-            JTextField checkoutStreetNumTF = new JTextField(5);
             checkoutPanel.add(checkoutStreetNumTF, con);
             con.gridx = 3;
             con.fill = GridBagConstraints.HORIZONTAL;
             checkoutPanel.add(checkoutStreetNameLabel, con);
             con.gridx = 4;
             con.fill = GridBagConstraints.NONE;
-            JTextField checkoutStreetNameTF = new JTextField(15);
             checkoutPanel.add(checkoutStreetNameTF, con);
             con.gridx = 5;
             con.fill = GridBagConstraints.HORIZONTAL;
             checkoutPanel.add(checkoutApartmentLabel, con);
             con.gridx = 6;
             con.fill = GridBagConstraints.NONE;
-            JTextField checkoutApartmentTF = new JTextField(5);
             checkoutPanel.add(checkoutApartmentTF, con);
 
             con.gridy = 7;
@@ -186,7 +199,6 @@ public class CheckoutScreen extends JFrame implements ActionListener {
             con.gridx = 2;
             con.gridwidth = 2;
             con.fill = GridBagConstraints.NONE;
-            JTextField checkoutCityTF = new JTextField(15);
             checkoutPanel.add(checkoutCityTF, con);
             con.gridx = 5;
             con.gridwidth = 1;
@@ -202,11 +214,9 @@ public class CheckoutScreen extends JFrame implements ActionListener {
             con.gridx = 2;
             con.gridwidth = 2;
             con.fill = GridBagConstraints.NONE;
-            JTextField checkoutCountryTF = new JTextField(15);
             checkoutPanel.add(checkoutCountryTF, con);
             con.gridx = 5;
             con.anchor = GridBagConstraints.LINE_START;
-            JTextField checkoutPostalCodeTF = new JTextField(15);
             checkoutPanel.add(checkoutPostalCodeTF, con);
 
             con.gridy = 9;
@@ -228,7 +238,6 @@ public class CheckoutScreen extends JFrame implements ActionListener {
             con.gridx = 2;
             con.gridwidth = 3;
             //  checkout Billing info
-            JTextField checkoutCreditCardNumTF = new JTextField(15);
             checkoutPanel.add(checkoutCreditCardNumTF, con);
 
             con.gridy = 12;
@@ -238,14 +247,12 @@ public class CheckoutScreen extends JFrame implements ActionListener {
             checkoutPanel.add(checkoutCreditCardExpLabel, con);
             con.gridx = 2;
             con.fill = GridBagConstraints.NONE;
-            JTextField checkoutCreditCardExpTF = new JTextField(5);
             checkoutPanel.add(checkoutCreditCardExpTF, con);
             con.gridx = 3;
             con.fill = GridBagConstraints.HORIZONTAL;
             checkoutPanel.add(checkoutCreditCardCVV, con);
             con.gridx = 4;
             con.fill = GridBagConstraints.NONE;
-            JTextField checkoutCreditCardCVVTF = new JTextField(5);
             checkoutPanel.add(checkoutCreditCardCVVTF, con);
 
             con.gridy = 13;
@@ -344,6 +351,8 @@ public class CheckoutScreen extends JFrame implements ActionListener {
 
             checkoutPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
 
+            DatabaseQueries.lookForaUser(username);
+
             c.add(checkoutPanel);
             FrontEndUtilities.configureFrame(this);
         }
@@ -354,6 +363,86 @@ public class CheckoutScreen extends JFrame implements ActionListener {
      */
     private void placeOrder() {
 
+        // Check each of the address fields :(
+        // Street Numbers
+        if (checkoutStreetNumTF.getText().length() == 0) {
+            checkoutErrorLabel.setText("Registration Failed. Shipping street number cannot be empty.");
+            return;
+        }
+        if (!sameAsBilling && checkoutBillingStreetNumTF.getText().length() == 0) {
+            checkoutErrorLabel.setText("Registration Failed. Billing street number cannot be empty.");
+            return;
+        }
+        try {
+            Double.parseDouble(checkoutStreetNumTF.getText());
+            if (!sameAsBilling) {
+                Double.parseDouble(checkoutBillingStreetNumTF.getText());
+            }
+        } catch (NumberFormatException ex) {
+            checkoutErrorLabel.setText("Registration Failed. Street numbers cannot contain letters.");
+            return;
+        }
+
+        // Street Names
+        if (checkoutStreetNameTF.getText().length() == 0) {
+            checkoutErrorLabel.setText("Registration Failed. Shipping street name cannot be empty.");
+            return;
+        }
+        if (!sameAsBilling && checkoutBillingStreetNameTF.getText().length() == 0) {
+            checkoutErrorLabel.setText("Registration Failed. Billing street name cannot be empty.");
+            return;
+        }
+        // Cities
+        if (FrontEndUtilities.check(checkoutCityTF.getText())) {
+            checkoutErrorLabel.setText("Registration Failed. Shipping city cannot contain numerical values.");
+            return;
+        }
+        if (FrontEndUtilities.check(checkoutBillingCityTF.getText())) {
+            checkoutErrorLabel.setText("Registration Failed. Billing city cannot contain numerical values.");
+            return;
+        }
+        if (checkoutCityTF.getText().length() == 0) {
+            checkoutErrorLabel.setText("Registration Failed. Shipping city name cannot be empty.");
+            return;
+        }
+        if (!sameAsBilling && checkoutBillingCityTF.getText().length() == 0) {
+            checkoutErrorLabel.setText("Registration Failed. Billing city name cannot be empty.");
+            return;
+        }
+        if (checkoutShippingProvinceCB.getSelectedIndex() == 0) {
+            checkoutErrorLabel.setText("Registration Failed. Please select a shipping province.");
+            return;
+        }
+        if (!sameAsBilling && checkoutBillingProvinceCB.getSelectedIndex() == 0) {
+            checkoutErrorLabel.setText("Registration Failed. Please select a billing province.");
+            return;
+        }
+        // Countries
+        if (FrontEndUtilities.check(checkoutCountryTF.getText())) {
+            checkoutErrorLabel.setText("Registration Failed. Shipping country cannot contain numerical values.");
+            return;
+        }
+        if (FrontEndUtilities.check(checkoutBillingCountryTF.getText())) {
+            checkoutErrorLabel.setText("Registration Failed. Billing country cannot contain numerical values.");
+            return;
+        }
+        if (checkoutCountryTF.getText().length() == 0) {
+            checkoutErrorLabel.setText("Registration Failed. Shipping country cannot be empty.");
+            return;
+        }
+        if (!sameAsBilling && checkoutBillingCountryTF.getText().length() == 0) {
+            checkoutErrorLabel.setText("Registration Failed. Billing country cannot be empty.");
+            return;
+        }
+        // Postal Code
+        if (checkoutPostalCodeTF.getText().length() == 0) {
+            checkoutErrorLabel.setText("Registration Failed. Shipping postal code cannot be empty.");
+            return;
+        }
+        if (!sameAsBilling && checkoutBillingPostalCodeTF.getText().length() == 0) {
+            checkoutErrorLabel.setText("Registration Failed. Billing postal code cannot be empty.");
+            return;
+        }
     }
 
     /**

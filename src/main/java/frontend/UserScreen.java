@@ -55,6 +55,7 @@ public class UserScreen extends JFrame implements ActionListener {
         /* Components */
         // Panels and Panes
         JSplitPane userView = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true);
+        userView.setBackground(Color.WHITE);
         userView.setEnabled(false);
         JPanel cartPanel = new JPanel();
         JPanel pricePanel = new JPanel();
@@ -183,6 +184,9 @@ public class UserScreen extends JFrame implements ActionListener {
         userView.resetToPreferredSizes();
         userView.setLeftComponent(searchAndResults);
         userView.setRightComponent(cartPanel);
+        cartPanel.setBackground(Color.WHITE);
+        checkoutPanel.setBackground(Color.WHITE);
+        pricePanel.setBackground(Color.WHITE);
 
         c.add(userView);
         checkForExistingCart(this.username);
