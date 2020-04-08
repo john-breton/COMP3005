@@ -7,25 +7,28 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 public class CheckoutScreen extends JFrame implements ActionListener {
 
     // JTextFields
-    private final JTextField checkoutBillingStreetNumTF = new JTextField(5);
-    private final JTextField checkoutBillingStreetNameTF = new JTextField(15);
-    private final JTextField checkoutBillingApartmentTF = new JTextField(5);
-    private final JTextField checkoutBillingCityTF = new JTextField(15);
-    private final JTextField checkoutBillingCountryTF = new JTextField(15);
-    private final JTextField checkoutBillingPostalCodeTF = new JTextField(15);
-    private final JTextField checkoutStreetNumTF = new JTextField(5);
-    private final JTextField checkoutStreetNameTF = new JTextField(15);
-    private final JTextField checkoutApartmentTF = new JTextField(5);
-    private final JTextField checkoutCityTF = new JTextField(15);
-    private final JTextField checkoutCountryTF = new JTextField(15);
-    private final JTextField checkoutPostalCodeTF = new JTextField(15);
-    private final JTextField checkoutCreditCardNumTF = new JTextField(15);
-    private final JTextField checkoutCreditCardExpTF = new JTextField(5);
-    private final JTextField checkoutCreditCardCVVTF = new JTextField(5);
+    private final JTextField checkoutshippingStreetNumTF = new JTextField(5),
+            checkoutshippingStreetNameTF = new JTextField(15),
+            checkoutshippingApartmentTF = new JTextField(5),
+            checkoutshippingCityTF = new JTextField(15),
+            checkoutshippingCountryTF = new JTextField(15),
+            checkoutshippingPostalCodeTF = new JTextField(15),
+
+    checkoutBillingStreetNumTF = new JTextField(5),
+            checkoutBillingStreetNameTF = new JTextField(15),
+            checkoutBillingApartmentTF = new JTextField(5),
+            checkoutBillingCityTF = new JTextField(15),
+            checkoutBillingCountryTF = new JTextField(15),
+            checkoutBillingPostalCodeTF = new JTextField(15),
+
+    checkoutCreditCardNumTF = new JTextField(15),
+            checkoutCreditCardExpTF = new JTextField(5),
+            checkoutCreditCardCVVTF = new JTextField(5);
 
     // JComboBoxes
     final JComboBox<String> checkoutShippingProvinceCB = new JComboBox<>(FrontEndUtilities.provincesArr),
@@ -38,6 +41,7 @@ public class CheckoutScreen extends JFrame implements ActionListener {
 
     // Current username
     private final String username;
+    private final ArrayList<Object> userInfo;
 
     /**
      * Creates the "Checkout" interface for the userScreen
@@ -50,6 +54,7 @@ public class CheckoutScreen extends JFrame implements ActionListener {
         checkoutShippingProvinceCB.setBackground(Color.WHITE);
         checkoutBillingProvinceCB.setBackground(Color.WHITE);
         this.username = username;
+        this.userInfo = DatabaseQueries.lookForaUser(username);
         Container c = this.getContentPane();
         // Clear GUI in order to reload
         this.setPreferredSize(new Dimension(800, 500));
@@ -67,6 +72,7 @@ public class CheckoutScreen extends JFrame implements ActionListener {
 
         /* JLabels */
         JLabel checkoutTotalPriceLabel = new JLabel("Total Price: ", JLabel.RIGHT),
+                checkoutUserLabel = new JLabel("User: "),
                 checkoutNameLabel = new JLabel("Name: "),
                 checkoutEmailLabel = new JLabel("Receipt will be sent to: "),
                 // checkout shipping address info
@@ -136,28 +142,32 @@ public class CheckoutScreen extends JFrame implements ActionListener {
             con.gridy = 1;
             con.gridx = 1;
             con.weightx = 1.0;
-            con.gridwidth = 3;
-            con.anchor = GridBagConstraints.LINE_END;
-            JLabel checkoutUsernameLabel = new JLabel("");
+            con.gridwidth = 1;
+            con.anchor = GridBagConstraints.LINE_START;
+            checkoutUserLabel.setFont(checkoutUserLabel.getFont().deriveFont(Font.BOLD));
+            checkoutPanel.add(checkoutUserLabel, con);
+            con.gridx = 2;
+            JLabel checkoutUsernameLabel = new JLabel(username);
             checkoutPanel.add(checkoutUsernameLabel, con);
 
             con.gridy = 2;
             con.gridx = 1;
             con.gridwidth = 1;
-            con.anchor = GridBagConstraints.LINE_START;
+            checkoutNameLabel.setFont(checkoutNameLabel.getFont().deriveFont(Font.BOLD));
             checkoutPanel.add(checkoutNameLabel, con);
             con.gridx = 2;
             con.gridwidth = 4;
-            JLabel checkoutNameField = new JLabel("");
+            JLabel checkoutNameField = new JLabel(userInfo.get(2).toString() + " " + userInfo.get(3).toString());
             checkoutPanel.add(checkoutNameField, con);
 
             con.gridy = 3;
             con.gridx = 1;
             con.gridwidth = 2;
+            checkoutEmailLabel.setFont(checkoutEmailLabel.getFont().deriveFont(Font.BOLD));
             checkoutPanel.add(checkoutEmailLabel, con);
             con.gridx = 3;
             con.gridwidth = 4;
-            JLabel checkoutEmailConfirm = new JLabel("");
+            JLabel checkoutEmailConfirm = new JLabel(userInfo.get(4).toString());
             checkoutPanel.add(checkoutEmailConfirm, con);
 
             con.gridy = 4;
@@ -167,6 +177,7 @@ public class CheckoutScreen extends JFrame implements ActionListener {
             con.gridy = 5;
             con.gridx = 1;
             con.gridwidth = 3;
+            checkoutShippingLabel.setFont(checkoutShippingLabel.getFont().deriveFont(Font.BOLD));
             checkoutPanel.add(checkoutShippingLabel, con);
 
             con.gridy = 6;
@@ -175,19 +186,19 @@ public class CheckoutScreen extends JFrame implements ActionListener {
             checkoutPanel.add(checkoutStreetNumLabel, con);
             con.gridx = 2;
             con.fill = GridBagConstraints.NONE;
-            checkoutPanel.add(checkoutStreetNumTF, con);
+            checkoutPanel.add(checkoutshippingStreetNumTF, con);
             con.gridx = 3;
             con.fill = GridBagConstraints.HORIZONTAL;
             checkoutPanel.add(checkoutStreetNameLabel, con);
             con.gridx = 4;
             con.fill = GridBagConstraints.NONE;
-            checkoutPanel.add(checkoutStreetNameTF, con);
+            checkoutPanel.add(checkoutshippingStreetNameTF, con);
             con.gridx = 5;
             con.fill = GridBagConstraints.HORIZONTAL;
             checkoutPanel.add(checkoutApartmentLabel, con);
             con.gridx = 6;
             con.fill = GridBagConstraints.NONE;
-            checkoutPanel.add(checkoutApartmentTF, con);
+            checkoutPanel.add(checkoutshippingApartmentTF, con);
 
             con.gridy = 7;
             con.gridx = 1;
@@ -199,7 +210,7 @@ public class CheckoutScreen extends JFrame implements ActionListener {
             con.gridx = 2;
             con.gridwidth = 2;
             con.fill = GridBagConstraints.NONE;
-            checkoutPanel.add(checkoutCityTF, con);
+            checkoutPanel.add(checkoutshippingCityTF, con);
             con.gridx = 5;
             con.gridwidth = 1;
             checkoutPanel.add(checkoutShippingProvinceCB, con);
@@ -214,10 +225,10 @@ public class CheckoutScreen extends JFrame implements ActionListener {
             con.gridx = 2;
             con.gridwidth = 2;
             con.fill = GridBagConstraints.NONE;
-            checkoutPanel.add(checkoutCountryTF, con);
+            checkoutPanel.add(checkoutshippingCountryTF, con);
             con.gridx = 5;
             con.anchor = GridBagConstraints.LINE_START;
-            checkoutPanel.add(checkoutPostalCodeTF, con);
+            checkoutPanel.add(checkoutshippingPostalCodeTF, con);
 
             con.gridy = 9;
             con.gridx = 1;
@@ -227,6 +238,7 @@ public class CheckoutScreen extends JFrame implements ActionListener {
             con.gridx = 1;
             con.gridwidth = 3;
             con.fill = GridBagConstraints.HORIZONTAL;
+            checkoutBillingAddressLabel.setFont(checkoutBillingAddressLabel.getFont().deriveFont(Font.BOLD));
             checkoutPanel.add(checkoutBillingAddressLabel, con);
             con.gridx = 3;
             checkoutPanel.add(billingSameAsShipping, con);
@@ -365,7 +377,7 @@ public class CheckoutScreen extends JFrame implements ActionListener {
 
         // Check each of the address fields :(
         // Street Numbers
-        if (checkoutStreetNumTF.getText().length() == 0) {
+        if (checkoutshippingStreetNumTF.getText().length() == 0) {
             checkoutErrorLabel.setText("Registration Failed. Shipping street number cannot be empty.");
             return;
         }
@@ -374,7 +386,7 @@ public class CheckoutScreen extends JFrame implements ActionListener {
             return;
         }
         try {
-            Double.parseDouble(checkoutStreetNumTF.getText());
+            Double.parseDouble(checkoutShippingStreetNumTF.getText());
             if (!sameAsBilling) {
                 Double.parseDouble(checkoutBillingStreetNumTF.getText());
             }
@@ -384,7 +396,7 @@ public class CheckoutScreen extends JFrame implements ActionListener {
         }
 
         // Street Names
-        if (checkoutStreetNameTF.getText().length() == 0) {
+        if (checkoutShippingStreetNameTF.getText().length() == 0) {
             checkoutErrorLabel.setText("Registration Failed. Shipping street name cannot be empty.");
             return;
         }
@@ -393,7 +405,7 @@ public class CheckoutScreen extends JFrame implements ActionListener {
             return;
         }
         // Cities
-        if (FrontEndUtilities.check(checkoutCityTF.getText())) {
+        if (FrontEndUtilities.check(checkoutShippingCityTF.getText())) {
             checkoutErrorLabel.setText("Registration Failed. Shipping city cannot contain numerical values.");
             return;
         }

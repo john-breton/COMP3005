@@ -67,7 +67,7 @@ public class DatabaseQueries {
      * Query user information from the database.
      *
      * @param username The username that was entered.
-     * @return ArrayList of user credentials from the database. [0] = username, [1] = password, [2] = first name, [3] = last name, [4] = email, [5] = salary null if no user found.
+     * @return ArrayList of user credentials from the database. [0] = username, [1] = password, [2] = first name, [3] = last name, [4] = email, [5] = salary, null if no user found.
      */
     public static ArrayList<Object> lookForaUser(String username) {
         ArrayList<Object> userCred = new ArrayList<>();
