@@ -76,7 +76,8 @@ public class DatabaseQueries {
     public static boolean registerNewUser(String username, String password, String first_name, String last_name, String email) {
         try {
             boolean temp = statement.executeUpdate(String.format("INSERT into project.user values ('%s', '%s', '%s', '%s', '%s') ON CONFLICT (user_name) DO NOTHING", username.toLowerCase(), password, first_name, last_name, email)) == 1;
-            DatabaseQueries.registerCart(username);
+            if(temp)
+                DatabaseQueries.registerCart(username);
             return temp;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -136,14 +137,10 @@ public class DatabaseQueries {
      *
      * @param username   The username associated with the address.
      * @param isShipping True if the address is a shipping address, false otherwise.
-     * @param isBilling  True if the address is a shipping address, false otherwise.
      */
-    public static void addHasAdd(String username, boolean isShipping, boolean isBilling) {
+    public static void addHasAdd(String username, boolean isShipping) {
         try {
-            statement.execute("INSERT into project.hasadd " +
-                    "values ('" + username +
-                    "', currval('project.address_add_id_seq'),'"
-                    + isShipping + "', '" + isBilling + "')");
+            statement.execute(String.format("INSERT into project.hasadd values (currval('project.address_add_id_seq'), '%s', %s)", username, isShipping));
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -315,16 +312,15 @@ public class DatabaseQueries {
      * @param country    the country
      * @param postalCode the postal code
      * @param isShipping the is shipping
-     * @param isBilling  the is billing
      */
-    public static void updateAddress(String username, String num, String name, String apartment, String city, String prov, String country, String postalCode, boolean isShipping, boolean isBilling) {
+    public static void updateAddress(String username, String num, String name, String apartment, String city, String prov, String country, String postalCode, boolean isShipping) {
         // attempt to update address
         try {
             int rowsAffected = statement.executeUpdate(String.format("UPDATE project.address SET street_num = %s,street_name = '%s',apartment = '%s',city = '%s',province = '%s',country = '%s',postal_code = '%s' FROM project.hasadd WHERE project.address.add_id = project.hasadd.add_id AND project.hasadd.user_name = '%s'AND project.hasadd.isshipping = '%s'", num, name, apartment, city, prov, country, postalCode, username, isShipping));
 
             if (rowsAffected == 0) { //user doesn't have an address yet
                 if (addAddress(num, name, apartment, city, prov, country, postalCode)) {
-                    addHasAdd(username, isShipping, isBilling);
+                    addHasAdd(username, isShipping);
                 }
             }
 
@@ -352,8 +348,8 @@ public class DatabaseQueries {
     public static int addBook(String isbn, String title, String version, String pageCount, String year, String stock, String[] genres, String price, String royalty, String[] authors, String publisher) {
         try {
             // ensure strings don't contain illegal characters
-            title = title.replaceAll("'", "");
-            publisher = publisher.replaceAll("'", "");
+            title = title.replaceAll("['\"]", "");
+            publisher = publisher.replaceAll("['\"]", "");
             // attempt to insert book info
             if (!statement.executeQuery(String.format("SELECT * FROM project.book WHERE isbn = %s", isbn)).next()) { // ensure the book doesn't already exist
                 if (statement.executeQuery(String.format("SELECT * FROM project.publisher WHERE pub_name = '%s'", publisher)).next() && // make sure publisher exists
@@ -588,7 +584,7 @@ public class DatabaseQueries {
      */
     private static boolean addPublishes(String name, String isbn, String year) {
         try {
-            int rowCount = statement.executeUpdate(String.format("INSERT INTO project.publishes values ('%s', %s, %s);", name, isbn, year));
+            int rowCount = statement.executeUpdate(String.format("INSERT INTO project.publishes values (%s, '%s', %s);", isbn, name, year));
             return rowCount == 1;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -683,9 +679,7 @@ public class DatabaseQueries {
     public static void registerCart(String username) {
         try {
             statement = connection.createStatement();
-            statement.execute("INSERT into project.bask_manage " +
-                    "values ('" + username +
-                    "', currval('project.basket_basket_id_seq'))");
+            statement.execute(String.format("INSERT into project.bask_manage values ('%s', currval('project.basket_basket_id_seq'))", username));
         } catch (SQLException e) {
             e.printStackTrace();
         }

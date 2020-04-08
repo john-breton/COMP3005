@@ -449,14 +449,14 @@ public class RegistrationScreen extends JFrame implements ActionListener {
         // Add the shipping address and billing address.
         // I changed this a bit, each user will now have exactly 2 addresses, 1 for shipping, 1 for billing for simplicity of updating their addresses later
         DatabaseQueries.addAddress(shipStreetNumTF.getText(), shipStreetNameTF.getText(), shipApartmentTF.getText(), shipCityTF.getText(), Objects.requireNonNull(shipProvinceCB.getSelectedItem()).toString(), shipCountryTF.getText(), shipPostalCodeTF.getText());
-        DatabaseQueries.addHasAdd(newUsernameTF.getText(), true, false);
+        DatabaseQueries.addHasAdd(newUsernameTF.getText(), true);
         if (!sameShipAndBill) {
             // Need to add the billing address as a separate address.
             DatabaseQueries.addAddress(billStreetNumTF.getText(), billStreetNameTF.getText(), billApartmentTF.getText(), billCityTF.getText(), Objects.requireNonNull(billProvinceCB.getSelectedItem()).toString(), billCountryTF.getText(), billPostalCodeTF.getText());
         } else {
             DatabaseQueries.addAddress(shipStreetNumTF.getText(), shipStreetNameTF.getText(), shipApartmentTF.getText(), shipCityTF.getText(), Objects.requireNonNull(shipProvinceCB.getSelectedItem()).toString(), shipCountryTF.getText(), shipPostalCodeTF.getText());
         }
-        DatabaseQueries.addHasAdd(newUsernameTF.getText(), false, true);
+        DatabaseQueries.addHasAdd(newUsernameTF.getText(), false);
         // Done.
         return true;
     }

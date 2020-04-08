@@ -281,12 +281,12 @@ public class AdminScreenUtilities extends AdminScreen {
         /* If we get here, the following insertion methods will not fail. */
         // Update the user's addresses.
         if (addressAttempt) {
-            DatabaseQueries.updateAddress(currentUserNameLabel.getText(), editShippingStreetNumTF.getText(), editShippingStreetNameTF.getText(), editShippingApartmentTF.getText(), editShippingCityTF.getText(), Objects.requireNonNull(editShippingProvinceCB.getSelectedItem()).toString(), editShippingCountryTF.getText(), editShippingPostalCodeTF.getText(), true, false);
+            DatabaseQueries.updateAddress(currentUserNameLabel.getText(), editShippingStreetNumTF.getText(), editShippingStreetNameTF.getText(), editShippingApartmentTF.getText(), editShippingCityTF.getText(), Objects.requireNonNull(editShippingProvinceCB.getSelectedItem()).toString(), editShippingCountryTF.getText(), editShippingPostalCodeTF.getText(), true);
             if (!sameShipAndBill) {
                 // Need to add the billing address as a separate address.
-                DatabaseQueries.updateAddress(currentUserNameLabel.getText(), editBillStreetNumTF.getText(), editBillStreetNameTF.getText(), editBillApartmentTF.getText(), editBillCityTF.getText(), Objects.requireNonNull(editBillProvinceCB.getSelectedItem()).toString(), editBillCountryTF.getText(), editBillPostalCodeTF.getText(), false, true);
+                DatabaseQueries.updateAddress(currentUserNameLabel.getText(), editBillStreetNumTF.getText(), editBillStreetNameTF.getText(), editBillApartmentTF.getText(), editBillCityTF.getText(), Objects.requireNonNull(editBillProvinceCB.getSelectedItem()).toString(), editBillCountryTF.getText(), editBillPostalCodeTF.getText(), false);
             } else {
-                DatabaseQueries.updateAddress(currentUserNameLabel.getText(), editShippingStreetNumTF.getText(), editShippingStreetNameTF.getText(), editShippingApartmentTF.getText(), editShippingCityTF.getText(), Objects.requireNonNull(editShippingProvinceCB.getSelectedItem()).toString(), editShippingCountryTF.getText(), editShippingPostalCodeTF.getText(), false, true);
+                DatabaseQueries.updateAddress(currentUserNameLabel.getText(), editShippingStreetNumTF.getText(), editShippingStreetNameTF.getText(), editShippingApartmentTF.getText(), editShippingCityTF.getText(), Objects.requireNonNull(editShippingProvinceCB.getSelectedItem()).toString(), editShippingCountryTF.getText(), editShippingPostalCodeTF.getText(), false);
             }
         }
         // Done.
@@ -854,14 +854,14 @@ public class AdminScreenUtilities extends AdminScreen {
         // Add the shipping address and billing address.
         if (addressAttempt) {
             DatabaseQueries.addAddress(shippingAdminStreetNumTF.getText(), shippingAdminStreetNameTF.getText(), shippingAdminApartmentTF.getText(), shippingAdminCityTF.getText(), Objects.requireNonNull(shippingAdminProvinceCB.getSelectedItem()).toString(), shippingAdminCountryTF.getText(), shippingAdminPostalCodeTF.getText());
-            DatabaseQueries.addHasAdd(newAdminUsernameTF.getText(), true, false);
+            DatabaseQueries.addHasAdd(newAdminUsernameTF.getText(), true);
             if (!sameShipAndBill) {
                 // Need to add the billing address as a separate address.
                 DatabaseQueries.addAddress(billAdminStreetNumTF.getText(), billAdminStreetNameTF.getText(), billAdminApartmentTF.getText(), billAdminCityTF.getText(), Objects.requireNonNull(billAdminProvinceCB.getSelectedItem()).toString(), billAdminCountryTF.getText(), billAdminPostalCodeTF.getText());
             } else {
                 DatabaseQueries.addAddress(shippingAdminStreetNumTF.getText(), shippingAdminStreetNameTF.getText(), shippingAdminApartmentTF.getText(), shippingAdminCityTF.getText(), Objects.requireNonNull(shippingAdminProvinceCB.getSelectedItem()).toString(), shippingAdminCountryTF.getText(), shippingAdminPostalCodeTF.getText());
             }
-            DatabaseQueries.addHasAdd(newAdminUsernameTF.getText(), false, true);
+            DatabaseQueries.addHasAdd(newAdminUsernameTF.getText(), false);
         }
         // Done.
         return true;

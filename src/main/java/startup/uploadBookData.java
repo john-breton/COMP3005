@@ -110,7 +110,7 @@ public class uploadBookData {
             authors.append("\t").append(a.toString());
         }
         for (JsonElement p : publishersObject) {
-            publishers.append(" ").append(p.toString());
+            publishers.append("\t").append(p.toString());
         }
 
         DatabaseQueries.addBook(String.valueOf(isbn),
@@ -123,7 +123,7 @@ public class uploadBookData {
                 String.valueOf(price),
                 String.valueOf(royalty),
                 authors.toString().trim().split("\t"),
-                publishers.toString().trim().replaceAll("\"", ""));
+                publishers.toString().trim().split("\t")[0]);
     }
 
     /**
@@ -139,7 +139,10 @@ public class uploadBookData {
 
         publishers.forEach(p -> {
             String newP = p.getAsString().replaceAll("'", "");
-            DatabaseQueries.addPublisher(newP, defaultEmail, String.valueOf(phoneNum), String.valueOf(bankAcc));
+            if(DatabaseQueries.addPublisher(newP, defaultEmail, String.valueOf(phoneNum), String.valueOf(bankAcc))) {
+                DatabaseQueries.addAddress("123", "Default Ave.", "B", "Ottawa", "ON", "Canada", "O1T4W4");
+                DatabaseQueries.addPubAdd(newP);
+            }
         });
     }
 
@@ -183,7 +186,7 @@ public class uploadBookData {
             if (salary != null)
                 DatabaseQueries.updateAdmin(username, String.valueOf(salary));
             DatabaseQueries.addAddress(Integer.toString(streetNum), defaultStreetName + streetid, apt, city, prov, count, postalCode.toString());
-            DatabaseQueries.addHasAdd(username, true, false);
+            DatabaseQueries.addHasAdd(username, true);
 
             if (!isBilling) { // need another address
                 streetNum = (int) (100L + r.nextFloat() * 900L);
@@ -191,7 +194,7 @@ public class uploadBookData {
             } else {
                 DatabaseQueries.addAddress(Integer.toString(streetNum), defaultStreetName + streetid, apt, city, prov, count, postalCode.toString());
             }
-            DatabaseQueries.addHasAdd(username, false, true);
+            DatabaseQueries.addHasAdd(username, false);
         }
     }
 
