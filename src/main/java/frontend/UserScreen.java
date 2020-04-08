@@ -1,6 +1,7 @@
 package frontend;
 
 import backend.DatabaseQueries;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
@@ -11,17 +12,18 @@ import java.util.Objects;
 
 public class UserScreen extends JFrame implements ActionListener {
 
-    private static final JTextField userSearchTF = new JTextField();
-    private static final JComboBox<String> searchFilters = new JComboBox<>(FrontEndUtilities.searchFilterArr);
-    private static final JComboBox<String> resultFilters = new JComboBox<>(FrontEndUtilities.resultFilterArr);
+    private final JTextField userSearchTF = new JTextField();
+    private final JComboBox<String> searchFilters = new JComboBox<>(FrontEndUtilities.searchFilterArr);
+    private final JComboBox<String> resultFilters = new JComboBox<>(FrontEndUtilities.resultFilterArr);
     private final ButtonGroup cartItems = new ButtonGroup();
     private final JLabel errorLabel = new JLabel("");
     private final JLabel totalPrice;
     private final JPanel searchResult = new JPanel(new GridLayout(1, 1));
     private final JPanel cart = new JPanel(new GridLayout(1, 1));
     private ArrayList<JButton> bookButtons = new ArrayList<>();
-    private final ArrayList<JToggleButton> cartButtons = new ArrayList<>();
-    private static String username;
+    private ArrayList<JToggleButton> cartButtons = new ArrayList<>();
+    private String username;
+    private String cartID;
 
     public UserScreen(String username) {
         this.username = username;
@@ -168,7 +170,6 @@ public class UserScreen extends JFrame implements ActionListener {
         userView.setLeftComponent(searchAndResults);
         userView.setRightComponent(cartPanel);
 
-
         c.add(userView);
         checkForExistingCart(this.username);
         FrontEndUtilities.configureFrame(this);
@@ -184,7 +185,6 @@ public class UserScreen extends JFrame implements ActionListener {
         bookButtons = new ArrayList<>();
         errorLabel.setText("");
 
-        // TODO make this a label
         if (searchText.isEmpty()) {
             errorLabel.setText("There's nothing here to search with!");
             return;
@@ -228,6 +228,14 @@ public class UserScreen extends JFrame implements ActionListener {
         JButton book = FrontEndUtilities.formatButton("");
         book.setMinimumSize(new Dimension(400, 50));
         book.addActionListener(this);
+        String text = buildBookString(results, i);
+        book.setText(text);
+        book.setHorizontalAlignment(SwingConstants.LEFT);
+        bookButtons.add(book);
+    }
+
+    @NotNull
+    private String buildBookString(ArrayList<Object> results, int i) {
         StringBuilder text = new StringBuilder();
         text.append("<html>");
         text.append("<u>ISBN:</u> ").append(results.get(i).toString()).append("<br/>");
@@ -254,23 +262,38 @@ public class UserScreen extends JFrame implements ActionListener {
         text.append("<u>Publisher:</u> ").append(results.get(i + 7).toString()).append("<br/>");
         text.append("<u>Year:</u> ").append(results.get(i + 8).toString()).append("<br/>");
         text.append("</html>");
-        book.setText(text.toString());
-        book.setHorizontalAlignment(SwingConstants.LEFT);
-        bookButtons.add(book);
+        return text.toString();
     }
 
     /**
      * Add an item to the user's cart.
      *
      * @param text The text that will be parsed to create the cart item.
+     * @param addToDB True if the item should be added to the bask_item table, false otherwise.
      */
-    private void addToCart(String text) {
+    private void addToCart(String text, boolean addToDB) {
         String[] splitEmUp = text.split("Title");
+        String[] findISBN = text.split("ISBN");
+        String[] findPrice = text.split("Price");
+        String price = findPrice[1].substring(6);
+        String isbn = findISBN[1].substring(6);
         String title = splitEmUp[1].substring(6);
         StringBuilder usefulTitle = new StringBuilder();
+        StringBuilder usefulISBN = new StringBuilder();
+        StringBuilder usefulPrice = new StringBuilder();
         int i = 0;
         while ((title.charAt(i) != '<')) {
             usefulTitle.append(title.charAt(i));
+            i++;
+        }
+        i = 0;
+        while ((isbn.charAt(i) != '<')) {
+            usefulISBN.append(isbn.charAt(i));
+            i++;
+        }
+        i = 0;
+        while ((price.charAt(i) != '<')) {
+            usefulPrice.append(price.charAt(i));
             i++;
         }
         // Book already in cart
@@ -280,10 +303,17 @@ public class UserScreen extends JFrame implements ActionListener {
             }
         }
         // Book was not in cart.
-        JToggleButton item = new JToggleButton("<html><u>Title</u>: " + usefulTitle.toString() + "<br/><u>Quantity</u>: 1</html>");
+        JToggleButton item;
+        if (addToDB) {
+            DatabaseQueries.addToCart(cartID, usefulISBN.toString());
+            item = new JToggleButton("<html><u>Title</u>: " + usefulTitle.toString() + "<br/><u>Price</u>: " + usefulPrice.toString() + "<br/><u>Quantity</u>: 1</html>");
+        } else {
+            item = new JToggleButton("<html><u>Title</u>: " + usefulTitle.toString() + "<br/><u>Price</u>: " + usefulPrice.toString() +  "<br/><u>Quantity</u>: ");
+        }
         item.setBackground(Color.WHITE);
         item.setHorizontalAlignment(SwingConstants.LEFT);
         item.setName(usefulTitle.toString());
+        item.setMinimumSize(new Dimension(298, 100));
         if (cartButtons.size() > 4) {
             cart.setLayout(new GridLayout(cartButtons.size() + 1, 1));
         } else {
@@ -323,9 +353,22 @@ public class UserScreen extends JFrame implements ActionListener {
 
     /**
      * Check if a user has an existing cart with items within it.
+     * If items exist, these items are populated wihtin the cart.
      */
     private void checkForExistingCart(String username) {
-        
+        ArrayList<String> items = DatabaseQueries.checkForCart(username);
+        cartID = DatabaseQueries.getCartID(username);
+        // Check for cart items.
+        if (items != null) {
+            // The cart contains items.
+            for (int i = 0; i < items.size() / 2; i++) {
+                ArrayList<Object> results = DatabaseQueries.lookForaBook(items.get((i * 2) + 1), "isbn");
+                String book = buildBookString(Objects.requireNonNull(results), 0);
+                addToCart(book, false);
+                // Sets the quantity to the correct value.
+                cartButtons.get(cartButtons.size() - 1).setText(cartButtons.get(cartButtons.size() - 1).getText() + Integer.parseInt(items.get((i * 2) + 2)) + "<html>");
+            }
+        }
     }
 
     /**
@@ -342,10 +385,10 @@ public class UserScreen extends JFrame implements ActionListener {
             case "-" -> System.out.println("Item removed"); // User screen
             case "Checkout" -> {
                 this.dispose();
-                new CheckoutScreen(); // User Screen
+                new CheckoutScreen(username, totalPrice.getText()); // User Screen
             }
             case "Search" -> search(); // User screen
-            default -> addToCart(((JButton) o).getText());
+            default -> addToCart(((JButton) o).getText(), true);
         }
     }
 }

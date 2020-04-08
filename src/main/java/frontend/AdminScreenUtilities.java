@@ -9,6 +9,10 @@ import java.util.Objects;
 
 public class AdminScreenUtilities extends AdminScreen {
 
+    public AdminScreenUtilities(String username) {
+        super(username);
+    }
+
     /**
      * Populates edit user fields with appropriate data from database
      * and correctly adjusts checkboxes

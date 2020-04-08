@@ -20,14 +20,17 @@ public class CheckoutScreen extends JFrame implements ActionListener {
     final JComboBox<String> checkoutShippingProvinceCB = new JComboBox<>(FrontEndUtilities.provincesArr),
             checkoutBillingProvinceCB = new JComboBox<>(FrontEndUtilities.provincesArr);
 
+    private static String username;
+
     /**
      * Creates the "Checkout" interface for the userScreen
      * Accepts new shipping and billing addresses
      * Accepts credit card details
      * <p>
-     * TODO: Possibly add a cart view during checkout, but we could also not...
+     * TODO: Possibly add a cart view during checkout, but we could also not... Maybe. But that's a "if I feel like it" feature.
      */
-    public CheckoutScreen() {
+    public CheckoutScreen(String username, String orderCost) {
+        this.username = username;
         Container c = this.getContentPane();
         // Clear GUI in order to reload
         this.setPreferredSize(new Dimension(800, 800));
@@ -41,28 +44,7 @@ public class CheckoutScreen extends JFrame implements ActionListener {
 
         /* Panel */
         final GridBagLayout layout = new GridBagLayout();
-        JPanel checkoutPanel = new JPanel(layout) {
-            // This will paint grid lines on the layout
-            /*@Override
-            public void paint(Graphics g)
-            {
-                super.paint(g);
-                int[][] dims = layout.getLayoutDimensions();
-                g.setColor(Color.BLUE);
-                int x = 0;
-                for (int add : dims[0])
-                {
-                    x += add;
-                    g.drawLine(x, 0, x, getHeight());
-                }
-                int y = 0;
-                for (int add : dims[1])
-                {
-                    y += add;
-                    g.drawLine(0, y, getWidth(), y);
-                }
-            }*/
-        };
+        JPanel checkoutPanel = new JPanel(layout);
 
         /* JLabels */
         JLabel checkoutTotalPriceLabel = new JLabel("Total Price: ", JLabel.RIGHT),
@@ -332,7 +314,7 @@ public class CheckoutScreen extends JFrame implements ActionListener {
             con.gridx = 5;
             con.anchor = GridBagConstraints.CENTER;
             // JLabels
-            JLabel checkoutTotalPriceValueLabel = new JLabel("$0.00", JLabel.CENTER);
+            JLabel checkoutTotalPriceValueLabel = new JLabel(orderCost, JLabel.CENTER);
             checkoutPanel.add(checkoutTotalPriceValueLabel, con);
             con.gridwidth = 2;
             con.gridx = 6;
@@ -378,7 +360,7 @@ public class CheckoutScreen extends JFrame implements ActionListener {
             switch (((JButton) o).getText()) {
                 case "Cancel Checkout" -> {
                     this.dispose();
-                    new UserScreen(); // checkoutScreen
+                    new UserScreen(username); // checkoutScreen
                 }
                 case "Confirm Order" -> System.out.println("Order Submitted"); // checkoutScreen
                 default -> System.out.println("Error");

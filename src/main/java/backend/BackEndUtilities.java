@@ -1,3 +1,4 @@
 package backend;
 
-class BackEndUtilities {}
+class BackEndUtilities {
+}

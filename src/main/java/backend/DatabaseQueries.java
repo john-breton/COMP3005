@@ -18,8 +18,8 @@ import java.util.ArrayList;
 public class DatabaseQueries {
 
     // Just putting this here so we can change it when we test.
-    private static final String USER = "postgres";
-    private static final String DATABASE = "lookinnabook";
+    private static final String USER = "ryan";
+    private static final String DATABASE = "LookInnaBook";
     public static Connection connection;
     public static Statement statement;
 
@@ -88,7 +88,6 @@ public class DatabaseQueries {
      * Counts the number of addresses currently in the database.
      *
      * @return The total number of addresses currently stored, as an int.
-     * @deprecated No longer used for any purpose.
      */
     public static int countAddresses() {
         try {
@@ -157,7 +156,7 @@ public class DatabaseQueries {
      * @param pub_name
      * @return true if a valid relationship was created, false otherwise
      */
-    public static boolean addPubAdd(String pub_name){
+    public static boolean addPubAdd(String pub_name) {
         try {
             return statement.executeUpdate(String.format("INSERT into project.pubadd values (currval('project.address_add_id_seq'), '%s')", pub_name)) == 1;
         } catch (SQLException e) {
@@ -358,9 +357,9 @@ public class DatabaseQueries {
             // attempt to insert book info
             if (!statement.executeQuery(String.format("SELECT * FROM project.book WHERE isbn = %s", isbn)).next()) { // ensure the book doesn't already exist
                 if (statement.executeQuery(String.format("SELECT * FROM project.publisher WHERE pub_name = '%s'", publisher)).next() && // make sure publisher exists
-                    statement.executeUpdate(String.format("INSERT INTO project.book values (%s,'%s',%s,%s,%s,%s,%s)", isbn, title, version, pageCount, price, royalty, stock)) == 1) { // add the book
+                        statement.executeUpdate(String.format("INSERT INTO project.book values (%s,'%s',%s,%s,%s,%s,%s)", isbn, title, version, pageCount, price, royalty, stock)) == 1) { // add the book
                     // attempt to insert into publishes info
-                    if(addPublishes(publisher, isbn, year)) {
+                    if (addPublishes(publisher, isbn, year)) {
                         // attempt insert of genre info
                         if (updateGenre(isbn, genres)) {
                             // attempt insert of author info
@@ -373,7 +372,8 @@ public class DatabaseQueries {
             }
         } catch (SQLException e) {
             e.printStackTrace();
-        }return 4;
+        }
+        return 4;
     }
 
     /**
@@ -396,18 +396,17 @@ public class DatabaseQueries {
         int rowCount = 0;
         ResultSet result = null;
         try {
-            if(searchType.equals("author")) {
+            if (searchType.equals("author")) {
                 // TODO Actually finish this.
             } else if (searchType.equals("name")) {
                 String isbn = null;
-                result = statement.executeQuery(String.format("SELECT * FROM project.hasgenre WHERE '%s' = '%s'", searchType, searchText));
-                while(result.next()) {
+                result = statement.executeQuery("SELECT * FROM project.hasgenre WHERE name = '" + searchText + "'");
+                while (result.next()) {
                     isbn = result.getString("isbn");
                     statement = connection.createStatement();
                     ResultSet result2 = statement.executeQuery(String.format("SELECT * FROM project.book natural join project.publishes WHERE isbn = '%s'", isbn));
                     while (result2.next()) {
                         rowCount++; // count results
-                        isbn = result2.getString("isbn");
                         bookInfo.add(isbn);
                         bookInfo.add(result2.getString("title"));
                         bookInfo.add(result2.getString("version"));
@@ -571,7 +570,7 @@ public class DatabaseQueries {
      */
     public static boolean addPublisher(String name, String email, String phoneNum, String bankAcc) {
         try {
-            if(phoneNum.isEmpty()) phoneNum = null;
+            if (phoneNum.isEmpty()) phoneNum = null;
             return statement.executeUpdate(String.format("INSERT INTO project.publisher values ('%s','%s', %s, %s) ON CONFLICT (pub_name) DO NOTHING;", name, email, phoneNum, bankAcc)) == 1;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -661,11 +660,11 @@ public class DatabaseQueries {
                 // attempt to insert the author's names into the database, do nothing if that author already exists
                 if (names.length >= 2) { // else invalid, dont even bother adding
                     statement.executeUpdate("INSERT INTO project.author " +
-                            "VALUES ('" + names[0].trim() + "', '" + names[names.length-1].trim() + "')" +
+                            "VALUES ('" + names[0].trim() + "', '" + names[names.length - 1].trim() + "')" +
                             "ON CONFLICT (auth_fn, auth_ln) DO NOTHING");
                     // attempt to insert the relationship between author and book into the database, do nothing if the relationship already exists
                     statement.execute("INSERT INTO project.writes " +
-                            "VALUES ('" + names[0].trim() + "', '" + names[names.length-1].trim() + "', '" + isbn + "')" +
+                            "VALUES ('" + names[0].trim() + "', '" + names[names.length - 1].trim() + "', '" + isbn + "')" +
                             "ON CONFLICT (auth_fn, auth_ln, isbn) DO NOTHING");
                 }
             }
@@ -692,7 +691,71 @@ public class DatabaseQueries {
         }
     }
 
-    public static void checkForCart(String username) {
+    /**
+     * Retrieve the items in a user's cart, if the user has an items to retrieve.
+     *
+     * @param username THe username used to retrieve the cart for.
+     * @return The ISBN and quantity of each item in the user cart, or null if no items were found.
+     */
+    public static ArrayList<String> checkForCart(String username) {
+        int rowCount = 0;
+        ArrayList<String> cartInfo = new ArrayList<>();
+        try {
+            ResultSet result = statement.executeQuery("SELECT * FROM project.bask_manage NATURAL JOIN project.bask_item WHERE project.bask_manage.user_name = '" + username + "'");
+            while (result.next()) {
+                if (rowCount == 0) {
+                    cartInfo.add(result.getString("basket_id"));
+                }
+                rowCount++;
+                cartInfo.add(result.getString("isbn"));
+                cartInfo.add(result.getString("quantity"));
+            }
+            if (rowCount >= 1) {
+                return cartInfo;
+            } else {
+                return null;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 
+    /**
+     * Attempts to add an item to a cart.
+     *
+     * @param cartID The ID of the cart that the item will be added to.
+     * @param isbn   The ISBN of the book that is being added to the cart.
+     */
+    public static void addToCart(String cartID, String isbn) {
+        try {
+            statement = connection.createStatement();
+            statement.execute("INSERT into project.bask_item " +
+                    "values ('" + cartID +
+                    "', '" + isbn + "', 0)");
+            updateQuantity(isbn);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void updateQuantity(String isbn) {
+        try {
+            statement = connection.createStatement();
+            statement.executeUpdate("UPDATE project.bask_item SET quantity = quantity + 1 WHERE isbn = '" + isbn + "'");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static String getCartID(String username) {
+        try {
+            ResultSet result = statement.executeQuery("SELECT * FROM project.bask_manage WHERE user_name = '" + username + "'");
+            result.next();
+            return result.getString("basket_id");
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }
