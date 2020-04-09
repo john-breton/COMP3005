@@ -107,7 +107,7 @@ public class CheckoutScreen extends JFrame implements ActionListener {
                 checkoutShippingLabel = new JLabel("Confirm Shipping Address"),
                 checkoutStreetNumLabel = new JLabel("*Street Number: "),
                 checkoutStreetNameLabel = new JLabel("*Street Name: ", JLabel.RIGHT),
-                checkoutApartmentLabel = new JLabel("*Apartment: ", JLabel.RIGHT),
+                checkoutApartmentLabel = new JLabel("Apartment: ", JLabel.RIGHT),
                 checkoutCityLabel = new JLabel("*City: "),
                 checkoutProvinceLabel = new JLabel("*Province: ", JLabel.RIGHT),
                 checkoutCountryLabel = new JLabel("*Country: "),
@@ -128,7 +128,7 @@ public class CheckoutScreen extends JFrame implements ActionListener {
         /* Setup checkoutPanel */
         // Get the addresses of the user.
         ArrayList<Object> addresses = DatabaseQueries.lookForanAddressWithID(username);
-        boolean sameAddress = (Objects.requireNonNull(addresses).get(6).toString().equals(addresses.get(14).toString()));
+        boolean sameAddress = (Objects.requireNonNull(addresses).get(0).toString().equals(addresses.get(8).toString()) && Objects.requireNonNull(addresses).get(6).toString().equals(addresses.get(14).toString()));
 
         /* ActionListeners */
         cancelOrder.addActionListener(this);
@@ -550,6 +550,7 @@ public class CheckoutScreen extends JFrame implements ActionListener {
         if (sameAsBilling) {
             DatabaseQueries.addOrder(trackingNumber, totalCost.substring(1), true);
         } else {
+        // Case 2: Different billing and shipping.
             DatabaseQueries.addAddress(checkoutBillingStreetNumTF.getText(), checkoutBillingStreetNameTF.getText(), checkoutBillingApartmentTF.getText(), checkoutBillingCityTF.getText(), Objects.requireNonNull(checkoutBillingProvinceCB.getSelectedItem()).toString(), checkoutBillingCountryTF.getText(), checkoutBillingCountryTF.getText());
             DatabaseQueries.addOrder(trackingNumber, totalCost.substring(1), false);
         }
