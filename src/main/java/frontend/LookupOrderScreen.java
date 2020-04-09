@@ -8,6 +8,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class LookupOrderScreen extends JFrame implements ActionListener {
     /* JTextFields */
@@ -105,7 +106,7 @@ public class LookupOrderScreen extends JFrame implements ActionListener {
             invalidTrackingLabel.setText("Please enter a tracking number.");
         }
         ArrayList<String> orderInfo = DatabaseQueries.lookForanOrder(trackingNumber.getText());
-        if (orderInfo.isEmpty()) {
+        if (Objects.requireNonNull(orderInfo).isEmpty()) {
             invalidTrackingLabel.setText("No order found.");
         } else {
             orderNumber.setText(orderInfo.get(0));

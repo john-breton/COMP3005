@@ -5,6 +5,7 @@ package backend;
  */
 
 import java.sql.*;
+import java.util.Date;
 import java.util.ArrayList;
 
 /**
@@ -64,6 +65,29 @@ public class DatabaseQueries {
     }
 
     /**
+     * Query order information form the database.
+     *
+     * @param trackingNumber The tracking number associated with an order.
+     * @return An ArrayList of containing order information from the database if the order was found. Null if no order was found.
+     *         If an order was found: [0] = order_num, [1] = tracking_num, [2] = date_placed
+     */
+    public static ArrayList<String> lookForanOrder(String trackingNumber) {
+        try {
+            ArrayList<String> orderInfo = new ArrayList<>();
+            ResultSet result = statement.executeQuery("SELECT * FROM project.order WHERE tracking_num = '" + trackingNumber + "'");
+            while (result.next()) {
+                orderInfo.add(0, result.getString("order_num"));
+                orderInfo.add(1, result.getString("tracking_num"));
+                orderInfo.add(2, result.getString("date_placed"));
+            }
+            return orderInfo;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
      * Query user information from the database.
      *
      * @param username The username that was entered.
@@ -110,12 +134,51 @@ public class DatabaseQueries {
     }
 
     /**
+     * Get the ID and the addresses associated with a user.
+     *
+     * @param username Username of the user
+     * @return An ArrayList of address info. [0] = street num, [1] = street name, [2] = apartment, [3] = city, [4] = province, [5] = country, [6] = postal code, [7] = add_id
+     */
+    public static ArrayList<Object> lookForanAddressWithID(String username) {
+        ArrayList<Object> addInfo = new ArrayList<>();
+        int rowCount = 0;
+
+        try {
+            ResultSet result = statement.executeQuery("SELECT * FROM project.address NATURAL JOIN project.hasadd WHERE user_name = '" + username.toLowerCase() + "'");
+
+            while (result.next()) {
+                rowCount++; // count results
+                addInfo.add(result.getString("street_num"));
+                addInfo.add(result.getString("street_name"));
+                addInfo.add(result.getString("apartment"));
+                addInfo.add(result.getString("city"));
+                addInfo.add(result.getString("province"));
+                addInfo.add(result.getString("country"));
+                addInfo.add(result.getString("postal_code"));
+                addInfo.add(result.getString("add_id"));
+            }
+
+            if (rowCount >= 0) return addInfo; // user found
+
+            // whaaaaaat
+            addInfo.clear();
+            addInfo.add("-1");
+            System.out.println("Houston, we gotta problem in lookForanAddress");
+            return addInfo;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return addInfo;
+    }
+
+    /**
      * Query address information from the database
      *
      * @param username Username of the user
      * @return An ArrayList of address info. [0] = street num, [1] = street name, [2] = apartment, [3] = city, [4] = province, [5] = country, [6] = postal code
      */
-    private static ArrayList<Object> lookForanAddress(String username) {
+    public static ArrayList<Object> lookForanAddress(String username) {
         ArrayList<Object> addInfo = new ArrayList<>();
         int rowCount = 0;
 
@@ -353,6 +416,32 @@ public class DatabaseQueries {
     }
 
     /**
+     * Add an order to the database.
+     *
+     * @param trackingNumber The tracking number of an order.
+     * @param totalCost The total cost of an order.
+     * @param oneAddress True if there the order has the same billing and shipping address, false otherwise.
+     */
+    public static void addOrder(String trackingNumber, String totalCost, boolean oneAddress) {
+        Date date = new Date();
+        Timestamp ts = new Timestamp(date.getTime());
+        try {
+            if (oneAddress) {
+                statement.execute("INSERT INTO project.order values (nextval('project.order_order_num_seq'), '" + trackingNumber + "', '" + ts + "', '" + totalCost + "')");
+                statement.execute("INSERT INTO project.ordadd values (currval('project.order_order_num_seq'), currval('project.address_add_id_seq'), true, true)");
+            } else {
+                statement.execute("INSERT INTO project.order values (nextval('project.order_order_num_seq'), '" + trackingNumber + "', '" + ts + "', '" + totalCost + "')");
+                statement.execute("INSERT INTO project.ordadd values (currval('project.order_order_num_seq'), currval('project.address_add_id_seq') - 1, true, false)");
+                statement.execute("INSERT INTO project.ordadd values (currval('project.order_order_num_seq'), currval('project.address_add_id_seq'), false, true)");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
+    /**
      * Add an address into the database.
      *
      * @param streetNum  The street number of the address.
@@ -364,7 +453,8 @@ public class DatabaseQueries {
      * @param postalCode The postal code of the address.
      * @return True if the insertion was successful, false otherwise.
      */
-    public static boolean addAddress(String streetNum, String streetName, String apartment, String city, String province, String country, String postalCode) {
+    public static boolean addAddress(String streetNum, String streetName, String apartment, String city, String
+            province, String country, String postalCode) {
         try {
             statement.execute("INSERT into project.address " +
                     "values (nextval('project.address_add_id_seq'), " +
@@ -400,7 +490,7 @@ public class DatabaseQueries {
     /**
      * Adds a relationship between a publisher and address in the database
      *
-     * @param pub_name
+     * @param pub_name The name of the publisher.
      * @return true if a valid relationship was created, false otherwise
      */
     public static boolean addPubAdd(String pub_name) {
@@ -428,7 +518,8 @@ public class DatabaseQueries {
      * @param publisher the publisher
      * @return 0 if successful update of all attributes, 1 if error with the author information, 2 if error with the genre information, 3 if error with publisher information, 4 if error with book information
      */
-    public static int addBook(String isbn, String title, String version, String pageCount, String year, String stock, String[] genres, String price, String royalty, String[] authors, String publisher) {
+    public static int addBook(String isbn, String title, String version, String pageCount, String year, String
+            stock, String[] genres, String price, String royalty, String[] authors, String publisher) {
         try {
             // ensure strings don't contain illegal characters
             title = title.replaceAll("['\"]", "");
@@ -458,10 +549,10 @@ public class DatabaseQueries {
     /**
      * Adds a publisher to the database
      *
-     * @param name
-     * @param email
-     * @param phoneNum
-     * @param bankAcc
+     * @param name The name of the publisher.
+     * @param email The email of the publisher.
+     * @param phoneNum The phone number of the publisher.
+     * @param bankAcc The bank account number of the publisher.
      * @return true if successful, false otherwise
      */
     public static boolean addPublisher(String name, String email, String phoneNum, String bankAcc) {
@@ -477,9 +568,9 @@ public class DatabaseQueries {
     /**
      * Adds a publishes relation to the database, the publisher and book must already be present in order to be successful.
      *
-     * @param name
-     * @param isbn
-     * @param year
+     * @param name The name of the publisher.
+     * @param isbn The ISBN of the book that the publisher has published.
+     * @param year The year that the publisher publishes the book.
      * @return true if successful, false otherwise
      */
     private static boolean addPublishes(String name, String isbn, String year) {
@@ -518,7 +609,7 @@ public class DatabaseQueries {
             statement.execute("INSERT into project.bask_item " +
                     "values ('" + cartID +
                     "', '" + isbn + "', 0)");
-            updateQuantity(isbn);
+            updateQuantity(cartID, isbn, true);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -535,7 +626,8 @@ public class DatabaseQueries {
      * @param email     The email that was entered
      * @return ArrayList of the updated user credentials (or added credentials but we don't want this), null otherwise
      */
-    public static boolean updateUser(String username, String password, String firstName, String lastName, String email) {
+    public static boolean updateUser(String username, String password, String firstName, String lastName, String
+            email) {
         try {
             int rowsAffected;
             if (!password.isEmpty())
@@ -589,7 +681,8 @@ public class DatabaseQueries {
      * @param postalCode the postal code
      * @param isShipping the is shipping
      */
-    public static void updateAddress(String username, String num, String name, String apartment, String city, String prov, String country, String postalCode, boolean isShipping) {
+    public static void updateAddress(String username, String num, String name, String apartment, String
+            city, String prov, String country, String postalCode, boolean isShipping) {
         // attempt to update address
         try {
             int rowsAffected = statement.executeUpdate(String.format("UPDATE project.address SET street_num = %s,street_name = '%s',apartment = '%s',city = '%s',province = '%s',country = '%s',postal_code = '%s' FROM project.hasadd WHERE project.address.add_id = project.hasadd.add_id AND project.hasadd.user_name = '%s'AND project.hasadd.isshipping = '%s'", num, name, apartment, city, prov, country, postalCode, username, isShipping));
@@ -621,7 +714,8 @@ public class DatabaseQueries {
      * @param publisher the new publisher
      * @return 0 if successful update of all attributes, 1 if error with the author information, 2 if error with the genre information, 3 if error with publisher information, 4 if error with book information
      */
-    public static int updateBook(String isbn, String title, String version, String pageCount, String year, String stock, String[] genres, String price, String royalty, String[] authors, String publisher) {
+    public static int updateBook(String isbn, String title, String version, String pageCount, String year, String
+            stock, String[] genres, String price, String royalty, String[] authors, String publisher) {
         try {
             // attempt update of book info
             statement.executeUpdate(String.format("UPDATE project.book SET title = '%s',version = '%s',num_pages = '%s',price = '%s',royalty = '%s',stock = '%s'WHERE isbn = '%s'", title, version, pageCount, price, royalty, stock, isbn));
@@ -720,21 +814,12 @@ public class DatabaseQueries {
         return false;
     }
 
-    public static void updateQuantity(String isbn) {
-        try {
-            statement = connection.createStatement();
-            statement.executeUpdate("UPDATE project.bask_item SET quantity = quantity + 1 WHERE isbn = '" + isbn + "'");
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
     /**
      * Increase or decrease the quantity of a cart item.
      *
      * @param cartID   The id of the cart that this item belongs to.
      * @param isbn     The isbn corresponding to the item that will be increased.
-     * @param increase
+     * @param increase True if the quantity should be increased by 1, false otherwise.
      */
     public static void updateQuantity(String cartID, String isbn, boolean increase) {
         try {

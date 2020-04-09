@@ -32,10 +32,17 @@ public class UserScreen extends JFrame implements ActionListener {
     private final JPanel cart = new JPanel(new GridLayout(1, 1));
     private ArrayList<JButton> bookButtons = new ArrayList<>();
     private final ArrayList<JToggleButton> cartButtons = new ArrayList<>();
+    private final JButton removeItemFromCart = FrontEndUtilities.formatButton("-");
+    private final JButton addItemToCart = FrontEndUtilities.formatButton("+");
+    private final JButton checkoutButton = FrontEndUtilities.formatButton("Checkout");
     private final String username;
     private String cartID;
 
     public UserScreen(String username) {
+        removeItemFromCart.setEnabled(false);
+        addItemToCart.setEnabled(false);
+        checkoutButton.setEnabled(false);
+
         this.username = username;
         totalPrice = new JLabel("$0.00", JLabel.CENTER);
         this.setPreferredSize(new Dimension(798, 850));
@@ -70,29 +77,26 @@ public class UserScreen extends JFrame implements ActionListener {
         JLabel totalPriceLabel = new JLabel("Total Price: ");
 
         // Buttons
-        JButton addToCart = FrontEndUtilities.formatButton("+");
-        addToCart.setMargin(new Insets(0, 0, 0, 0));
-        JButton removeFromCart = FrontEndUtilities.formatButton("-");
-        removeFromCart.setMargin(new Insets(0, 0, 0, 0));
-        JButton checkoutButton = FrontEndUtilities.formatButton("Checkout");
+        addItemToCart.setMargin(new Insets(0, 0, 0, 0));
+        removeItemFromCart.setMargin(new Insets(0, 0, 0, 0));
         JButton searchButton = FrontEndUtilities.formatButton("Search");
         JButton logoutButton = FrontEndUtilities.formatButton("Logout");
 
         // ActionListeners
-        addToCart.addActionListener(this);
-        removeFromCart.addActionListener(this);
+        addItemToCart.addActionListener(this);
+        removeItemFromCart.addActionListener(this);
         checkoutButton.addActionListener(this);
         searchButton.addActionListener(this);
         logoutButton.addActionListener(this);
 
         /* Setup Panels */
         // Price panel
-        addToCart.setPreferredSize(addRemoveButtonDimensions);
-        pricePanel.add(addToCart);
+        addItemToCart.setPreferredSize(addRemoveButtonDimensions);
+        pricePanel.add(addItemToCart);
         pricePanel.add(totalPriceLabel);
         pricePanel.add(totalPrice);
-        removeFromCart.setPreferredSize(addRemoveButtonDimensions);
-        pricePanel.add(removeFromCart);
+        removeItemFromCart.setPreferredSize(addRemoveButtonDimensions);
+        pricePanel.add(removeItemFromCart);
 
         // Checkout Panel
         checkoutPanel.setLayout(new BoxLayout(checkoutPanel, BoxLayout.PAGE_AXIS));
@@ -374,6 +378,12 @@ public class UserScreen extends JFrame implements ActionListener {
         } else {
             currPrice -= lastPrice;
         }
+        // Allow checkout
+        boolean allowCheckout = currPrice != 0;
+        removeItemFromCart.setEnabled(allowCheckout);
+        addItemToCart.setEnabled(allowCheckout);
+        checkoutButton.setEnabled(allowCheckout);
+
         totalPrice.setText("$" + currPrice);
     }
 

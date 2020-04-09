@@ -26,8 +26,8 @@ import java.util.stream.Stream;
 @SuppressWarnings("JavaDoc")
 public class uploadBookData {
 
-    private static final String DATABASE = "lookinnabook";
-    private static final String USER = "postgres";
+    private static final String DATABASE = "LookInnaBook";
+    private static final String USER = "ryan";
     static String titleObject;
     static BigInteger isbnObject;
     static JsonArray authorsObject;
@@ -49,7 +49,7 @@ public class uploadBookData {
             statement.executeUpdate(resetDB.toString());
 
             // add admin
-            statement.executeUpdate("Insert into project.user (user_name, password) values ('" + USER + "', '" + USER + "');" +
+            statement.executeUpdate("Insert into project.user values ('" + USER + "', '" + USER + "', 'Post', 'Gres', 'postgres@email.ca');" +
                     "insert into project.librarian values ('" + USER + "', 300.00);");
             // Give them their own cart.
             statement.executeUpdate("INSERT INTO project.bask_manage values ('" + USER + "', '1')");
