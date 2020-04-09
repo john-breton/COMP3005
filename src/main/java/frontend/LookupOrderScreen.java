@@ -1,12 +1,23 @@
 package frontend;
 
+import backend.DatabaseQueries;
+
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 public class LookupOrderScreen extends JFrame implements ActionListener {
+    /* JTextFields */
+    private final JTextField trackingNumber = new JTextField(16);
+
+    /* JLabels */
+    private final JLabel invalidTrackingLabel = new JLabel();
+    private final JLabel orderStatus = new JLabel("");
+    private final JLabel dateOrderPlaced = new JLabel("");
+    private final JLabel orderNumber = new JLabel("");
 
     public LookupOrderScreen() {
 
@@ -20,16 +31,15 @@ public class LookupOrderScreen extends JFrame implements ActionListener {
         JPanel orderScreen = new JPanel(new GridBagLayout());
         orderScreen.setBorder(new EmptyBorder(10, 10, 10, 10));
 
+        /* JLabels */
+        JLabel orderNumberLabel = new JLabel("<html><u>Order Number</u>: </html>");
+        JLabel trackingNumberLabel = new JLabel("<html><u>Tracking Number</u>: </html>");
+        JLabel dateOrderPlacedLabel = new JLabel("<html><u>Date Placed</u>: </html>");
+        JLabel orderStatusLabel = new JLabel("<html><u>Status</u>: </html>");
+
         /* JButtons */
         JButton cancelLookup = FrontEndUtilities.formatButton("Cancel Lookup");
         JButton lookupOrder = FrontEndUtilities.formatButton("Lookup Order");
-
-        /* JLabels */
-        JLabel orderNumberLabel = new JLabel("Order Number: ");
-        JLabel trackingNumberLabel = new JLabel("Tracking Number: ");
-        JLabel dateOrderPlacedLabel = new JLabel("Date Placed: ");
-        JLabel userNameOrderLabel = new JLabel("Order Owner: ");
-        JLabel orderStatusLabel = new JLabel("Status: ");
 
         /* ActionListeners */
         cancelLookup.addActionListener(this);
@@ -48,44 +58,60 @@ public class LookupOrderScreen extends JFrame implements ActionListener {
 
         con.gridy = 1;
         con.gridx = 0;
-        orderScreen.add(orderNumberLabel, con);
+        orderScreen.add(trackingNumberLabel, con);
         con.gridx = 1;
         // JTextField
-        JTextField orderNumber = new JTextField();
-        orderScreen.add(orderNumber, con);
+        orderScreen.add(trackingNumber, con);
 
         con.gridy = 2;
         con.gridx = 0;
-        orderScreen.add(trackingNumberLabel, con);
+        orderScreen.add(orderNumberLabel, con);
         con.gridx = 1;
         // JLabels
-        JLabel trackingNumber = new JLabel("123456789101112");
-        orderScreen.add(trackingNumber, con);
+        orderScreen.add(orderNumber, con);
 
         con.gridy = 3;
         con.gridx = 0;
         orderScreen.add(dateOrderPlacedLabel, con);
         con.gridx = 1;
-        JLabel dateOrderPlaced = new JLabel("March 25, 2020");
         orderScreen.add(dateOrderPlaced, con);
 
         con.gridy = 4;
         con.gridx = 0;
-        orderScreen.add(userNameOrderLabel, con);
-        con.gridx = 1;
-        JLabel userNameOrder = new JLabel("User's Username");
-        orderScreen.add(userNameOrder, con);
-
-        con.gridy = 5;
-        con.gridx = 0;
         orderScreen.add(orderStatusLabel, con);
         con.gridx = 1;
-        JLabel orderStatus = new JLabel("TBH Dont know where it is");
         orderScreen.add(orderStatus, con);
+
+        con.gridy = 5;
+        con.gridwidth = 0;
+        orderScreen.add(invalidTrackingLabel, con);
+        invalidTrackingLabel.setForeground(Color.RED);
+
 
         c.add(orderScreen);
 
         FrontEndUtilities.configureFrame(this);
+    }
+
+    /**
+     * Lookup an order based on a tracking number.
+     */
+    private void lookUpOrder() {
+        orderNumber.setText("");
+        dateOrderPlaced.setText("");
+        orderStatus.setText("");
+        invalidTrackingLabel.setText("");
+        if (trackingNumber.getText().equals("")) {
+            invalidTrackingLabel.setText("Please enter a tracking number.");
+        }
+        ArrayList<String> orderInfo = DatabaseQueries.lookForanOrder(trackingNumber.getText());
+        if (orderInfo.isEmpty()) {
+            invalidTrackingLabel.setText("No order found.");
+        } else {
+            orderNumber.setText(orderInfo.get(0));
+            dateOrderPlaced.setText(orderInfo.get(2).substring(0, 11));
+            orderStatus.setText("On the way!");
+        }
     }
 
     /**
@@ -101,7 +127,7 @@ public class LookupOrderScreen extends JFrame implements ActionListener {
                 this.dispose();
                 new LoginScreen();
             }
-            case "Lookup Order" -> System.out.println("Looking up order");
+            case "Lookup Order" -> lookUpOrder();
             default -> System.out.println("Error");
         }
     }
