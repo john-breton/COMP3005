@@ -35,6 +35,7 @@ public class uploadBookData {
     static int pgCntObject;
     static JsonArray genresObject;
     static JsonArray publishersObject;
+    static int count = 0;
 
 
     public static void main(String[] args) {
@@ -133,14 +134,15 @@ public class uploadBookData {
      */
     private void addPublisher(JsonArray publishers) {
         Random r = new Random();
-        String defaultEmail = "default@carleton.ca";
-        long phoneNum = (long) (1000000000L + r.nextFloat() * 9000000000L);
-        long bankAcc = (long) (100000000000000L + r.nextFloat() * 900000000000000L);
+        long phoneNum = (long) (100000L + r.nextFloat() * 900000L);
+        long bankAcc = (long) (10000000000L + r.nextFloat() * 90000000000L);
 
         publishers.forEach(p -> {
+            String defaultEmail = "default";
+            defaultEmail += count++ + "@carleton.ca";
             String newP = p.getAsString().replaceAll("'", "");
-            if(DatabaseQueries.addPublisher(newP, defaultEmail, String.valueOf(phoneNum), String.valueOf(bankAcc))) {
-                DatabaseQueries.addAddress("123", "Default Ave.", "B", "Ottawa", "ON", "Canada", "O1T4W4");
+            if(DatabaseQueries.addPublisher(newP, defaultEmail, String.valueOf(phoneNum) + count, String.valueOf(bankAcc) + count)) {
+                DatabaseQueries.addAddress(String.valueOf(r.nextInt(1000)), "Default Ave.", "B", "Ottawa", "ON", "Canada", "O1T4W4");
                 DatabaseQueries.addPubAdd(newP);
             }
         });

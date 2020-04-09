@@ -107,6 +107,7 @@ public class CheckoutScreen extends JFrame implements ActionListener {
         // Get the addresses of the user.
         ArrayList<Object> addresses = DatabaseQueries.lookForanAddressWithID(username);
         boolean sameAddress = (Objects.requireNonNull(addresses).get(6).toString().equals(addresses.get(14).toString()));
+
         /* ActionListeners */
         cancelOrder.addActionListener(this);
         submitOrder.addActionListener(this);

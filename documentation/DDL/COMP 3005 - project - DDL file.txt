@@ -22,7 +22,7 @@ CREATE TABLE project.book (
 );
 
 CREATE TABLE project.user (
-    user_name 		character varying(16) PRIMARY KEY,
+    username 		character varying(16) PRIMARY KEY,
     password 		character varying(16),
     first_name 		character varying(10),
     last_name 		character varying(20),
@@ -30,10 +30,10 @@ CREATE TABLE project.user (
 );
 
 CREATE TABLE project.librarian (
-    user_name 	character varying(16) REFERENCES project.user(user_name) ON DELETE CASCADE,
+    username 	character varying(16) REFERENCES project.user(username) ON DELETE CASCADE,
     salary 		numeric(8,2),
 
-    CONSTRAINT librarian_pkey PRIMARY KEY (user_name)
+    CONSTRAINT librarian_pkey PRIMARY KEY (username)
 );
 
 CREATE TABLE project.address (
@@ -49,9 +49,9 @@ CREATE TABLE project.address (
 
 CREATE TABLE project.publisher (
     pub_name 	character varying(200) PRIMARY KEY,
-    email_add 	character varying(30),
-    phone_num 	numeric(10,0),
-    bank_acc 	numeric(15,0)
+    email_add 	character varying(30) UNIQUE,
+    phone_num 	numeric(10,0) UNIQUE,
+    bank_acc 	numeric(15,0) UNIQUE
 );
 
 CREATE TABLE project.genre (
@@ -71,7 +71,7 @@ CREATE TABLE project.basket (
 
 CREATE TABLE project.order (
     order_num 		SERIAL NOT NULL PRIMARY KEY,
-    tracking_num 	numeric(16,0),
+    tracking_num 	numeric(16,0) UNIQUE,
     date_placed 	timestamp without time zone,
     total_price 	numeric(6,2)
 );
@@ -113,21 +113,21 @@ CREATE TABLE project.bask_item (
 
 CREATE TABLE project.checkout (
     basket_id 	SERIAL NOT NULL REFERENCES project.basket(basket_id),
-    order_num 	SERIAL NOT NULL REFERENCES project.order(order_num),
+    order_num 	SERIAL NOT NULL UNIQUE REFERENCES project.order(order_num),
 
     CONSTRAINT checkout_pkey PRIMARY KEY (basket_id)
 );
 
 CREATE TABLE project.bask_manage (
-    user_name 	character varying(16) REFERENCES project.user(user_name) ON DELETE CASCADE,
+    username 	character varying(16) REFERENCES project.user(username) ON DELETE CASCADE,
     basket_id 	SERIAL NOT NULL REFERENCES project.basket(basket_id),
 
     CONSTRAINT bask_manage_pkey PRIMARY KEY (basket_id)
 );
 
 CREATE TABLE project.ordadd (
-    order_num 	SERIAL NOT NULL REFERENCES project.order(order_num),
-    add_id 		SERIAL NOT NULL REFERENCES project.address(add_id),
+    order_num 	SERIAL REFERENCES project.order(order_num),
+    add_id 		SERIAL REFERENCES project.address(add_id),
     isshipping  boolean NOT NULL,
     isbilling   boolean NOT NULL,
 
@@ -138,15 +138,15 @@ CREATE TABLE project.ordadd (
 
 CREATE TABLE project.hasAdd (
     add_id 		SERIAL NOT NULL REFERENCES project.address(add_id),
-    user_name 	character varying(16) NOT NULL REFERENCES project.user(user_name) ON DELETE CASCADE,
+    username 	character varying(16) NOT NULL REFERENCES project.user(username) ON DELETE CASCADE,
     isshipping 	boolean NOT NULL,
 
     CONSTRAINT 	hasadd_pkey PRIMARY KEY (add_id),
-    UNIQUE (user_name, isshipping)
+    UNIQUE (username, isshipping)
 );
 
 CREATE TABLE project.pubadd (
-    add_id 		SERIAL NOT NULL REFERENCES project.address(add_id),
+    add_id 		SERIAL NOT NULL UNIQUE REFERENCES project.address(add_id),
     pub_name 	character varying(200) REFERENCES project.publisher,
 
     CONSTRAINT 	pubadd_pkey PRIMARY KEY (pub_name)

@@ -50,7 +50,7 @@ public class DatabaseQueries {
         boolean[] returnArr = {false, false}; // [0] = active user, [1] = admin
 
         try {
-            ResultSet result = statement.executeQuery("SELECT * from project.user LEFT OUTER JOIN project.librarian USING (user_name) where user_name = '" + username.toLowerCase().trim() + "'");
+            ResultSet result = statement.executeQuery("SELECT * from project.user LEFT OUTER JOIN project.librarian USING (username) where username = '" + username.toLowerCase().trim() + "'");
 
             while (result.next()) {
                 returnArr[0] = String.valueOf(password).equals(result.getString("password"));
@@ -100,11 +100,11 @@ public class DatabaseQueries {
 
         try {
 
-            ResultSet result = statement.executeQuery("SELECT * FROM project.user left outer join project.librarian using (user_name) WHERE user_name = '" + username.toLowerCase() + "'");
+            ResultSet result = statement.executeQuery("SELECT * FROM project.user left outer join project.librarian using (username) WHERE username = '" + username.toLowerCase() + "'");
 
             while (result.next()) { // loop over results
                 rowCount++; // count results
-                userCred.add(0, result.getString("user_name"));
+                userCred.add(0, result.getString("username"));
                 userCred.add(1, result.getString("password"));
                 userCred.add(2, result.getString("first_name"));
                 userCred.add(3, result.getString("last_name"));
@@ -144,7 +144,7 @@ public class DatabaseQueries {
         int rowCount = 0;
 
         try {
-            ResultSet result = statement.executeQuery("SELECT * FROM project.address NATURAL JOIN project.hasadd WHERE user_name = '" + username.toLowerCase() + "'");
+            ResultSet result = statement.executeQuery("SELECT * FROM project.address NATURAL JOIN project.hasadd WHERE username = '" + username.toLowerCase() + "'");
 
             while (result.next()) {
                 rowCount++; // count results
@@ -183,7 +183,7 @@ public class DatabaseQueries {
         int rowCount = 0;
 
         try {
-            ResultSet result = statement.executeQuery("SELECT * FROM project.address NATURAL JOIN project.hasadd WHERE user_name = '" + username.toLowerCase() + "'");
+            ResultSet result = statement.executeQuery("SELECT * FROM project.address NATURAL JOIN project.hasadd WHERE username = '" + username.toLowerCase() + "'");
 
             while (result.next()) {
                 rowCount++; // count results
@@ -354,7 +354,7 @@ public class DatabaseQueries {
 
     public static String getCartID(String username) {
         try {
-            ResultSet result = statement.executeQuery("SELECT * FROM project.bask_manage WHERE user_name = '" + username + "'");
+            ResultSet result = statement.executeQuery("SELECT * FROM project.bask_manage WHERE username = '" + username + "'");
             result.next();
             return result.getString("basket_id");
         } catch (SQLException e) {
@@ -373,7 +373,7 @@ public class DatabaseQueries {
         int rowCount = 0;
         ArrayList<String> cartInfo = new ArrayList<>();
         try {
-            ResultSet result = statement.executeQuery("SELECT * FROM project.bask_manage NATURAL JOIN project.bask_item WHERE project.bask_manage.user_name = '" + username + "'");
+            ResultSet result = statement.executeQuery("SELECT * FROM project.bask_manage NATURAL JOIN project.bask_item WHERE project.bask_manage.username = '" + username + "'");
             while (result.next()) {
                 if (rowCount == 0) {
                     cartInfo.add(result.getString("basket_id"));
@@ -405,7 +405,7 @@ public class DatabaseQueries {
      */
     public static boolean registerNewUser(String username, String password, String first_name, String last_name, String email) {
         try {
-            boolean temp = statement.executeUpdate(String.format("INSERT into project.user values ('%s', '%s', '%s', '%s', '%s') ON CONFLICT (user_name) DO NOTHING", username.toLowerCase(), password, first_name, last_name, email)) == 1;
+            boolean temp = statement.executeUpdate(String.format("INSERT into project.user values ('%s', '%s', '%s', '%s', '%s') ON CONFLICT (username) DO NOTHING", username.toLowerCase(), password, first_name, last_name, email)) == 1;
             if (temp)
                 DatabaseQueries.registerCart(username.toLowerCase());
             return temp;
@@ -631,9 +631,9 @@ public class DatabaseQueries {
         try {
             int rowsAffected;
             if (!password.isEmpty())
-                rowsAffected = statement.executeUpdate(String.format("UPDATE project.user SET password = '%s', first_name = '%s', last_name = '%s', email = '%s' WHERE user_name = '%s'", password, firstName, lastName, email, username.toLowerCase()));
+                rowsAffected = statement.executeUpdate(String.format("UPDATE project.user SET password = '%s', first_name = '%s', last_name = '%s', email = '%s' WHERE username = '%s'", password, firstName, lastName, email, username.toLowerCase()));
             else
-                rowsAffected = statement.executeUpdate(String.format("UPDATE project.user SET first_name = '%s', last_name = '%s', email = '%s' WHERE user_name = '%s'", firstName, lastName, email, username.toLowerCase()));
+                rowsAffected = statement.executeUpdate(String.format("UPDATE project.user SET first_name = '%s', last_name = '%s', email = '%s' WHERE username = '%s'", firstName, lastName, email, username.toLowerCase()));
 
             if (rowsAffected == 1) { // means a row was updated
                 return true;
@@ -655,13 +655,9 @@ public class DatabaseQueries {
     public static void updateAdmin(String username, String salary) {
         try {
             if (salary == null || salary.isEmpty()) {
-                statement.executeUpdate("UPDATE project.librarian " +
-                        "SET salary = NULL " +
-                        "WHERE user_name = '" + username + "'");
+                statement.executeUpdate(String.format("UPDATE project.librarian SET salary = NULL WHERE username = '%s'", username));
             } else {
-                statement.executeUpdate("INSERT INTO project.librarian " +
-                        "values('" + username + "','" + salary + "') " +
-                        "ON CONFLICT (user_name) DO UPDATE SET salary = '" + salary + "'");
+                statement.executeUpdate(String.format("INSERT INTO project.librarian values('%s','%s') ON CONFLICT (username) DO UPDATE SET salary = '%s'", username, salary, salary));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -685,7 +681,7 @@ public class DatabaseQueries {
             city, String prov, String country, String postalCode, boolean isShipping) {
         // attempt to update address
         try {
-            int rowsAffected = statement.executeUpdate(String.format("UPDATE project.address SET street_num = %s,street_name = '%s',apartment = '%s',city = '%s',province = '%s',country = '%s',postal_code = '%s' FROM project.hasadd WHERE project.address.add_id = project.hasadd.add_id AND project.hasadd.user_name = '%s'AND project.hasadd.isshipping = '%s'", num, name, apartment, city, prov, country, postalCode, username, isShipping));
+            int rowsAffected = statement.executeUpdate(String.format("UPDATE project.address SET street_num = %s,street_name = '%s',apartment = '%s',city = '%s',province = '%s',country = '%s',postal_code = '%s' FROM project.hasadd WHERE project.address.add_id = project.hasadd.add_id AND project.hasadd.username = '%s'AND project.hasadd.isshipping = '%s'", num, name, apartment, city, prov, country, postalCode, username, isShipping));
 
             if (rowsAffected == 0) { //user doesn't have an address yet
                 if (addAddress(num, name, apartment, city, prov, country, postalCode)) {
