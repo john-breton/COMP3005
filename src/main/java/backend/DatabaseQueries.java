@@ -236,7 +236,7 @@ public class DatabaseQueries {
                 // TODO Actually finish this.
             } else if (searchType.equals("name")) {
                 String isbn;
-                result = statement.executeQuery("SELECT * FROM project.hasgenre WHERE name = '" + searchText + "'");
+                result = statement.executeQuery(String.format("SELECT * FROM project.hasgenre WHERE name = '%s'", searchText));
                 while (result.next()) {
                     isbn = result.getString("isbn");
                     statement = connection.createStatement();
