@@ -557,7 +557,7 @@ public class CheckoutScreen extends JFrame implements ActionListener {
         checkoutErrorLabel.setForeground(Color.BLACK);
         checkoutErrorLabel.setText("Order successful! Your tracking number is " + trackingNumber);
         submitOrder.setEnabled(false);
-        cancelOrder.setText("Return to Cart");
+        cancelOrder.setText("Return to Bookstore");
     }
 
     /**
