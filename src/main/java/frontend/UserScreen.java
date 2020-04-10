@@ -8,6 +8,8 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Objects;
 
 /**
@@ -23,8 +25,34 @@ import java.util.Objects;
  */
 public class UserScreen extends JFrame implements ActionListener {
 
+    class SortByYear implements Comparator<JButton>
+    {
+        // Used for sorting in ascending order of
+        // roll number
+        public int compare(JButton a, JButton b)
+        {
+            String[] textA = a.getText().split("Year:");
+            String[] textB = b.getText().split("Year:");
+            StringBuilder priceA = new StringBuilder();
+            StringBuilder priceB = new StringBuilder();
+
+            int i = 0;
+            while (textA[1].substring(5).charAt(i) != '<') {
+                priceA.append(textA[1].substring(5).charAt(i));
+                i++;
+            }
+            i = 0;
+            while (textB[1].substring(5).charAt(i) != '<') {
+                priceB.append(textB[1].substring(5).charAt(i));
+                i++;
+            }
+            return (Integer.valueOf(priceA.toString()) - Integer.valueOf(priceB.toString()));
+        }
+    }
+
     private final JTextField userSearchTF = new JTextField();
     private final JComboBox<String> searchFilters = new JComboBox<>(FrontEndUtilities.searchFilterArr);
+    private final JComboBox<String> resultFilters = new JComboBox<>(FrontEndUtilities.resultFilterArr);
     private final ButtonGroup cartItems = new ButtonGroup();
     private final JLabel errorLabel = new JLabel("");
     private final JLabel totalPrice;
@@ -51,7 +79,7 @@ public class UserScreen extends JFrame implements ActionListener {
         c.removeAll();
 
         searchFilters.setBackground(Color.WHITE);
-        JComboBox<String> resultFilters = new JComboBox<>(FrontEndUtilities.resultFilterArr);
+        resultFilters.addActionListener(e -> sort());
         resultFilters.setBackground(Color.WHITE);
 
         // Dimensions
@@ -198,6 +226,107 @@ public class UserScreen extends JFrame implements ActionListener {
     }
 
     /**
+     * Sort the results returned by a search based on the search filter.
+     */
+    private void sort() {
+        // We only want to sort if there are at least two books
+        if (!bookButtons.isEmpty() && bookButtons.size() != 0) {
+            searchResult.removeAll();
+            // Get the filter we want to sort by
+            switch (resultFilters.getSelectedItem().toString()) {
+                case "Price: High to low" -> Collections.sort(bookButtons, Collections.reverseOrder((a, b) -> {
+                    String[] textA = a.getText().split("Price:");
+                    String[] textB = b.getText().split("Price:");
+                    StringBuilder priceA = new StringBuilder();
+                    StringBuilder priceB = new StringBuilder();
+
+                    int i = 0;
+                    while (textA[1].substring(6).charAt(i) != '<') {
+                        priceA.append(textA[1].substring(6).charAt(i));
+                        i++;
+                    }
+                    i = 0;
+                    while (textB[1].substring(6).charAt(i) != '<') {
+                        priceB.append(textB[1].substring(6).charAt(i));
+                        i++;
+                    }
+                    return (int) (Double.parseDouble(priceA.toString()) - Double.parseDouble(priceB.toString()));
+                }));
+                case "Price: Low to high" -> Collections.sort(bookButtons, (a, b) -> {
+                    String[] textA = a.getText().split("Price:");
+                    String[] textB = b.getText().split("Price:");
+                    StringBuilder priceA = new StringBuilder();
+                    StringBuilder priceB = new StringBuilder();
+
+                    int i = 0;
+                    while (textA[1].substring(6).charAt(i) != '<') {
+                        priceA.append(textA[1].substring(6).charAt(i));
+                        i++;
+                    }
+                    i = 0;
+                    while (textB[1].substring(6).charAt(i) != '<') {
+                        priceB.append(textB[1].substring(6).charAt(i));
+                        i++;
+                    }
+                    return (int) (Double.parseDouble(priceA.toString()) - Double.parseDouble(priceB.toString()));
+                });
+                case "Title: A-Z" -> Collections.sort(bookButtons, (a, b) -> {
+                    String[] textA = a.getText().split("Title");
+                    String[] textB = b.getText().split("Title");
+                    return textA[1].compareTo(textB[1]);
+                });
+                case "Title: Z-A" -> Collections.sort(bookButtons, Collections.reverseOrder((a, b) -> {
+                    String[] textA = a.getText().split("Title");
+                    String[] textB = b.getText().split("Title");
+                    return textA[1].compareTo(textB[1]);
+                }));
+                case "Year: High to low" -> Collections.sort(bookButtons, Collections.reverseOrder((a, b) -> {
+                    String[] textA = a.getText().split("Year:");
+                    String[] textB = b.getText().split("Year:");
+                    StringBuilder yearA = new StringBuilder();
+                    StringBuilder yearB = new StringBuilder();
+
+                    int i = 0;
+                    while (textA[1].substring(5).charAt(i) != '<') {
+                        yearA.append(textA[1].substring(5).charAt(i));
+                        i++;
+                    }
+                    i = 0;
+                    while (textB[1].substring(5).charAt(i) != '<') {
+                        yearB.append(textB[1].substring(5).charAt(i));
+                        i++;
+                    }
+                    return (Integer.valueOf(yearA.toString()) - Integer.valueOf(yearB.toString()));
+                }));
+                case "Year: Low to high" -> Collections.sort(bookButtons, (a, b) -> {
+                    String[] textA = a.getText().split("Year:");
+                    String[] textB = b.getText().split("Year:");
+                    StringBuilder yearA = new StringBuilder();
+                    StringBuilder yearB = new StringBuilder();
+
+                    int i = 0;
+                    while (textA[1].substring(5).charAt(i) != '<') {
+                        yearA.append(textA[1].substring(5).charAt(i));
+                        i++;
+                    }
+                    i = 0;
+                    while (textB[1].substring(5).charAt(i) != '<') {
+                        yearB.append(textB[1].substring(5).charAt(i));
+                        i++;
+                    }
+                    return (Integer.valueOf(yearA.toString()) - Integer.valueOf(yearB.toString()));
+                });
+            }
+            for (JButton btn : bookButtons) {
+                searchResult.add(btn);
+            }
+            this.invalidate();
+            this.validate();
+            this.repaint();
+        }
+    }
+
+    /**
      * Attempts to search for a book.
      */
     private void search() {
@@ -212,7 +341,7 @@ public class UserScreen extends JFrame implements ActionListener {
             return;
         }
         String searchTerm = Objects.requireNonNull(searchFilters.getSelectedItem()).toString().toLowerCase();
-        switch (searchTerm){
+        switch (searchTerm) {
             case "publisher" -> searchTerm = "pub_name";
             case "genre" -> searchTerm = "name";
         }
@@ -221,7 +350,7 @@ public class UserScreen extends JFrame implements ActionListener {
         ArrayList<Object> results = DatabaseQueries.lookForaBook(searchText, searchTerm);
         if (results == null) {
             errorLabel.setText("Did not find any books, please try again!");
-        } else if(results.get(0).equals("-1")){ //illegal author search
+        } else if (results.get(0).equals("-1")) { //illegal author search
             errorLabel.setText("Nobody has 4 names!...you fool");
         } else {
             if (results.size() / 11 > 4) {
@@ -236,6 +365,8 @@ public class UserScreen extends JFrame implements ActionListener {
                 searchResult.add(btn);
             }
         }
+        // Sort the returned result based on the currently selected filter.
+        sort();
 
         this.invalidate();
         this.validate();
@@ -304,7 +435,6 @@ public class UserScreen extends JFrame implements ActionListener {
         StringBuilder usefulTitle = new StringBuilder();
         StringBuilder usefulISBN = new StringBuilder();
         StringBuilder usefulPrice = new StringBuilder();
-        StringBuilder usefulQuantity = new StringBuilder();
         int i = 0;
         while ((title.charAt(i) != '<')) {
             usefulTitle.append(title.charAt(i));
@@ -460,6 +590,7 @@ public class UserScreen extends JFrame implements ActionListener {
             this.repaint();
         }
     }
+
 
     /**
      * Implements ActionListeners for GUI components
