@@ -555,7 +555,7 @@ public class CheckoutScreen extends JFrame implements ActionListener {
             orderNumber = DatabaseQueries.addOrder(trackingNumber, totalCost.substring(1), false);
         }
         checkoutErrorLabel.setForeground(Color.BLACK);
-        checkoutErrorLabel.setText("Order successful! Your order number is " + orderNumber);
+        checkoutErrorLabel.setText("Order successful! Your order number is: " + orderNumber);
         checkoutErrorLabel.setFocusable(true);
         submitOrder.setEnabled(false);
         cancelOrder.setText("Return to Bookstore");
