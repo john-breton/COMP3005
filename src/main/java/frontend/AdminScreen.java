@@ -117,8 +117,8 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
             editBillCountryTF = new JTextField(15),
             editBillPostalCodeTF = new JTextField(15);
     // edit order
-    protected static JTextField trackingNumber = new JTextField(),
-            searchOrderNumber = new JTextField();
+    protected static final JTextField trackingNumber = new JTextField();
+    protected static final JTextField searchOrderNumber = new JTextField(15);
     // Admin
     protected static final JLabel confirmNewBookAddition = new JLabel("", JLabel.CENTER),
             confirmNewPublisherAddition = new JLabel("", JLabel.CENTER),
@@ -132,8 +132,9 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
             editBookErrorLabel = new JLabel("", JLabel.CENTER),
             currentISBNLabel = new JLabel(""),
             confirmBookEditLabel = new JLabel("", JLabel.CENTER),
-            lookupOrderErrorLabel = new JLabel("ERROR ERROR ERROR", JLabel.CENTER),
-            currentOrderNumber = new JLabel("Current Order Number");
+            lookupOrderErrorLabel = new JLabel("", JLabel.CENTER),
+            currentOrderNumber = new JLabel(""),
+            dateOrderPlaced = new JLabel("");
 
     /* JButtons */
     protected static final JButton deleteBookButton = FrontEndUtilities.formatButton("Delete Book");
@@ -142,7 +143,7 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
     protected static String username;
 
     public AdminScreen(String username) {
-        this.username = username;
+        AdminScreen.username = username;
         Container c = this.getContentPane();
         this.setPreferredSize(new Dimension(950, 800));
         c.removeAll();
@@ -297,8 +298,15 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
         editUserErrorLabel.setText("");
         confirmUserEditLabel.setText("");
 
-        // reports
+        // edit order
+        lookupOrderErrorLabel.setText("");
+        currentOrderNumber.setText("");
+        searchOrderNumber.setText("");
+        trackingNumber.setText("");
+        dateOrderPlaced.setText("");
+        editStatusCB.setSelectedItem("--");
 
+        // reports
 
         // Disable the fields by default.
         billingSameAsShipping.setSelected(true);
@@ -341,6 +349,8 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
         editShippingPostalCodeTF.setEnabled(false);
         editBillingSameAsShipping.setEnabled(false);
         editShippingProvinceCB.setEnabled(false);
+        trackingNumber.setEnabled(false);
+        editStatusCB.setEnabled(false);
 
         isUserAdminCB.setEnabled(false);
 
@@ -1595,6 +1605,11 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
         }
     }
 
+    /**
+     * Creates the "Edit Order" tap for the "Edit Stuff" tab of the adminView
+     *
+     * @return lookupOrderScreen for adminView
+     */
     private JPanel editOrder(){
         /* JPanels */
         JPanel lookupOrderScreen = new JPanel(new GridBagLayout());
@@ -1660,7 +1675,7 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
         con.gridwidth = 1;
         lookupOrderScreen.add(dateOrderPlacedLabel, con);
         con.gridx = 2;
-        lookupOrderScreen.add(new JLabel("Date order placed"), con);
+        lookupOrderScreen.add(dateOrderPlaced, con);
 
         con.gridy = 5;
         con.gridx = 1;
@@ -1816,8 +1831,14 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
                     }
                 } // Admin Add User Screen
                 case "Delete Book" -> confirmDelete("book"); // Admin Screen
-                case "Update Order" -> System.out.println("Updating Order");
-                case "Search Order" -> System.out.println("Searching Order");
+                case "Update Order" -> {
+                    if(AdminScreenUtilities.sendOrderDetails()) {
+                        defaultAdminViewFields();
+                        lookupOrderErrorLabel.setForeground(Color.BLACK);
+                        lookupOrderErrorLabel.setText("Order Updated");
+                    }
+                } // edit order
+                case "Search Order" -> AdminScreenUtilities.fetchOrderDetails(); // edit order
                 default -> System.out.println("Error");
             }
         }

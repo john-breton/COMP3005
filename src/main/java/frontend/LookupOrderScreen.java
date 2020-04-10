@@ -112,7 +112,7 @@ public class LookupOrderScreen extends JFrame implements ActionListener {
         } else {
             trackingNumber.setText(orderInfo.get(0));
             dateOrderPlaced.setText(orderInfo.get(1).substring(0, 11));
-            orderStatus.setText("On the way!");
+            orderStatus.setText(orderInfo.get(2));
         }
     }
 
