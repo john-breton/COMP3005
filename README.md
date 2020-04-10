@@ -2,6 +2,7 @@
 Created for the COMP 3005 course at Carleton University. Winter 2020.
 
 ## Possible TODOs
+- Might want an "Apply Filter" button to sort results
 - ReportPanel
 - After checkout, the system should check the stock of a book to see if more should be ordered adn print a message to the terminal saying "Emailing *publisher* to order # of new books"; probably need to implement report screen first
 - ToolTipText
