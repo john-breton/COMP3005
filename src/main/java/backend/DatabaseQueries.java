@@ -229,11 +229,9 @@ public class DatabaseQueries {
      */
     public static ArrayList<Object> lookForaBook(String searchText, String searchType) {
         ArrayList<Object> bookInfo = new ArrayList<>();
-        int rowCount = 0;
         ResultSet result;
         try {
             switch (searchType) {
-                case "title" -> {System.out.println("Searching Titles");} //search titles
                 case "author" -> {
                     String isbn;
                     String[] names = searchText.trim().split("\\s+");
@@ -244,7 +242,6 @@ public class DatabaseQueries {
                             statement = connection.createStatement();
                             ResultSet result2 = statement.executeQuery(String.format("SELECT * FROM project.book natural join project.publishes WHERE isbn = '%s'", isbn));
                             while (result2.next()) {
-                                rowCount++; // count results
                                 bookInfo.add(isbn);
                                 bookInfo.add(result2.getString("title"));
                                 bookInfo.add(result2.getString("version"));
@@ -267,7 +264,6 @@ public class DatabaseQueries {
                             statement = connection.createStatement();
                             ResultSet result2 = statement.executeQuery(String.format("SELECT * FROM project.book natural join project.publishes WHERE isbn = '%s'", isbn));
                             while (result2.next()) {
-                                rowCount++; // count results
                                 bookInfo.add(isbn);
                                 bookInfo.add(result2.getString("title"));
                                 bookInfo.add(result2.getString("version"));
@@ -289,7 +285,6 @@ public class DatabaseQueries {
                             statement = connection.createStatement();
                             ResultSet result2 = statement.executeQuery(String.format("SELECT * FROM project.book natural join project.publishes WHERE isbn = '%s'", isbn));
                             while (result2.next()) {
-                                rowCount++; // count results
                                 bookInfo.add(isbn);
                                 bookInfo.add(result2.getString("title"));
                                 bookInfo.add(result2.getString("version"));
@@ -318,7 +313,6 @@ public class DatabaseQueries {
                         statement = connection.createStatement();
                         ResultSet result2 = statement.executeQuery(String.format("SELECT * FROM project.book natural join project.publishes WHERE isbn = '%s'", isbn));
                         while (result2.next()) {
-                            rowCount++; // count results
                             bookInfo.add(isbn);
                             bookInfo.add(result2.getString("title"));
                             bookInfo.add(result2.getString("version"));
@@ -336,11 +330,10 @@ public class DatabaseQueries {
                     }
 
                 } // search genres
-                case "pub_name" -> {
+                default -> {
                     result = statement.executeQuery(String.format("SELECT * FROM project.book natural join project.publishes WHERE " + searchType + " = '%s'", searchText));
                     String isbn;
                     while (result.next()) {
-                        rowCount++; // count results
                         isbn = result.getString("isbn");
                         bookInfo.add(isbn);
                         bookInfo.add(result.getString("title"));
@@ -356,9 +349,7 @@ public class DatabaseQueries {
                         // get genres
                         bookInfo.add(lookForaGenre(isbn));
                     }
-                } // search publishers
-                case "isbn" -> {System.out.println("Searching ISBNs");} // search isbns
-                case "year" -> {System.out.println("Searching years");} // search years
+                } // search everything else
             }
 
             // We can find more than one book given the parameters.

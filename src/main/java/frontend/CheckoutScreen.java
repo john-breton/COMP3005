@@ -101,7 +101,6 @@ public class CheckoutScreen extends JFrame implements ActionListener {
         JLabel checkoutTotalPriceLabel = new JLabel("Total Price: ", JLabel.RIGHT),
                 checkoutUserLabel = new JLabel("<html><u>User</u>: " + Objects.requireNonNull(userInfo).get(0) + "</html>"),
                 checkoutNameLabel = new JLabel("<html><u>Name</u>: " + userInfo.get(2) + " " + userInfo.get(3) + "</html>"),
-                // TODO Fix the email label from overflowing to the next line.
                 checkoutEmailLabel = new JLabel("<html><u>Email will be sent to</u>: " + userInfo.get(4) + "</html>"),
                 // checkout shipping address info
                 checkoutShippingLabel = new JLabel("Confirm Shipping Address"),
@@ -556,6 +555,7 @@ public class CheckoutScreen extends JFrame implements ActionListener {
         }
         checkoutErrorLabel.setForeground(Color.BLACK);
         checkoutErrorLabel.setText("Order successful! Your tracking number is " + trackingNumber);
+        checkoutErrorLabel.setFocusable(true);
         submitOrder.setEnabled(false);
         cancelOrder.setText("Return to Bookstore");
     }
