@@ -106,7 +106,6 @@ public class AdminScreenUtilities extends AdminScreen {
             isUserAdminCB.setEnabled(true);
             editBillingSameAsShipping.setEnabled(true);
             editShippingProvinceCB.setEnabled(true);
-            deleteUserButton.setEnabled(true);
         }
     }
 

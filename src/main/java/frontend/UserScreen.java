@@ -212,16 +212,21 @@ public class UserScreen extends JFrame implements ActionListener {
             return;
         }
         String searchTerm = Objects.requireNonNull(searchFilters.getSelectedItem()).toString().toLowerCase();
-        if (searchTerm.equals("publisher")) {
-            searchTerm = "pub_name";
-        } else if (searchTerm.equals("genre")) {
-            searchTerm = "name";
+        switch (searchTerm){
+            case "publisher" -> searchTerm = "pub_name";
+            case "genre" -> searchTerm = "name";
+            case "author" -> searchTerm = "author";
+            case "isbn" -> searchTerm = "isbn";
+            case "year" -> searchTerm = "year";
+            default -> searchTerm = "title";
         }
 
         // Execute the search.
         ArrayList<Object> results = DatabaseQueries.lookForaBook(searchText, searchTerm);
         if (results == null) {
             errorLabel.setText("Did not find any books, please try again!");
+        } else if(results.get(0).equals("-1")){ //illegal author search
+            errorLabel.setText("Nobody has 4 names!...you fool");
         } else {
             if (results.size() / 11 > 4) {
                 searchResult.setLayout(new GridLayout(results.size() / 11, 1));

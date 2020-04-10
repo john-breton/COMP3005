@@ -129,8 +129,7 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
             confirmBookEditLabel = new JLabel("", JLabel.CENTER);
 
     /* JButtons */
-    protected static final JButton deleteUserButton = FrontEndUtilities.formatButton("Delete User"),
-            deleteBookButton = FrontEndUtilities.formatButton("Delete Book");
+    protected static final JButton deleteBookButton = FrontEndUtilities.formatButton("Delete Book");
 
     // Admin username
     protected static String username;
@@ -289,7 +288,6 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
         editBillProvinceCB.setSelectedIndex(0);
         editUserErrorLabel.setText("");
         confirmUserEditLabel.setText("");
-        deleteUserButton.setEnabled(false);
 
         // reports
 
@@ -1314,7 +1312,6 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
         logoutButton.addActionListener(this);
         confirmButton.addActionListener(this);
         searchButton.addActionListener(this);
-        deleteUserButton.addActionListener(this);
         editBillingSameAsShipping.addChangeListener(e -> {
             boolean sameAsBilling = !editBillingSameAsShipping.isSelected();
             editBillStreetNumTF.setEnabled(sameAsBilling);
@@ -1372,7 +1369,6 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
             isUserAdminCB.setEnabled(false);
             editBillingSameAsShipping.setEnabled(false);
             editShippingProvinceCB.setEnabled(false);
-            deleteUserButton.setEnabled(false);
 
             GridBagConstraints con = new GridBagConstraints();
             Dimension spacer = new Dimension(35, 35);
@@ -1418,10 +1414,6 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
             con.fill = GridBagConstraints.HORIZONTAL;
             editUserLoginCredLabel.setFont(editUserLoginCredLabel.getFont().deriveFont(Font.BOLD));
             editUserPanel.add(editUserLoginCredLabel, con);
-            con.gridx = 7;
-            con.fill = GridBagConstraints.NONE;
-            con.anchor = GridBagConstraints.CENTER;
-            editUserPanel.add(deleteUserButton, con);
 
             con.gridy = 5;
             con.gridx = 1;
@@ -1608,8 +1600,6 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
         /* JButtons */
         JButton generateReport = FrontEndUtilities.formatButton("Generate Report");
         JButton logout = FrontEndUtilities.formatButton("Logout");
-
-
 
         /* JLabels */
 

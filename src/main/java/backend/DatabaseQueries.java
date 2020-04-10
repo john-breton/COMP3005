@@ -19,8 +19,8 @@ import java.util.ArrayList;
 public class DatabaseQueries {
 
     // Just putting this here so we can change it when we test.
-    private static final String USER = "postgres";
-    private static final String DATABASE = "lookinnabook";
+    private static final String USER = "ryan";
+    private static final String DATABASE = "LookInnaBook";
     public static Connection connection;
     public static Statement statement;
 
@@ -232,57 +232,137 @@ public class DatabaseQueries {
         int rowCount = 0;
         ResultSet result;
         try {
-            if (searchType.equals("author")) {
-                // TODO Actually finish this.
-            } else if (searchType.equals("name")) {
-                String isbn;
-                result = statement.executeQuery(String.format("SELECT * FROM project.hasgenre WHERE name = '%s'", searchText));
-                while (result.next()) {
-                    isbn = result.getString("isbn");
-                    statement = connection.createStatement();
-                    ResultSet result2 = statement.executeQuery(String.format("SELECT * FROM project.book natural join project.publishes WHERE isbn = '%s'", isbn));
-                    while (result2.next()) {
+            switch (searchType) {
+                case "title" -> {System.out.println("Searching Titles");} //search titles
+                case "author" -> {
+                    String isbn;
+                    String[] names = searchText.trim().split("\\s+");
+                    if (names.length > 1 && names.length < 4) { // searching 1 full author name
+                        result = statement.executeQuery(String.format("SELECT * FROM project.writes WHERE auth_fn = '%s' AND auth_ln = '%s'", names[0], names[names.length - 1]));
+                        while (result.next()) {
+                            isbn = result.getString("isbn");
+                            statement = connection.createStatement();
+                            ResultSet result2 = statement.executeQuery(String.format("SELECT * FROM project.book natural join project.publishes WHERE isbn = '%s'", isbn));
+                            while (result2.next()) {
+                                rowCount++; // count results
+                                bookInfo.add(isbn);
+                                bookInfo.add(result2.getString("title"));
+                                bookInfo.add(result2.getString("version"));
+                                bookInfo.add(result2.getString("num_pages"));
+                                bookInfo.add(result2.getString("price"));
+                                bookInfo.add(result2.getString("royalty"));
+                                bookInfo.add(result2.getString("stock"));
+                                bookInfo.add(result2.getString("pub_name"));
+                                bookInfo.add(result2.getString("year"));
+                                // get author info
+                                bookInfo.add(lookForaAuthor(isbn));
+                                // get genres
+                                bookInfo.add(lookForaGenre(isbn));
+                            }
+                        }
+                    } else if (names.length == 1) { // search first and then last names
+                        result = statement.executeQuery(String.format("SELECT * FROM project.writes WHERE auth_fn = '%s'", names[0])); // search first names
+                        while (result.next()) {
+                            isbn = result.getString("isbn");
+                            statement = connection.createStatement();
+                            ResultSet result2 = statement.executeQuery(String.format("SELECT * FROM project.book natural join project.publishes WHERE isbn = '%s'", isbn));
+                            while (result2.next()) {
+                                rowCount++; // count results
+                                bookInfo.add(isbn);
+                                bookInfo.add(result2.getString("title"));
+                                bookInfo.add(result2.getString("version"));
+                                bookInfo.add(result2.getString("num_pages"));
+                                bookInfo.add(result2.getString("price"));
+                                bookInfo.add(result2.getString("royalty"));
+                                bookInfo.add(result2.getString("stock"));
+                                bookInfo.add(result2.getString("pub_name"));
+                                bookInfo.add(result2.getString("year"));
+                                // get author info
+                                bookInfo.add(lookForaAuthor(isbn));
+                                // get genres
+                                bookInfo.add(lookForaGenre(isbn));
+                            }
+                        }
+                        result = statement.executeQuery(String.format("SELECT * FROM project.writes WHERE auth_ln = '%s'", names[0])); // search last names
+                        while (result.next()) {
+                            isbn = result.getString("isbn");
+                            statement = connection.createStatement();
+                            ResultSet result2 = statement.executeQuery(String.format("SELECT * FROM project.book natural join project.publishes WHERE isbn = '%s'", isbn));
+                            while (result2.next()) {
+                                rowCount++; // count results
+                                bookInfo.add(isbn);
+                                bookInfo.add(result2.getString("title"));
+                                bookInfo.add(result2.getString("version"));
+                                bookInfo.add(result2.getString("num_pages"));
+                                bookInfo.add(result2.getString("price"));
+                                bookInfo.add(result2.getString("royalty"));
+                                bookInfo.add(result2.getString("stock"));
+                                bookInfo.add(result2.getString("pub_name"));
+                                bookInfo.add(result2.getString("year"));
+                                // get author info
+                                bookInfo.add(lookForaAuthor(isbn));
+                                // get genres
+                                bookInfo.add(lookForaGenre(isbn));
+                            }
+                        }
+                    } else {
+                        bookInfo.clear();
+                        bookInfo.add("-1"); // searching for more than 3 names?
+                    }
+                } // search authors
+                case "name" -> {
+                    String isbn;
+                    result = statement.executeQuery(String.format("SELECT * FROM project.hasgenre WHERE name = '%s'", searchText));
+                    while (result.next()) {
+                        isbn = result.getString("isbn");
+                        statement = connection.createStatement();
+                        ResultSet result2 = statement.executeQuery(String.format("SELECT * FROM project.book natural join project.publishes WHERE isbn = '%s'", isbn));
+                        while (result2.next()) {
+                            rowCount++; // count results
+                            bookInfo.add(isbn);
+                            bookInfo.add(result2.getString("title"));
+                            bookInfo.add(result2.getString("version"));
+                            bookInfo.add(result2.getString("num_pages"));
+                            bookInfo.add(result2.getString("price"));
+                            bookInfo.add(result2.getString("royalty"));
+                            bookInfo.add(result2.getString("stock"));
+                            bookInfo.add(result2.getString("pub_name"));
+                            bookInfo.add(result2.getString("year"));
+                            // get author info
+                            bookInfo.add(lookForaAuthor(isbn));
+                            // get genres
+                            bookInfo.add(lookForaGenre(isbn));
+                        }
+                    }
+
+                } // search genres
+                case "pub_name" -> {
+                    result = statement.executeQuery(String.format("SELECT * FROM project.book natural join project.publishes WHERE " + searchType + " = '%s'", searchText));
+                    String isbn;
+                    while (result.next()) {
                         rowCount++; // count results
+                        isbn = result.getString("isbn");
                         bookInfo.add(isbn);
-                        bookInfo.add(result2.getString("title"));
-                        bookInfo.add(result2.getString("version"));
-                        bookInfo.add(result2.getString("num_pages"));
-                        bookInfo.add(result2.getString("price"));
-                        bookInfo.add(result2.getString("royalty"));
-                        bookInfo.add(result2.getString("stock"));
-                        bookInfo.add(result2.getString("pub_name"));
-                        bookInfo.add(result2.getString("year"));
+                        bookInfo.add(result.getString("title"));
+                        bookInfo.add(result.getString("version"));
+                        bookInfo.add(result.getString("num_pages"));
+                        bookInfo.add(result.getString("price"));
+                        bookInfo.add(result.getString("royalty"));
+                        bookInfo.add(result.getString("stock"));
+                        bookInfo.add(result.getString("pub_name"));
+                        bookInfo.add(result.getString("year"));
                         // get author info
                         bookInfo.add(lookForaAuthor(isbn));
                         // get genres
                         bookInfo.add(lookForaGenre(isbn));
                     }
-                }
-
-            } else {
-                result = statement.executeQuery(String.format("SELECT * FROM project.book natural join project.publishes WHERE " + searchType + " = '%s'", searchText));
-                String isbn;
-                while (result.next()) {
-                    rowCount++; // count results
-                    isbn = result.getString("isbn");
-                    bookInfo.add(isbn);
-                    bookInfo.add(result.getString("title"));
-                    bookInfo.add(result.getString("version"));
-                    bookInfo.add(result.getString("num_pages"));
-                    bookInfo.add(result.getString("price"));
-                    bookInfo.add(result.getString("royalty"));
-                    bookInfo.add(result.getString("stock"));
-                    bookInfo.add(result.getString("pub_name"));
-                    bookInfo.add(result.getString("year"));
-                    // get author info
-                    bookInfo.add(lookForaAuthor(isbn));
-                    // get genres
-                    bookInfo.add(lookForaGenre(isbn));
-                }
+                } // search publishers
+                case "isbn" -> {System.out.println("Searching ISBNs");} // search isbns
+                case "year" -> {System.out.println("Searching years");} // search years
             }
 
             // We can find more than one book given the parameters.
-            if (rowCount >= 1) {
+            if (bookInfo.size() >= 1) {
                 return bookInfo; // book found
             } else {
                 return null; // no isbn found
