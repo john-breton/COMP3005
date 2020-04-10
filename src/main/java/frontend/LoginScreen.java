@@ -28,7 +28,9 @@ public class LoginScreen extends JFrame implements ActionListener {
         JButton registerButton = FrontEndUtilities.formatButton("Register");
         registerButton.setToolTipText("Proceed to the registration page");
         JButton lookupOrderButton = FrontEndUtilities.formatButton("Order Lookup");
-        lookupOrderButton.setToolTipText("Proceed to the lookup order page");
+        lookupOrderButton.setToolTipText("Proceed to the look up order page");
+        FrontEndUtilities.usernameField.setToolTipText("Enter your username");
+        FrontEndUtilities.passwordField.setToolTipText("Enter your password");
 
         // JLabels
         JLabel usernameLabel = new JLabel("Username: ");
@@ -89,7 +91,9 @@ public class LoginScreen extends JFrame implements ActionListener {
      */
     private void adminScreenChoice() {
         JButton userButton = FrontEndUtilities.formatButton("Customer View");
+        userButton.setToolTipText("Proceed to the customer screen");
         JButton adminButton = FrontEndUtilities.formatButton("Administrative View");
+        adminButton.setToolTipText("Proceed to the administration screen");
 
         Object[] options = {adminButton, userButton};
         final JOptionPane screenChoice = new JOptionPane("Which screen would you like to be directed to?", JOptionPane.PLAIN_MESSAGE, JOptionPane.YES_NO_OPTION, null, options, options[0]);

@@ -25,10 +25,10 @@ public class FrontEndUtilities {
      * Confirms that the user wishes to logout
      */
     static void confirmLogout(JFrame frame) {
-        JButton logoutButton = new JButton("Logout");
-        JButton cancelButton = new JButton("Cancel");
-        logoutButton.setBackground(Color.WHITE);
-        cancelButton.setBackground(Color.WHITE);
+        JButton logoutButton = formatButton("Logout");
+        logoutButton.setToolTipText("Logout and return to the login page");
+        JButton cancelButton = formatButton("Cancel");
+        cancelButton.setToolTipText("Cancel the logout and remain logged in");
 
         Object[] options = {logoutButton, cancelButton};
         final JOptionPane areYouSure = new JOptionPane("Are you sure you want to logout?", JOptionPane.PLAIN_MESSAGE, JOptionPane.YES_NO_OPTION, null, options, options[1]);

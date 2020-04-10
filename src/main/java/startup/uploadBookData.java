@@ -13,10 +13,8 @@ import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
+import java.util.Objects;
 import java.util.Random;
 import java.util.stream.Stream;
 
@@ -26,8 +24,8 @@ import java.util.stream.Stream;
 @SuppressWarnings("JavaDoc")
 public class uploadBookData {
 
-    private static final String DATABASE = "lookinnabook";
-    private static final String USER = "postgres";
+    private static final String DATABASE = "LookInnaBook";
+    private static final String USER = "ryan";
     static String titleObject;
     static BigInteger isbnObject;
     static JsonArray authorsObject;
@@ -36,12 +34,13 @@ public class uploadBookData {
     static JsonArray genresObject;
     static JsonArray publishersObject;
     static int count = 0;
-
+    static ResultSet isbnResult;
+    private static Statement statement;
 
     public static void main(String[] args) {
         try {
             Connection connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/" + DATABASE, USER, "");
-            Statement statement = connection.createStatement();
+            statement = connection.createStatement();
 
             // emptyDB
             StringBuilder resetDB = new StringBuilder();
@@ -141,7 +140,7 @@ public class uploadBookData {
             String defaultEmail = "default";
             defaultEmail += count++ + "@carleton.ca";
             String newP = p.getAsString().replaceAll("'", "");
-            if(DatabaseQueries.addPublisher(newP, defaultEmail, String.valueOf(phoneNum) + count, String.valueOf(bankAcc) + count)) {
+            if (DatabaseQueries.addPublisher(newP, defaultEmail, String.valueOf(phoneNum) + count, String.valueOf(bankAcc) + count)) {
                 DatabaseQueries.addAddress(String.valueOf(r.nextInt(1000)), "Default Ave.", "B", "Ottawa", "ON", "Canada", "O1T4W4");
                 DatabaseQueries.addPubAdd(newP);
             }
@@ -197,6 +196,48 @@ public class uploadBookData {
                 DatabaseQueries.addAddress(Integer.toString(streetNum), defaultStreetName + streetid, apt, city, prov, count, postalCode.toString());
             }
             DatabaseQueries.addHasAdd(username, false);
+        }
+
+        if (r.nextInt(4) > 2) {
+            // Look at that, this user has purchased items from our wonderful bookstore.
+            // How very generous of them.
+
+            // Add items to their cart.
+            double totalPrice = 0;
+            String cartID = DatabaseQueries.getCartID(username);
+            ResultSet priceOfBook = null;
+            int itemsPurchased = r.nextInt(10) + 1;
+            // Have them order between 1 and 10 books of a random quantity.
+            for (int i = 0; i < itemsPurchased; i++) {
+                String isbn = "";
+                int quantity = r.nextInt(20);
+                try {
+                    isbnResult = statement.executeQuery("SELECT isbn From project.book ORDER BY random() limit 1");
+                    isbnResult.next();
+                    isbn = isbnResult.getString("isbn");
+                    priceOfBook = statement.executeQuery("SELECT price from project.book WHERE isbn = '" + isbn + "'");
+                    priceOfBook.next();
+                    totalPrice += Double.parseDouble(priceOfBook.getString("price")) * quantity;
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+                // Add the book to the cart.
+                DatabaseQueries.addToCart(cartID, isbn);
+                // Increase the quantity of the book between 0 and 20 times.
+                for (int j = 0; j < quantity; j++) {
+                    DatabaseQueries.updateQuantity(cartID, isbn, true);
+                }
+            }
+            int low = 10000000;
+            int trackingNumber1 = r.nextInt(99999999 - low) + low;
+            int trackingNumber2 = r.nextInt(99999999 - low) + low;
+            String trackingNumber = String.valueOf(trackingNumber1) + trackingNumber2;
+            // Register the order as completed
+            String orderNumber = DatabaseQueries.addOrder(trackingNumber, String.valueOf(totalPrice), isBilling);
+            DatabaseQueries.addCheckout(orderNumber, Objects.requireNonNull(DatabaseQueries.checkForCart(username)).get(0));
+            // Give the user a new cart after their order is done.
+            DatabaseQueries.registerCart(username);
+            // Thank you for your business! Please shop with us again.
         }
     }
 

@@ -15,13 +15,12 @@ public class LookupOrderScreen extends JFrame implements ActionListener {
     private final JTextField orderNumber = new JTextField(16);
 
     /* JLabels */
-    private final JLabel invalidOrderLabel = new JLabel();
+    private final JLabel invalidOrderLabel = new JLabel("", JLabel.CENTER);
     private final JLabel orderStatus = new JLabel("");
     private final JLabel dateOrderPlaced = new JLabel("");
     private final JLabel trackingNumber = new JLabel("");
 
     public LookupOrderScreen() {
-
         Container c = this.getContentPane();
         // Clear GUI in order to reload
         this.setPreferredSize(new Dimension(400, 200));
@@ -29,8 +28,8 @@ public class LookupOrderScreen extends JFrame implements ActionListener {
         c.removeAll();
 
         /* JPanels */
-        JPanel orderScreen = new JPanel(new GridBagLayout());
-        orderScreen.setBorder(new EmptyBorder(10, 10, 10, 10));
+        final GridBagLayout layout = new GridBagLayout();
+        JPanel orderScreen = new JPanel(layout);
 
         /* JLabels */
         JLabel orderNumberLabel = new JLabel("<html><u>Order Number</u>: </html>");
@@ -38,9 +37,12 @@ public class LookupOrderScreen extends JFrame implements ActionListener {
         JLabel dateOrderPlacedLabel = new JLabel("<html><u>Date Placed</u>: </html>");
         JLabel orderStatusLabel = new JLabel("<html><u>Status</u>: </html>");
 
-        /* JButtons */
+        /* JButtons and ToolTips*/
         JButton cancelLookup = FrontEndUtilities.formatButton("Cancel Lookup");
+        cancelLookup.setToolTipText("Return to the login page");
         JButton lookupOrder = FrontEndUtilities.formatButton("Lookup Order");
+        lookupOrder.setToolTipText("Look up an order based on the provided order number");
+        orderNumber.setToolTipText("Enter your order number");
 
         /* ActionListeners */
         cancelLookup.addActionListener(this);

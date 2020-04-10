@@ -48,13 +48,33 @@ public class RegistrationScreen extends JFrame implements ActionListener {
         this.setPreferredSize(new Dimension(700, 550));
         this.setMaximumSize(new Dimension(700, 550));
         if (this.getJMenuBar() != null) this.getJMenuBar().setVisible(false);
+        this.setBackground(Color.WHITE);
         // Get the container for the JFrame.
         Container c = this.getContentPane();
         c.removeAll();
 
         // ToolTips
+        newUsernameTF.setToolTipText("Enter your username");
+        firstNameTF.setToolTipText("Enter your first name");
+        lastNameTF.setToolTipText("Enter your last name");
+        emailTF.setToolTipText("Enter your email address (Format: email@domain");
+        newPasswordTF.setToolTipText("Enter your password (Case-sensitive)");
+        confirmPasswordTF.setToolTipText("Confirm your password (Case-sensitive, please ensure your password match)");
         billStreetNumTF.setToolTipText("Enter the street number for your billing address");
-        billStreetNameTF.setTo
+        billStreetNameTF.setToolTipText("Enter the street name for your billing address");
+        billApartmentTF.setToolTipText("Enter the apartment number for your billing address (Optional)");
+        billCityTF.setToolTipText("Enter the city name for your billing address");
+        billProvinceCB.setToolTipText("Select the province name for your billing address");
+        billCountryTF.setToolTipText("Enter the country name for your billing address");
+        billPostalCodeTF.setToolTipText("Enter the postal code for your billing address (Format: X1X1X1");
+        shipStreetNumTF.setToolTipText("Enter the street number for your shipping address");
+        shipStreetNameTF.setToolTipText("Enter the street name for your shipping address");
+        shipApartmentTF.setToolTipText("Enter the apartment number for your shipping address (Optional)");
+        shipCityTF.setToolTipText("Enter the city name for your shipping address");
+        shipProvinceCB.setToolTipText("Select the province name for your shipping address");
+        shipCountryTF.setToolTipText("Enter the country name for your shipping address");
+        shipPostalCodeTF.setToolTipText("Enter the postal code for your shipping address (Format: X1X1X1");
+        billingSameAsShipping.setToolTipText("Select this if your shipping address is the same as your billing address");
 
         shipProvinceCB.setBackground(Color.WHITE);
         billProvinceCB.setBackground(Color.WHITE);
@@ -309,7 +329,6 @@ public class RegistrationScreen extends JFrame implements ActionListener {
             Component glue = Box.createVerticalGlue();
             regPage.add(glue, con);
         }
-
         c.add(regPage);
         FrontEndUtilities.configureFrame(this);
     }
@@ -321,7 +340,7 @@ public class RegistrationScreen extends JFrame implements ActionListener {
      * @see super.registerNewUser, super.addHasAdd, super.addAddress, super.countAddresses for further implementation.
      */
     private boolean register() {
-        confirmRegistration.setForeground(Color.red);
+        confirmRegistration.setForeground(new Color(255, 0, 0));
         // Check for a valid username.
         if (newUsernameTF.getText().length() == 0) {
             confirmRegistration.setText("Registration Failed. Please provide a username.");

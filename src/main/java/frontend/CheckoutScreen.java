@@ -71,32 +71,27 @@ public class CheckoutScreen extends JFrame implements ActionListener {
 
         // Setup Components
 
+        /* ToolTips */
+        checkoutBillingStreetNumTF.setToolTipText("Enter the street number for your billing address");
+        checkoutBillingStreetNameTF.setToolTipText("Enter the street name for your billing address");
+        checkoutBillingApartmentTF.setToolTipText("Enter the apartment number for your billing address (Optional)");
+        checkoutBillingCityTF.setToolTipText("Enter the city name for your billing address");
+        checkoutBillingProvinceCB.setToolTipText("Select the province name for your billing address");
+        checkoutBillingCountryTF.setToolTipText("Enter the country name for your billing address");
+        checkoutBillingPostalCodeTF.setToolTipText("Enter the postal code for your billing address (Format: X1X1X1");
+        checkoutShippingStreetNumTF.setToolTipText("Enter the street number for your shipping address");
+        checkoutShippingStreetNameTF.setToolTipText("Enter the street name for your shipping address");
+        checkoutShippingApartmentTF.setToolTipText("Enter the apartment number for your shipping address (Optional)");
+        checkoutShippingCityTF.setToolTipText("Enter the city name for your shipping address");
+        checkoutShippingProvinceCB.setToolTipText("Select the province name for your shipping address");
+        checkoutShippingCountryTF.setToolTipText("Enter the country name for your shipping address");
+        checkoutShippingPostalCodeTF.setToolTipText("Enter the postal code for your shipping address (Format: X1X1X1");
+        billingSameAsShipping.setToolTipText("Select this if your shipping address is the same as your billing address");
+
         /* Panel */
         final GridBagLayout layout = new GridBagLayout();
         JPanel checkoutPanel = new JPanel(layout);
-        /*{
 
-            @Override
-            public void paint(Graphics g)
-            {
-                super.paint(g);
-                int[][] dims = layout.getLayoutDimensions();
-                g.setColor(Color.BLUE);
-                int x = 0;
-                for (int add : dims[0])
-                {
-                    x += add;
-                    g.drawLine(x, 0, x, getHeight());
-                }
-                int y = 0;
-                for (int add : dims[1])
-                {
-                    y += add;
-                    g.drawLine(0, y, getWidth(), y);
-                }
-            }
-
-        };*/
         /* JLabels */
         JLabel checkoutTotalPriceLabel = new JLabel("Total Price: ", JLabel.RIGHT),
                 checkoutUserLabel = new JLabel("<html><u>User</u>: " + Objects.requireNonNull(userInfo).get(0) + "</html>"),

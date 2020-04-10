@@ -73,7 +73,7 @@ CREATE TABLE project.order (
     order_num 		SERIAL NOT NULL PRIMARY KEY,
     tracking_num 	numeric(16,0) UNIQUE,
     date_placed 	timestamp without time zone,
-    total_price 	numeric(6,2),
+    total_price 	numeric(9,2),
     status          varchar(20)
 );
 
