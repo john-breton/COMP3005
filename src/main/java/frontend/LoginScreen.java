@@ -22,10 +22,13 @@ public class LoginScreen extends JFrame implements ActionListener {
         c.setLayout(new BoxLayout(c, BoxLayout.PAGE_AXIS));
 
         /* Component declarations */
-        // JButtons
+        // JButtons and ToolTips
         JButton loginButton = FrontEndUtilities.formatButton("Login");
+        loginButton.setToolTipText("Login to LookInnaBook");
         JButton registerButton = FrontEndUtilities.formatButton("Register");
+        registerButton.setToolTipText("Proceed to the registration page");
         JButton lookupOrderButton = FrontEndUtilities.formatButton("Order Lookup");
+        lookupOrderButton.setToolTipText("Proceed to the lookup order page");
 
         // JLabels
         JLabel usernameLabel = new JLabel("Username: ");

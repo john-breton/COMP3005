@@ -84,8 +84,7 @@ public class LookupOrderScreen extends JFrame implements ActionListener {
 
         con.gridy = 5;
         con.gridx = 0;
-        con.gridwidth = 100;
-        con.anchor = GridBagConstraints.CENTER;
+        con.gridwidth = 6;
         orderScreen.add(invalidOrderLabel, con);
         invalidOrderLabel.setForeground(Color.RED);
 

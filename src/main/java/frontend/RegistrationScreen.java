@@ -52,14 +52,20 @@ public class RegistrationScreen extends JFrame implements ActionListener {
         Container c = this.getContentPane();
         c.removeAll();
 
+        // ToolTips
+        billStreetNumTF.setToolTipText("Enter the street number for your billing address");
+        billStreetNameTF.setTo
+
         shipProvinceCB.setBackground(Color.WHITE);
         billProvinceCB.setBackground(Color.WHITE);
 
-        // JButton
+        // JButton and ToolTips
         JButton cancelReg = new JButton("Cancel Registration");
+        cancelReg.setToolTipText("Return to the login page");
         JPanel buttons = new JPanel();
         buttons.add(cancelReg);
         JButton submitReg = new JButton("Submit");
+        submitReg.setToolTipText("Submit the registration application");
         buttons.add(submitReg);
 
         // JPanels

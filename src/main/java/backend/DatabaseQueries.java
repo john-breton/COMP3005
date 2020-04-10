@@ -19,8 +19,8 @@ import java.util.ArrayList;
 public class DatabaseQueries {
 
     // Just putting this here so we can change it when we test.
-    private static final String USER = "ryan";
-    private static final String DATABASE = "LookInnaBook";
+    private static final String USER = "postgres";
+    private static final String DATABASE = "lookinnabook";
     public static Connection connection;
     public static Statement statement;
 
@@ -508,9 +508,8 @@ public class DatabaseQueries {
                 statement.execute("INSERT INTO project.ordadd values (currval('project.order_order_num_seq'), currval('project.address_add_id_seq'), false, true)");
             }
             result = statement.executeQuery("SELECT * FROM project.order WHERE tracking_num = '" + trackingNumber + "'");
-            while(result.next()) {
-                return result.getString("order_num");
-            }
+            result.next();
+            return result.getString("order_num");
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -723,7 +722,6 @@ public class DatabaseQueries {
      */
     public static void registerCart(String username) {
         try {
-            statement = connection.createStatement();
             statement.execute(String.format("INSERT into project.bask_manage values ('%s', currval('project.basket_basket_id_seq'))", username));
         } catch (SQLException e) {
             e.printStackTrace();

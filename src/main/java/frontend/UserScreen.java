@@ -25,31 +25,6 @@ import java.util.Objects;
  */
 public class UserScreen extends JFrame implements ActionListener {
 
-    class SortByYear implements Comparator<JButton>
-    {
-        // Used for sorting in ascending order of
-        // roll number
-        public int compare(JButton a, JButton b)
-        {
-            String[] textA = a.getText().split("Year:");
-            String[] textB = b.getText().split("Year:");
-            StringBuilder priceA = new StringBuilder();
-            StringBuilder priceB = new StringBuilder();
-
-            int i = 0;
-            while (textA[1].substring(5).charAt(i) != '<') {
-                priceA.append(textA[1].substring(5).charAt(i));
-                i++;
-            }
-            i = 0;
-            while (textB[1].substring(5).charAt(i) != '<') {
-                priceB.append(textB[1].substring(5).charAt(i));
-                i++;
-            }
-            return (Integer.valueOf(priceA.toString()) - Integer.valueOf(priceB.toString()));
-        }
-    }
-
     private final JTextField userSearchTF = new JTextField();
     private final JComboBox<String> searchFilters = new JComboBox<>(FrontEndUtilities.searchFilterArr);
     private final JComboBox<String> resultFilters = new JComboBox<>(FrontEndUtilities.resultFilterArr);
@@ -230,10 +205,10 @@ public class UserScreen extends JFrame implements ActionListener {
      */
     private void sort() {
         // We only want to sort if there are at least two books
-        if (!bookButtons.isEmpty() && bookButtons.size() != 0) {
+        if (!bookButtons.isEmpty() && bookButtons.size() != 1) {
             searchResult.removeAll();
             // Get the filter we want to sort by
-            switch (resultFilters.getSelectedItem().toString()) {
+            switch (Objects.requireNonNull(resultFilters.getSelectedItem()).toString()) {
                 case "Price: High to low" -> Collections.sort(bookButtons, Collections.reverseOrder((a, b) -> {
                     String[] textA = a.getText().split("Price:");
                     String[] textB = b.getText().split("Price:");

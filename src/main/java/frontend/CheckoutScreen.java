@@ -555,7 +555,7 @@ public class CheckoutScreen extends JFrame implements ActionListener {
             orderNumber = DatabaseQueries.addOrder(trackingNumber, totalCost.substring(1), false);
            }
 
-        DatabaseQueries.addCheckout(orderNumber, DatabaseQueries.checkForCart(username).get(0));
+        DatabaseQueries.addCheckout(orderNumber, Objects.requireNonNull(DatabaseQueries.checkForCart(username)).get(0));
         DatabaseQueries.registerCart(username);
 
         checkoutErrorLabel.setForeground(Color.BLACK);
