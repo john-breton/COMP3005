@@ -19,8 +19,8 @@ import java.util.ArrayList;
 public class DatabaseQueries {
 
     // Just putting this here so we can change it when we test.
-    private static final String USER = "ryan";
-    private static final String DATABASE = "LookInnaBook";
+    private static final String USER = "postgres";
+    private static final String DATABASE = "lookinnabook";
     public static Connection connection;
     public static Statement statement;
 
@@ -67,18 +67,17 @@ public class DatabaseQueries {
     /**
      * Query order information form the database.
      *
-     * @param trackingNumber The tracking number associated with an order.
+     * @param orderNumber The tracking number associated with an order.
      * @return An ArrayList of containing order information from the database if the order was found. Null if no order was found.
      *         If an order was found: [0] = order_num, [1] = tracking_num, [2] = date_placed
      */
-    public static ArrayList<String> lookForanOrder(String trackingNumber) {
+    public static ArrayList<String> lookForanOrder(String orderNumber) {
         try {
             ArrayList<String> orderInfo = new ArrayList<>();
-            ResultSet result = statement.executeQuery("SELECT * FROM project.order WHERE tracking_num = '" + trackingNumber + "'");
+            ResultSet result = statement.executeQuery("SELECT * FROM project.order WHERE order_num = '" + orderNumber + "'");
             while (result.next()) {
-                orderInfo.add(0, result.getString("order_num"));
-                orderInfo.add(1, result.getString("tracking_num"));
-                orderInfo.add(2, result.getString("date_placed"));
+                orderInfo.add(0, result.getString("tracking_num"));
+                orderInfo.add(1, result.getString("date_placed"));
             }
             return orderInfo;
         } catch (SQLException e) {
@@ -233,7 +232,6 @@ public class DatabaseQueries {
         ResultSet result;
         try {
             switch (searchType) {
-                case "title" -> {System.out.println("Searching Titles");} //search titles
                 case "author" -> {
                     String isbn;
                     String[] names = searchText.trim().split("\\s+");
@@ -336,7 +334,7 @@ public class DatabaseQueries {
                     }
 
                 } // search genres
-                case "pub_name" -> {
+                case "pub_name", "title", "isbn", "year" -> {
                     result = statement.executeQuery(String.format("SELECT * FROM project.book natural join project.publishes WHERE " + searchType + " = '%s'", searchText));
                     String isbn;
                     while (result.next()) {
@@ -357,8 +355,6 @@ public class DatabaseQueries {
                         bookInfo.add(lookForaGenre(isbn));
                     }
                 } // search publishers
-                case "isbn" -> {System.out.println("Searching ISBNs");} // search isbns
-                case "year" -> {System.out.println("Searching years");} // search years
             }
 
             // We can find more than one book given the parameters.
@@ -501,11 +497,13 @@ public class DatabaseQueries {
      * @param trackingNumber The tracking number of an order.
      * @param totalCost The total cost of an order.
      * @param oneAddress True if there the order has the same billing and shipping address, false otherwise.
+     * @return The order number associated with the order.
      */
-    public static void addOrder(String trackingNumber, String totalCost, boolean oneAddress) {
+    public static String addOrder(String trackingNumber, String totalCost, boolean oneAddress) {
         Date date = new Date();
         Timestamp ts = new Timestamp(date.getTime());
         try {
+            ResultSet result;
             if (oneAddress) {
                 statement.execute("INSERT INTO project.order values (nextval('project.order_order_num_seq'), '" + trackingNumber + "', '" + ts + "', '" + totalCost + "')");
                 statement.execute("INSERT INTO project.ordadd values (currval('project.order_order_num_seq'), currval('project.address_add_id_seq'), true, true)");
@@ -514,12 +512,15 @@ public class DatabaseQueries {
                 statement.execute("INSERT INTO project.ordadd values (currval('project.order_order_num_seq'), currval('project.address_add_id_seq') - 1, true, false)");
                 statement.execute("INSERT INTO project.ordadd values (currval('project.order_order_num_seq'), currval('project.address_add_id_seq'), false, true)");
             }
+            result = statement.executeQuery("SELECT * FROM project.order WHERE tracking_num = '" + trackingNumber + "'");
+            while(result.next()) {
+                return result.getString("order_num");
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return null;
     }
-
-
 
     /**
      * Add an address into the database.

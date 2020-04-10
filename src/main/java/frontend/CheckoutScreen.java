@@ -542,20 +542,21 @@ public class CheckoutScreen extends JFrame implements ActionListener {
         int trackingNumber1 = r.nextInt(99999999 - low) + low;
         int trackingNumber2 = r.nextInt(99999999 - low) + low;
         String trackingNumber = String.valueOf(trackingNumber1) + trackingNumber2;
+        String orderNumber;
 
         // All fields are correct. Need to determine if addresses have changed.
         // Do not associate these addresses with a user, but associate them with the order.
         // Case 1: Same billing and shipping.
         DatabaseQueries.addAddress(checkoutShippingStreetNumTF.getText(), checkoutShippingStreetNameTF.getText(), checkoutShippingApartmentTF.getText(), checkoutShippingCityTF.getText(), Objects.requireNonNull(checkoutShippingProvinceCB.getSelectedItem()).toString(), checkoutShippingCountryTF.getText(), checkoutShippingCountryTF.getText());
         if (sameAsBilling) {
-            DatabaseQueries.addOrder(trackingNumber, totalCost.substring(1), true);
+            orderNumber = DatabaseQueries.addOrder(trackingNumber, totalCost.substring(1), true);
         } else {
         // Case 2: Different billing and shipping.
             DatabaseQueries.addAddress(checkoutBillingStreetNumTF.getText(), checkoutBillingStreetNameTF.getText(), checkoutBillingApartmentTF.getText(), checkoutBillingCityTF.getText(), Objects.requireNonNull(checkoutBillingProvinceCB.getSelectedItem()).toString(), checkoutBillingCountryTF.getText(), checkoutBillingCountryTF.getText());
-            DatabaseQueries.addOrder(trackingNumber, totalCost.substring(1), false);
+            orderNumber = DatabaseQueries.addOrder(trackingNumber, totalCost.substring(1), false);
         }
         checkoutErrorLabel.setForeground(Color.BLACK);
-        checkoutErrorLabel.setText("Order successful! Your tracking number is " + trackingNumber);
+        checkoutErrorLabel.setText("Order successful! Your order number is " + orderNumber);
         submitOrder.setEnabled(false);
         cancelOrder.setText("Return to Bookstore");
     }

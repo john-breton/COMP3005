@@ -26,8 +26,8 @@ import java.util.stream.Stream;
 @SuppressWarnings("JavaDoc")
 public class uploadBookData {
 
-    private static final String DATABASE = "LookInnaBook";
-    private static final String USER = "ryan";
+    private static final String DATABASE = "lookinnabook";
+    private static final String USER = "postgres";
     static String titleObject;
     static BigInteger isbnObject;
     static JsonArray authorsObject;

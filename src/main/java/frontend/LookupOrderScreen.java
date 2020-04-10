@@ -12,13 +12,13 @@ import java.util.Objects;
 
 public class LookupOrderScreen extends JFrame implements ActionListener {
     /* JTextFields */
-    private final JTextField trackingNumber = new JTextField(16);
+    private final JTextField orderNumber = new JTextField(16);
 
     /* JLabels */
-    private final JLabel invalidTrackingLabel = new JLabel();
+    private final JLabel invalidOrderLabel = new JLabel();
     private final JLabel orderStatus = new JLabel("");
     private final JLabel dateOrderPlaced = new JLabel("");
-    private final JLabel orderNumber = new JLabel("");
+    private final JLabel trackingNumber = new JLabel("");
 
     public LookupOrderScreen() {
 
@@ -59,17 +59,16 @@ public class LookupOrderScreen extends JFrame implements ActionListener {
 
         con.gridy = 1;
         con.gridx = 0;
-        orderScreen.add(trackingNumberLabel, con);
+        orderScreen.add(orderNumberLabel, con);
         con.gridx = 1;
         // JTextField
-        orderScreen.add(trackingNumber, con);
+        orderScreen.add(orderNumber, con);
 
         con.gridy = 2;
         con.gridx = 0;
-        orderScreen.add(orderNumberLabel, con);
+        orderScreen.add(trackingNumberLabel, con);
         con.gridx = 1;
-        // JLabels
-        orderScreen.add(orderNumber, con);
+        orderScreen.add(trackingNumber, con);
 
         con.gridy = 3;
         con.gridx = 0;
@@ -84,10 +83,11 @@ public class LookupOrderScreen extends JFrame implements ActionListener {
         orderScreen.add(orderStatus, con);
 
         con.gridy = 5;
-        con.gridwidth = 0;
-        orderScreen.add(invalidTrackingLabel, con);
-        invalidTrackingLabel.setForeground(Color.RED);
-
+        con.gridx = 0;
+        con.gridwidth = 100;
+        con.anchor = GridBagConstraints.CENTER;
+        orderScreen.add(invalidOrderLabel, con);
+        invalidOrderLabel.setForeground(Color.RED);
 
         c.add(orderScreen);
 
@@ -98,19 +98,20 @@ public class LookupOrderScreen extends JFrame implements ActionListener {
      * Lookup an order based on a tracking number.
      */
     private void lookUpOrder() {
-        orderNumber.setText("");
+        trackingNumber.setText("");
         dateOrderPlaced.setText("");
         orderStatus.setText("");
-        invalidTrackingLabel.setText("");
-        if (trackingNumber.getText().equals("")) {
-            invalidTrackingLabel.setText("Please enter a tracking number.");
+        invalidOrderLabel.setText("");
+        if (orderNumber.getText().equals("")) {
+            invalidOrderLabel.setText("Please enter an order number.");
+            return;
         }
-        ArrayList<String> orderInfo = DatabaseQueries.lookForanOrder(trackingNumber.getText());
+        ArrayList<String> orderInfo = DatabaseQueries.lookForanOrder(orderNumber.getText());
         if (Objects.requireNonNull(orderInfo).isEmpty()) {
-            invalidTrackingLabel.setText("No order found.");
+            invalidOrderLabel.setText("No order found.");
         } else {
-            orderNumber.setText(orderInfo.get(0));
-            dateOrderPlaced.setText(orderInfo.get(2).substring(0, 11));
+            trackingNumber.setText(orderInfo.get(0));
+            dateOrderPlaced.setText(orderInfo.get(1).substring(0, 11));
             orderStatus.setText("On the way!");
         }
     }

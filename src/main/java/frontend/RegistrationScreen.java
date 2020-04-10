@@ -457,6 +457,8 @@ public class RegistrationScreen extends JFrame implements ActionListener {
             DatabaseQueries.addAddress(shipStreetNumTF.getText(), shipStreetNameTF.getText(), shipApartmentTF.getText(), shipCityTF.getText(), Objects.requireNonNull(shipProvinceCB.getSelectedItem()).toString(), shipCountryTF.getText(), shipPostalCodeTF.getText());
         }
         DatabaseQueries.addHasAdd(newUsernameTF.getText(), false);
+        confirmRegistration.setForeground(Color.BLACK);
+        confirmRegistration.setText("Registration successful! You can now login.");
         // Done.
         return true;
     }
