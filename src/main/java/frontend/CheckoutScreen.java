@@ -546,12 +546,12 @@ public class CheckoutScreen extends JFrame implements ActionListener {
         // All fields are correct. Need to determine if addresses have changed.
         // Do not associate these addresses with a user, but associate them with the order.
         // Case 1: Same billing and shipping.
-        DatabaseQueries.addAddress(checkoutShippingStreetNumTF.getText(), checkoutShippingStreetNameTF.getText(), checkoutShippingApartmentTF.getText(), checkoutShippingCityTF.getText(), Objects.requireNonNull(checkoutShippingProvinceCB.getSelectedItem()).toString(), checkoutShippingCountryTF.getText(), checkoutShippingCountryTF.getText());
+        DatabaseQueries.addAddress(checkoutShippingStreetNumTF.getText(), checkoutShippingStreetNameTF.getText(), checkoutShippingApartmentTF.getText(), checkoutShippingCityTF.getText(), Objects.requireNonNull(checkoutShippingProvinceCB.getSelectedItem()).toString(), checkoutShippingCountryTF.getText(), checkoutShippingPostalCodeTF.getText());
         if (sameAsBilling) {
             orderNumber = DatabaseQueries.addOrder(trackingNumber, totalCost.substring(1), true);
         } else {
         // Case 2: Different billing and shipping.
-            DatabaseQueries.addAddress(checkoutBillingStreetNumTF.getText(), checkoutBillingStreetNameTF.getText(), checkoutBillingApartmentTF.getText(), checkoutBillingCityTF.getText(), Objects.requireNonNull(checkoutBillingProvinceCB.getSelectedItem()).toString(), checkoutBillingCountryTF.getText(), checkoutBillingCountryTF.getText());
+            DatabaseQueries.addAddress(checkoutBillingStreetNumTF.getText(), checkoutBillingStreetNameTF.getText(), checkoutBillingApartmentTF.getText(), checkoutBillingCityTF.getText(), Objects.requireNonNull(checkoutBillingProvinceCB.getSelectedItem()).toString(), checkoutBillingCountryTF.getText(), checkoutBillingPostalCodeTF.getText());
             orderNumber = DatabaseQueries.addOrder(trackingNumber, totalCost.substring(1), false);
         }
         checkoutErrorLabel.setForeground(Color.BLACK);

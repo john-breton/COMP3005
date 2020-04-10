@@ -469,6 +469,54 @@ public class AdminScreenUtilities extends AdminScreen {
     }
 
     /**
+     *  Populates editOrder with order info
+     */
+    public static void fetchOrderDetails() {
+        ArrayList<String> orderInfo = new ArrayList<>();
+        if(!searchOrderNumber.getText().isEmpty())
+            orderInfo = DatabaseQueries.lookForanOrder(searchOrderNumber.getText());
+        else {
+            defaultAdminViewFields();
+            lookupOrderErrorLabel.setText("Please enter an order number before searching.");
+        }
+        if(orderInfo == null || orderInfo.size() == 0){
+            defaultAdminViewFields();
+            lookupOrderErrorLabel.setText("Order not found");
+        } else {
+            currentOrderNumber.setText(searchOrderNumber.getText());
+            trackingNumber.setText(orderInfo.get(0));
+            dateOrderPlaced.setText(orderInfo.get(1).substring(0, 11));
+            editStatusCB.setSelectedItem(orderInfo.get(2));
+
+            lookupOrderErrorLabel.setText(""); // clear errors + search bar
+            searchOrderNumber.setText("");
+
+            trackingNumber.setEnabled(true);
+            editStatusCB.setEnabled(true);
+        }
+    }
+
+    /**
+     *  Sends order information to the DB
+     * @return true if order is updated
+     */
+    public static boolean sendOrderDetails() {
+        lookupOrderErrorLabel.setForeground(Color.RED);
+        if(editStatusCB.getSelectedIndex() > 2){
+            if(trackingNumber.getText().isEmpty()){
+                lookupOrderErrorLabel.setText("Order with this status needs a tracking number");
+                return false;
+            }
+        }
+        if(editStatusCB.getSelectedIndex() == 0){
+            lookupOrderErrorLabel.setText("Order needs a status");
+            return false;
+        } else {
+               return DatabaseQueries.updateOrder(currentOrderNumber.getText(), trackingNumber.getText(), (String) editStatusCB.getSelectedItem());
+        }
+    }
+
+    /**
      * Retrieves information from the GUI and sends it to the DB to be inserted
      *
      * @return true if successful, false otherwise

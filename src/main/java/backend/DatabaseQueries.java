@@ -67,9 +67,9 @@ public class DatabaseQueries {
     /**
      * Query order information form the database.
      *
-     * @param orderNumber The tracking number associated with an order.
+     * @param orderNumber The order number associated with an order.
      * @return An ArrayList of containing order information from the database if the order was found. Null if no order was found.
-     *         If an order was found: [0] = order_num, [1] = tracking_num, [2] = date_placed
+     *         If an order was found: [0] = tracking_num, [1] = date_placed, [2] = status
      */
     public static ArrayList<String> lookForanOrder(String orderNumber) {
         try {
@@ -78,6 +78,7 @@ public class DatabaseQueries {
             while (result.next()) {
                 orderInfo.add(0, result.getString("tracking_num"));
                 orderInfo.add(1, result.getString("date_placed"));
+                orderInfo.add(2, result.getString("status"));
             }
             return orderInfo;
         } catch (SQLException e) {
@@ -300,7 +301,6 @@ public class DatabaseQueries {
                             }
                         }
                     } else {
-                        bookInfo.clear();
                         bookInfo.add("-1"); // searching for more than 3 names?
                     }
                 } // search authors
@@ -903,6 +903,27 @@ public class DatabaseQueries {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     *
+     * @param orderNum unique order identifier
+     * @param tracking unique tracking number
+     * @param status status of the order
+     * @return true if successful, false otherwise
+     */
+    public static boolean updateOrder(String orderNum, String tracking, String status){
+        try {
+            statement = connection.createStatement();
+            if (tracking.isEmpty()) { // no tracking number yet
+                return statement.executeUpdate(String.format("UPDATE project.order SET status = '%s' WHERE order_num = %s", status, orderNum)) == 1;
+            } else {
+                return statement.executeUpdate(String.format("UPDATE project.order SET status = '%s', tracking_num = %s WHERE order_num = %s", status, tracking, orderNum)) == 1;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     /**
