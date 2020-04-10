@@ -8,6 +8,7 @@ Created for the COMP 3005 course at Carleton University. Winter 2020.
 - ToolTipText
 - Make it possible for the user to "copy and paste" order confirmation label (so they can copy their order number), might need JTextPane instead of JLabel
 - Add an edit order screen to update order status only
+- Fix the centering on the error label for the lookup order screen.
 
 ## Current Database Schema
 <p style="text-align:right">
