@@ -549,7 +549,7 @@ public class DatabaseQueries {
                 ResultSet rs = moreBooks.executeQuery();
                 while(rs.next()) {
                     if (rs.getBoolean("order_more_books")) {
-                        System.out.println("Emailing Publisher for more books");
+                        emailPublisher(result.getString("isbn"));
                     }
                 }
             }
@@ -558,6 +558,22 @@ public class DatabaseQueries {
         }
     }
 
+    /**
+     *  Queries the db for pub_name and email to email the publisher for more books with a specific isbn
+     * @param isbn the isbn of the book to be ordered
+     */
+    private static void emailPublisher(String isbn){
+        try{
+            ResultSet publisher = connection.createStatement().executeQuery(String.format("SELECT pub_name, email_add FROM project.publisher NATURAL JOIN project.publishes WHERE isbn = %s", isbn));
+            // TODO: make a function that returns the number of books sold last month
+            int numBooks = 100;
+            while(publisher.next()){
+                System.out.println("Sending an email to: " + publisher.getString("pub_name") + " (" + publisher.getString("email_add") + ") \nto order " + numBooks + " more books with isbn = " + isbn);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
     /**
      * Add an address into the database.
      *
