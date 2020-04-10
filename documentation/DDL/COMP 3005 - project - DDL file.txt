@@ -208,3 +208,7 @@ EXECUTE PROCEDURE delete_old_admin();
 CREATE TRIGGER new_cart
 AFTER INSERT ON project.user
 EXECUTE PROCEDURE create_cart();
+
+CREATE TRIGGER another_cart
+AFTER INSERT ON project.order
+EXECUTE PROCEDURE create_cart();

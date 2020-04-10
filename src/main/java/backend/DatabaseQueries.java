@@ -424,9 +424,9 @@ public class DatabaseQueries {
 
     public static String getCartID(String username) {
         try {
-            ResultSet result = statement.executeQuery("SELECT * FROM project.bask_manage WHERE username = '" + username + "'");
+            ResultSet result = statement.executeQuery(String.format("SELECT max(basket_id) FROM project.bask_manage WHERE username = '%s'", username));
             result.next();
-            return result.getString("basket_id");
+            return result.getString("max");
         } catch (SQLException e) {
             e.printStackTrace();
             return null;
@@ -443,7 +443,8 @@ public class DatabaseQueries {
         int rowCount = 0;
         ArrayList<String> cartInfo = new ArrayList<>();
         try {
-            ResultSet result = statement.executeQuery("SELECT * FROM project.bask_manage NATURAL JOIN project.bask_item WHERE project.bask_manage.username = '" + username + "'");
+            ResultSet result = statement.executeQuery(String.format("SELECT * FROM project.bask_item WHERE basket_id = (\n" +
+                    "\tSELECT max(basket_id) FROM project.bask_manage WHERE project.bask_manage.username = '%s')", username));
             while (result.next()) {
                 if (rowCount == 0) {
                     cartInfo.add(result.getString("basket_id"));
@@ -514,6 +515,47 @@ public class DatabaseQueries {
             e.printStackTrace();
         }
         return null;
+    }
+
+    /**
+     * Add checout relation
+     *
+     * @param orderNum the order number
+     * @param basketID the basket id
+     */
+    public static void addCheckout(String orderNum, String basketID){
+        try{
+            statement.executeUpdate(String.format("INSERT INTO project.checkout VALUES (%s, %s)", basketID, orderNum));
+            decrementStock(basketID);
+        } catch(SQLException e){
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Decrement the stock of all books in a basket, by the quantity in the basket
+     *
+     * @param basketID the basket id
+     */
+    private static void decrementStock(String basketID){
+        try{
+            ResultSet result = statement.executeQuery(String.format("SELECT * FROM project.bask_item WHERE basket_id = %s", basketID));
+
+            while(result.next()){
+                connection.createStatement().executeUpdate(String.format("UPDATE project.book SET stock = stock - %s WHERE isbn = %s", result.getString("quantity"), result.getString("isbn")));
+
+                // check book stock
+                PreparedStatement moreBooks = connection.prepareStatement(String.format("SELECT order_more_books(%s)", result.getString("isbn")));
+                ResultSet rs = moreBooks.executeQuery();
+                while(rs.next()) {
+                    if (rs.getBoolean("order_more_books")) {
+                        System.out.println("Emailing Publisher for more books");
+                    }
+                }
+            }
+        } catch(SQLException e){
+            e.printStackTrace();
+        }
     }
 
     /**
