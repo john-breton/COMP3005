@@ -215,10 +215,6 @@ public class UserScreen extends JFrame implements ActionListener {
         switch (searchTerm){
             case "publisher" -> searchTerm = "pub_name";
             case "genre" -> searchTerm = "name";
-            case "author" -> searchTerm = "author";
-            case "isbn" -> searchTerm = "isbn";
-            case "year" -> searchTerm = "year";
-            default -> searchTerm = "title";
         }
 
         // Execute the search.

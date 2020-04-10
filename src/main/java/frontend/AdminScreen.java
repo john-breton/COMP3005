@@ -733,7 +733,7 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
                 shippingAdminAddressLabel = new JLabel("Shipping Address"),
                 shippingAdminStreetNumLabel = new JLabel("*Street Number: "),
                 shippingAdminStreetNameLabel = new JLabel("*Street Name: ", JLabel.RIGHT),
-                shippingAdminApartmentLabel = new JLabel("*Apartment: ", JLabel.RIGHT),
+                shippingAdminApartmentLabel = new JLabel("Apartment: ", JLabel.RIGHT),
                 shippingAdminCityLabel = new JLabel("*City: "),
                 shippingAdminProvinceLabel = new JLabel("*Province: ", JLabel.RIGHT),
                 shippingAdminCountryLabel = new JLabel("*Country: "),
