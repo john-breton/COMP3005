@@ -4,6 +4,7 @@ package frontend;
 import backend.DatabaseQueries;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.*;
@@ -26,7 +27,8 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
             shippingAdminProvinceCB = new JComboBox<>(FrontEndUtilities.provincesArr),
             billAdminProvinceCB = new JComboBox<>(FrontEndUtilities.provincesArr),
             editShippingProvinceCB = new JComboBox<>(FrontEndUtilities.provincesArr),
-            editBillProvinceCB = new JComboBox<>(FrontEndUtilities.provincesArr);
+            editBillProvinceCB = new JComboBox<>(FrontEndUtilities.provincesArr),
+            editStatusCB = new JComboBox<>(FrontEndUtilities.statusArr);
     protected static final JCheckBox isUserAdminCB = new JCheckBox("Is the user an admin?"),
             newIsUserAdminCB = new JCheckBox("Is the user an admin?");
     protected static final JCheckBox editBillingSameAsShipping = new JCheckBox("Billing Address is the same as Shipping Address");
@@ -114,6 +116,9 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
             editBillCityTF = new JTextField(15),
             editBillCountryTF = new JTextField(15),
             editBillPostalCodeTF = new JTextField(15);
+    // edit order
+    protected static JTextField trackingNumber = new JTextField(),
+            searchOrderNumber = new JTextField();
     // Admin
     protected static final JLabel confirmNewBookAddition = new JLabel("", JLabel.CENTER),
             confirmNewPublisherAddition = new JLabel("", JLabel.CENTER),
@@ -126,7 +131,9 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
             confirmUserEditLabel = new JLabel("", JLabel.CENTER),
             editBookErrorLabel = new JLabel("", JLabel.CENTER),
             currentISBNLabel = new JLabel(""),
-            confirmBookEditLabel = new JLabel("", JLabel.CENTER);
+            confirmBookEditLabel = new JLabel("", JLabel.CENTER),
+            lookupOrderErrorLabel = new JLabel("ERROR ERROR ERROR", JLabel.CENTER),
+            currentOrderNumber = new JLabel("Current Order Number");
 
     /* JButtons */
     protected static final JButton deleteBookButton = FrontEndUtilities.formatButton("Delete Book");
@@ -174,6 +181,7 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
         newEntitiesPanel.addTab("Add Users", null, addUser(), "Add a new user to the database");
         editEntitiesPanel.addTab("Edit Books", null, editBook(), "Edit properties of existing books");
         editEntitiesPanel.addTab("Edit User", null, editUser(), "Edit properties of existing users");
+        editEntitiesPanel.addTab("Edit Order", null, editOrder(), "Edit status and tracking number of existing order");
 
         /* ChangeListeners */
         adminView.addChangeListener(this);
@@ -1587,6 +1595,88 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
         }
     }
 
+    private JPanel editOrder(){
+        /* JPanels */
+        JPanel lookupOrderScreen = new JPanel(new GridBagLayout());
+        lookupOrderScreen.setBorder(new EmptyBorder(10, 10, 10, 10));
+
+        /* JLabels */
+        JLabel orderNumberLabel = new JLabel("<html><u>Order Number</u>: </html>");
+        JLabel trackingNumberLabel = new JLabel("<html><u>Tracking Number</u>: </html>");
+        JLabel dateOrderPlacedLabel = new JLabel("<html><u>Date Placed</u>: </html>");
+        JLabel orderStatusLabel = new JLabel("<html><u>Status</u>: </html>");
+        JLabel orderSearchLabel = new JLabel("<html><u>Order Number</u>: </html>");
+
+        /* JButtons */
+        JButton logoutButton = FrontEndUtilities.formatButton("Logout");
+        JButton searchOrderButton = FrontEndUtilities.formatButton("Search Order");
+        JButton updateOrderButton = FrontEndUtilities.formatButton("Update Order");
+
+        /* ActionListeners */
+        logoutButton.addActionListener(this);
+        searchOrderButton.addActionListener(this);
+        updateOrderButton.addActionListener(this);
+
+        // Setup Panel
+        GridBagConstraints con = new GridBagConstraints();
+        con.gridy = 0;
+        con.gridx = 0;
+        con.gridwidth = 1;
+        con.fill = GridBagConstraints.HORIZONTAL;
+        con.anchor = GridBagConstraints.LINE_START;
+        lookupOrderScreen.add(logoutButton, con);
+        con.gridx = 1;
+        con.gridwidth = 3;
+        lookupOrderErrorLabel.setForeground(Color.RED);
+        lookupOrderScreen.add(lookupOrderErrorLabel, con);
+        con.gridx = 4;
+        lookupOrderScreen.add(updateOrderButton, con);
+
+        con.gridy = 1;
+        con.gridx = 1;
+        con.gridwidth = 1;
+        lookupOrderScreen.add(orderSearchLabel, con);
+        con.gridx = 2;
+        lookupOrderScreen.add(searchOrderNumber, con);
+        con.gridx = 3;
+        lookupOrderScreen.add(searchOrderButton, con);
+
+        con.gridy = 2;
+        con.gridx = 1;
+        lookupOrderScreen.add(orderNumberLabel, con);
+        con.gridx = 2;
+        lookupOrderScreen.add(currentOrderNumber, con);
+
+        con.gridy = 3;
+        con.gridx = 1;
+        con.gridwidth = 1;
+        lookupOrderScreen.add(trackingNumberLabel, con);
+        con.gridx = 2;
+        con.gridwidth = 2;
+        lookupOrderScreen.add(trackingNumber, con);
+
+        con.gridy = 4;
+        con.gridx = 1;
+        con.gridwidth = 1;
+        lookupOrderScreen.add(dateOrderPlacedLabel, con);
+        con.gridx = 2;
+        lookupOrderScreen.add(new JLabel("Date order placed"), con);
+
+        con.gridy = 5;
+        con.gridx = 1;
+        con.gridwidth = 1;
+        lookupOrderScreen.add(orderStatusLabel, con);
+        con.gridx = 2;
+        con.gridwidth = 2;
+        lookupOrderScreen.add(editStatusCB, con);
+
+        con.gridy = 6;
+        con.weighty = 1.0;
+        con.fill = GridBagConstraints.BOTH;
+        lookupOrderScreen.add(Box.createGlue(), con);
+
+    return lookupOrderScreen;
+    }
     /**
      * Creates the "Reports" tab for the adminScreen
      * TODO: reportPanel()
@@ -1725,8 +1815,9 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
                         confirmAdminReg.setText("New User Added");
                     }
                 } // Admin Add User Screen
-                case "Delete User" -> confirmDelete("user"); // Admin Screen
                 case "Delete Book" -> confirmDelete("book"); // Admin Screen
+                case "Update Order" -> System.out.println("Updating Order");
+                case "Search Order" -> System.out.println("Searching Order");
                 default -> System.out.println("Error");
             }
         }

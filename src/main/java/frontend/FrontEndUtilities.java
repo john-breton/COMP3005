@@ -13,6 +13,7 @@ public class FrontEndUtilities {
     static final String[] searchFilterArr = {"Title", "Author", "Genre", "ISBN", "Publisher", "Year"};
     static final String[] reportChoiceArr = {"--", "Sales v Expense", "Sales per Genre", "Sales per Author", "Sales per Publisher", "Sales per Month", "Sales per Year", "Expense per Month", "Expense per Year"};
     static final String[] provincesArr = {"--", "AB", "BC", "MB", "NB", "NL", "NS", "NT", "NU", "ON", "PE", "QC", "SK", "YT"};
+    static final String[] statusArr = {"Processing Order", "Ready for Shipment", "On the Way!", "Delivered"};
 
     /* JTextFields -- Global in order for methods to access */
     /* JLabels -- Global to update users */

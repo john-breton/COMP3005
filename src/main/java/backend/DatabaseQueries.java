@@ -19,8 +19,8 @@ import java.util.ArrayList;
 public class DatabaseQueries {
 
     // Just putting this here so we can change it when we test.
-    private static final String USER = "postgres";
-    private static final String DATABASE = "lookinnabook";
+    private static final String USER = "ryan";
+    private static final String DATABASE = "LookInnaBook";
     public static Connection connection;
     public static Statement statement;
 
@@ -499,10 +499,10 @@ public class DatabaseQueries {
         try {
             ResultSet result;
             if (oneAddress) {
-                statement.execute("INSERT INTO project.order values (nextval('project.order_order_num_seq'), '" + trackingNumber + "', '" + ts + "', '" + totalCost + "')");
+                statement.execute("INSERT INTO project.order values (nextval('project.order_order_num_seq'), '" + trackingNumber + "', '" + ts + "', '" + totalCost + "', 'Processing')");
                 statement.execute("INSERT INTO project.ordadd values (currval('project.order_order_num_seq'), currval('project.address_add_id_seq'), true, true)");
             } else {
-                statement.execute("INSERT INTO project.order values (nextval('project.order_order_num_seq'), '" + trackingNumber + "', '" + ts + "', '" + totalCost + "')");
+                statement.execute("INSERT INTO project.order values (nextval('project.order_order_num_seq'), '" + trackingNumber + "', '" + ts + "', '" + totalCost + "', 'Processing')");
                 statement.execute("INSERT INTO project.ordadd values (currval('project.order_order_num_seq'), currval('project.address_add_id_seq') - 1, true, false)");
                 statement.execute("INSERT INTO project.ordadd values (currval('project.order_order_num_seq'), currval('project.address_add_id_seq'), false, true)");
             }
