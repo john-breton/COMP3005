@@ -191,6 +191,9 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
         editEntitiesPanel.addTab("Edit User", null, editUser(), "Edit properties of existing users");
         editEntitiesPanel.addTab("Edit Order", null, editOrder(), "Edit status and tracking number of existing order");
 
+        // Tooltips :(
+
+
         // Format JComboBoxes
         billProvinceCB.setBackground(Color.WHITE);
         pubProvinceCB.setBackground(Color.WHITE);
@@ -202,9 +205,6 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
         reportCB.setBackground(Color.WHITE);
         timeCB.setBackground(Color.WHITE);
         reportSortCB.setBackground(Color.WHITE);
-        isUserAdminCB.setBackground(Color.WHITE);
-        newIsUserAdminCB.setBackground(Color.WHITE);
-        editBillingSameAsShipping.setBackground(Color.WHITE);
 
         /* ChangeListeners */
         adminView.addChangeListener(this);
@@ -416,6 +416,8 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
         accountingLabel.setFont(accountingLabel.getFont().deriveFont(Font.BOLD));
 
         // ToolTipText
+        logoutAddBookButton.setToolTipText("Logout and return to the login screen");
+        addBookButton.setToolTipText("Add a new book to the database");
         newBookYearTF.setToolTipText("Format: YYYY (If year is < 1000, add leading 0's)");
         newBookGenreTF.setToolTipText("Enter genres, separated by a \",\". No genre can contain a \" \"");
         newBookAuthorNameTF.setToolTipText("Enter author's names, separated by a \",\"");
@@ -602,6 +604,8 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
         newPublisherBankAccountLabel.setFont(newPublisherBankAccountLabel.getFont().deriveFont(Font.BOLD));
 
         // ToolTipText
+        logoutAddPublisherButton.setToolTipText("Logout and return to the login screen");
+        addPublisherButton.setToolTipText("Add a new publisher to the database");
         newPublisherNameTF.setToolTipText("Enter the publisher's name, ensure proper punctuation");
         newPublisherEmailTF.setToolTipText("Enter the publisher's email, ensure validity");
         newPublisherBankAccountTF.setToolTipText("Enter the publishers 15 digit bank account number");
@@ -799,6 +803,10 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
         billingAdminAddressLabel.setFont(billingAdminAddressLabel.getFont().deriveFont(Font.BOLD));
 
         // ToolTipText
+        logoutAddUserButton.setToolTipText("Logout and return to the login screen");
+        addUserButton.setToolTipText("Add a new user to the database");
+        adminBillingSameAsShipping.setToolTipText("Select this if the user's shipping address is the same as their billing address");
+        newIsUserAdminCB.setToolTipText("Select this if the user is an admin");
         newAdminUsernameTF.setToolTipText("Enter a unique username");
         newAdminPasswordTF.setToolTipText("Enter a password");
         confirmAdminPasswordTF.setToolTipText("Confirm the password, ensure they match");
@@ -1105,6 +1113,10 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
         editBookPublisherLabel.setFont(editBookPublisherLabel.getFont().deriveFont(Font.BOLD));
 
         // ToolTipText
+        updateBookButton.setToolTipText("Update a book in the database");
+        logoutButton.setToolTipText("Logout and return to the login screen");
+        searchBookButton.setToolTipText("Search for a book in the database");
+        deleteBookButton.setToolTipText("Delete a book from the database");
         editBookSearchTF.setToolTipText("Enter the book's unique 13-digit ISBN");
         editBookYearTF.setToolTipText("Format: YYYY (If year is < 1000, add leading 0's)");
         editBookGenreTF.setToolTipText("Edit genres, separated by a \",\". No genre can contain a \" \"");
@@ -1328,6 +1340,13 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
                 editBillPostalCodeLabel = new JLabel("Postal Code: ", JLabel.RIGHT);
 
         // ToolTipText
+
+        logoutButton.setToolTipText("Logout and return to the login page");
+        editUserSearchTF.setToolTipText("Enter the username to search for");
+        isUserAdminCB.setToolTipText("Select this if the user is an admin");
+        editBillingSameAsShipping.setToolTipText("Select this if the user's shipping address is the same as their billing address");
+        confirmButton.setToolTipText("Submit the edits for the user in the database");
+        searchButton.setToolTipText("Search for a user in the database");
         editPasswordTF.setToolTipText("Edit the user's password");
         confirmEditPasswordTF.setToolTipText("Confirm the password, ensure they match");
         editFirstNameTF.setToolTipText("Edit the user's first name");
@@ -1653,6 +1672,14 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
         JButton searchOrderButton = FrontEndUtilities.formatButton("Search Order");
         JButton updateOrderButton = FrontEndUtilities.formatButton("Update Order");
 
+        //Tooltip Text
+        searchOrderNumber.setToolTipText("Enter the order number to search for");
+        logoutButton.setToolTipText("Logout and return to the login page");
+        searchOrderButton.setToolTipText("Search for an order in the database");
+        updateOrderButton.setToolTipText("Update an order in the database");
+        trackingNumber.setToolTipText("Enter the tracking number");
+        editStatusCB.setToolTipText("Select the status of the order");
+
         /* ActionListeners */
         logoutButton.addActionListener(this);
         searchOrderButton.addActionListener(this);
@@ -1747,6 +1774,13 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
             }
         });
 
+        // ToolTip text
+        generateReport.setToolTipText("Generate a report based on the selected parameters");
+        logout.setToolTipText("Logout and return to the login page");
+        reportCB.setToolTipText("Select the type of report to generate");
+        reportSortCB.setToolTipText("Select how you would like the report to be sorted");
+        timeCB.setToolTipText("Select the time period to generate the report for");
+
         // setup panel
         GridBagConstraints con = new GridBagConstraints();
 
@@ -1791,6 +1825,7 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
         con.gridwidth = 8;
         //reportContainer.setEditable(false);
         reportContainer.setAlignmentX(JTextArea.CENTER_ALIGNMENT);
+        reportContainer.setBorder(BorderFactory.createLineBorder(Color.black));
         //JScrollPane reportView = new JScrollPane(reportContainer);
         //reportView.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         generateReportPanel.add(reportContainer, con);
@@ -1803,7 +1838,9 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
      */
     private void confirmViewSwitch() {
         JButton cancelButton = FrontEndUtilities.formatButton("Cancel");
+        cancelButton.setToolTipText("Cancel the change and return to the administration page");
         JButton userButton = FrontEndUtilities.formatButton("Customer View");
+        userButton.setToolTipText("Confirm the change and continue to the customer page");
 
         Object[] options = {userButton, cancelButton};
         final JOptionPane screenChoice = new JOptionPane("Are you sure you wish to change views?\nYou cannot switch back without logging out.", JOptionPane.PLAIN_MESSAGE, JOptionPane.YES_NO_OPTION, null, options, options[1]);
@@ -1830,7 +1867,9 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
      */
     private void confirmDelete(String option) {
         JButton cancelButton = FrontEndUtilities.formatButton("Cancel");
+        cancelButton.setToolTipText("Cancel the deletion");
         JButton deleteButton = FrontEndUtilities.formatButton("Delete");
+        deleteButton.setToolTipText("Confirm the deletion");
 
         Object[] options = {deleteButton, cancelButton};
         final JOptionPane screenChoice = new JOptionPane("", JOptionPane.PLAIN_MESSAGE, JOptionPane.YES_NO_OPTION, null, options, options[1]);

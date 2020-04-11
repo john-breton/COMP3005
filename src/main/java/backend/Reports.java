@@ -11,8 +11,8 @@ import java.util.Vector;
 
 public class Reports {
     // Just putting this here so we can change it when we test.
-    private static final String USER = "ryan";
-    private static final String DATABASE = "LookInnaBook";
+    private static final String USER = "postgres";
+    private static final String DATABASE = "lookinnabook";
     private static Connection connection;
     private static Statement statement;
 

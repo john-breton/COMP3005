@@ -9,7 +9,7 @@ import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
 public class FrontEndUtilities {
     public static final ImageIcon WINDOW_ICON = new ImageIcon(new ImageIcon(Objects.requireNonNull(Thread.currentThread().getContextClassLoader().getResource("logo.png"))).getImage());
     // JComboBox Arrays
-    static final String[] resultFilterArr = {"Price: High to low", "Price: Low to high", "Title: A-Z", "Title: Z-A", "Year: High to low", "Year: Low to high"};
+    static final String[] resultFilterArr = {"Price: High to Low", "Price: Low to High", "Title: A-Z", "Title: Z-A", "Year: High to Low", "Year: Low to High"};
     static final String[] searchFilterArr = {"Title", "Author", "Genre", "ISBN", "Publisher", "Year"};
     static final String[] reportChoiceArr = {"--", "Sales v Expense", "Sales per Genre", "Sales per Author", "Sales per Publisher"};
     static final String[] reportTimeFrameArr = {"Year", "Month", "Week", "Day"};

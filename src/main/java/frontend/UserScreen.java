@@ -41,6 +41,14 @@ public class UserScreen extends JFrame implements ActionListener {
     private String cartID;
 
     public UserScreen(String username) {
+        // Tooltips
+        userSearchTF.setToolTipText("Enter what you would like to search for");
+        searchFilters.setToolTipText("Select the filter you would like to search by");
+        resultFilters.setToolTipText("Select how you would like the search results to be sorted");
+        removeItemFromCart.setToolTipText("Decrease the quantity of a cart item by 1");
+        addItemToCart.setToolTipText("Increase the quantity of a cart item by 1");
+        checkoutButton.setToolTipText("Proceed to the checkout page");
+
         removeItemFromCart.setEnabled(false);
         addItemToCart.setEnabled(false);
         checkoutButton.setEnabled(false);
@@ -82,7 +90,9 @@ public class UserScreen extends JFrame implements ActionListener {
         addItemToCart.setMargin(new Insets(0, 0, 0, 0));
         removeItemFromCart.setMargin(new Insets(0, 0, 0, 0));
         JButton searchButton = FrontEndUtilities.formatButton("Search");
+        searchButton.setToolTipText("Search for books");
         JButton logoutButton = FrontEndUtilities.formatButton("Logout");
+        logoutButton.setToolTipText("Logout and return to the login page");
 
         // ActionListeners
         addItemToCart.addActionListener(this);
@@ -166,6 +176,7 @@ public class UserScreen extends JFrame implements ActionListener {
         cart.setBorder(BorderFactory.createLineBorder(Color.black));
         searchResult.setSize(500, 600);
         for (JButton btn : bookButtons) {
+            btn.setToolTipText("Click to add to the cart");
             searchResult.add(btn);
         }
         JScrollPane scrollResults = new JScrollPane(searchResult,
@@ -208,7 +219,7 @@ public class UserScreen extends JFrame implements ActionListener {
             searchResult.removeAll();
             // Get the filter we want to sort by
             switch (Objects.requireNonNull(resultFilters.getSelectedItem()).toString()) {
-                case "Price: High to low" -> bookButtons.sort(Collections.reverseOrder((a, b) -> {
+                case "Price: High to Low" -> bookButtons.sort(Collections.reverseOrder((a, b) -> {
                     String[] textA = a.getText().split("Price:");
                     String[] textB = b.getText().split("Price:");
                     StringBuilder priceA = new StringBuilder();
@@ -226,7 +237,7 @@ public class UserScreen extends JFrame implements ActionListener {
                     }
                     return (int) (Double.parseDouble(priceA.toString()) - Double.parseDouble(priceB.toString()));
                 }));
-                case "Price: Low to high" -> bookButtons.sort((a, b) -> {
+                case "Price: Low to High" -> bookButtons.sort((a, b) -> {
                     String[] textA = a.getText().split("Price:");
                     String[] textB = b.getText().split("Price:");
                     StringBuilder priceA = new StringBuilder();
@@ -254,7 +265,7 @@ public class UserScreen extends JFrame implements ActionListener {
                     String[] textB = b.getText().split("Title");
                     return textA[1].compareTo(textB[1]);
                 }));
-                case "Year: High to low" -> bookButtons.sort(Collections.reverseOrder((a, b) -> {
+                case "Year: High to Low" -> bookButtons.sort(Collections.reverseOrder((a, b) -> {
                     String[] textA = a.getText().split("Year:");
                     String[] textB = b.getText().split("Year:");
                     StringBuilder yearA = new StringBuilder();
@@ -272,7 +283,7 @@ public class UserScreen extends JFrame implements ActionListener {
                     }
                     return (Integer.parseInt(yearA.toString()) - Integer.parseInt(yearB.toString()));
                 }));
-                case "Year: Low to high" -> bookButtons.sort((a, b) -> {
+                case "Year: Low to High" -> bookButtons.sort((a, b) -> {
                     String[] textA = a.getText().split("Year:");
                     String[] textB = b.getText().split("Year:");
                     StringBuilder yearA = new StringBuilder();
@@ -292,6 +303,7 @@ public class UserScreen extends JFrame implements ActionListener {
                 });
             }
             for (JButton btn : bookButtons) {
+                btn.setToolTipText("Click to add to the cart");
                 searchResult.add(btn);
             }
             this.invalidate();
@@ -339,6 +351,7 @@ public class UserScreen extends JFrame implements ActionListener {
                 createBook(results, i * 11);
             }
             for (JButton btn : bookButtons) {
+                btn.setToolTipText("Click to add to the cart");
                 searchResult.add(btn);
             }
         }
@@ -453,6 +466,7 @@ public class UserScreen extends JFrame implements ActionListener {
         cartItems.add(item);
         cartButtons.add(item);
         for (JToggleButton btn : cartButtons) {
+            btn.setToolTipText("Select in order to change the quantity");
             cart.add(btn);
         }
         if (addToDB) {
@@ -557,6 +571,7 @@ public class UserScreen extends JFrame implements ActionListener {
                 }
                 cart.removeAll();
                 for (JToggleButton btn : cartButtons) {
+                    btn.setToolTipText("Select in order to change the quantity");
                     cart.add(btn);
                 }
             }
@@ -583,7 +598,7 @@ public class UserScreen extends JFrame implements ActionListener {
             case "-" -> quantityUpdate(false); // User screen
             case "Checkout" -> {
                 this.dispose();
-                new CheckoutScreen(username, totalPrice.getText()); // User Screen
+                new CheckoutScreen(username, totalPrice.getText(), cartButtons); // User Screen
             }
             case "Search" -> search(); // User screen
             default -> addToCart(((JButton) o).getText(), true);

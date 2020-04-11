@@ -43,20 +43,42 @@ public class CheckoutScreen extends JFrame implements ActionListener {
     private final JCheckBox billingSameAsShipping = new JCheckBox("Billing Address is the same as Shipping Address");
 
     // JLabels
-    private final JLabel checkoutErrorLabel = new JLabel("", JLabel.CENTER);
+    private final JTextField checkoutErrorLabel = new JTextField("");
+
+    // JPanels
+    private final JPanel cart = new JPanel(new GridLayout(1, 1));
 
     // Current username
     private final String username;
+    // Cost of order
     private final String totalCost;
 
     /**
      * Creates the "Checkout" interface for the userScreen
      * Accepts new shipping and billing addresses
      * Accepts credit card details
-     * <p>
-     * TODO: Possibly add a cart view during checkout, but we could also not... Maybe. But that's an "if I feel like it" feature.
      */
-    public CheckoutScreen(String username, String orderCost) {
+    public CheckoutScreen(String username, String orderCost, ArrayList<JToggleButton> cartButtons) {
+        // Setup a cart view
+        JPanel cartPanel = new JPanel();
+        JLabel cartLabel = new JLabel("Cart: ");
+        cartPanel.setLayout(new BorderLayout());
+        cartLabel.setAlignmentX(JPanel.LEFT_ALIGNMENT);
+        cartPanel.add(cartLabel, BorderLayout.PAGE_START);
+        JScrollPane currentCart = new JScrollPane(cart,
+                JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+                JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        currentCart.setMaximumSize(new Dimension(198, 500));
+        cartPanel.add(currentCart, BorderLayout.CENTER);
+        //cartPanel.setPreferredSize(cartDimension);
+
+        // Allow the order number to be highlighted and copied
+        checkoutErrorLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        checkoutErrorLabel.setMaximumSize(new Dimension(200, 20));
+        checkoutErrorLabel.setEditable(false);
+        checkoutErrorLabel.setBackground(null);
+        checkoutErrorLabel.setBorder(null);
+
         checkoutShippingProvinceCB.setBackground(Color.WHITE);
         checkoutBillingProvinceCB.setBackground(Color.WHITE);
         this.username = username;
@@ -64,8 +86,8 @@ public class CheckoutScreen extends JFrame implements ActionListener {
         ArrayList<Object> userInfo = DatabaseQueries.lookForaUser(username);
         Container c = this.getContentPane();
         // Clear GUI in order to reload
-        this.setPreferredSize(new Dimension(800, 500));
-        this.setMaximumSize(new Dimension(800, 500));
+        this.setPreferredSize(new Dimension(1100, 500));
+        this.setMaximumSize(new Dimension(1100, 500));
         if (this.getJMenuBar() != null) this.getJMenuBar().setVisible(false);
         c.removeAll();
 
@@ -87,6 +109,11 @@ public class CheckoutScreen extends JFrame implements ActionListener {
         checkoutShippingCountryTF.setToolTipText("Enter the country name for your shipping address");
         checkoutShippingPostalCodeTF.setToolTipText("Enter the postal code for your shipping address (Format: X1X1X1");
         billingSameAsShipping.setToolTipText("Select this if your shipping address is the same as your billing address");
+        checkoutCreditCardNumTF.setToolTipText("Enter your 16-digit credit card number, without spaces");
+        checkoutCreditCardExpTF.setToolTipText("Enter your credit card's expiry date (Format: MMYY)");
+        checkoutCreditCardCVVTF.setToolTipText("Enter your credit card's 3 digit CVV");
+        cancelOrder.setToolTipText("Return to the store page");
+        submitOrder.setToolTipText("Submit your order to the store");
 
         /* Panel */
         final GridBagLayout layout = new GridBagLayout();
@@ -128,13 +155,14 @@ public class CheckoutScreen extends JFrame implements ActionListener {
         cancelOrder.addActionListener(this);
         submitOrder.addActionListener(this);
         billingSameAsShipping.addActionListener(e -> {
-            checkoutBillingStreetNumTF.setEnabled(sameAddress);
-            checkoutBillingStreetNameTF.setEnabled(sameAddress);
-            checkoutBillingApartmentTF.setEnabled(sameAddress);
-            checkoutBillingCityTF.setEnabled(sameAddress);
-            checkoutBillingProvinceCB.setEnabled(sameAddress);
-            checkoutBillingCountryTF.setEnabled(sameAddress);
-            checkoutBillingPostalCodeTF.setEnabled(sameAddress);
+            boolean sameAsBilling = !billingSameAsShipping.isSelected();
+            checkoutBillingStreetNumTF.setEnabled(sameAsBilling);
+            checkoutBillingStreetNameTF.setEnabled(sameAsBilling);
+            checkoutBillingApartmentTF.setEnabled(sameAsBilling);
+            checkoutBillingCityTF.setEnabled(sameAsBilling);
+            checkoutBillingProvinceCB.setEnabled(sameAsBilling);
+            checkoutBillingCountryTF.setEnabled(sameAsBilling);
+            checkoutBillingPostalCodeTF.setEnabled(sameAsBilling);
         });
 
         billingSameAsShipping.setSelected(sameAddress);
@@ -168,17 +196,16 @@ public class CheckoutScreen extends JFrame implements ActionListener {
         GridBagConstraints con = new GridBagConstraints();
         Dimension spacer = new Dimension(25, 25);
         con.gridy = 0;
-        con.gridx = 1;
-        con.gridwidth = 2;
-        con.anchor = GridBagConstraints.LINE_START;
-        con.fill = GridBagConstraints.NONE;
-        checkoutPanel.add(cancelOrder, con);
-        con.gridx = 0;
+        con.gridx = 2;
         con.gridwidth = 8;
         checkoutErrorLabel.setForeground(Color.red);
         con.fill = GridBagConstraints.HORIZONTAL;
         con.anchor = GridBagConstraints.CENTER;
         checkoutPanel.add(checkoutErrorLabel, con);
+        con.gridx = 0;
+        con.anchor = GridBagConstraints.LINE_START;
+        con.fill = GridBagConstraints.NONE;
+        checkoutPanel.add(cancelOrder, con);
 
         con.gridy = 1;
         con.gridx = 1;
@@ -395,9 +422,31 @@ public class CheckoutScreen extends JFrame implements ActionListener {
 
         checkoutPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
 
+
+        JSplitPane checkoutAndCart = new JSplitPane();
+        checkoutAndCart.setEnabled(false);
+        checkoutPanel.setMinimumSize(new Dimension(825, 500));
+        checkoutAndCart.setLeftComponent(checkoutPanel);
+        cart.setMaximumSize(new Dimension(198, 500));
+        cartPanel.setMaximumSize(new Dimension(198, 500));
+
+        for (JToggleButton btn : cartButtons) {
+            btn.setMinimumSize(new Dimension(198, 100));
+            btn.setMaximumSize(new Dimension(198, 100));
+            btn.setToolTipText("Selecting this does nothing");
+            if (cartButtons.size() > 6) {
+                cart.setLayout(new GridLayout(cartButtons.size(), 1));
+            } else {
+                cart.setLayout(new GridLayout(7, 1));
+            }
+            cart.add(btn);
+        }
+
+        checkoutAndCart.setRightComponent(cartPanel);
+
         DatabaseQueries.lookForaUser(username);
 
-        c.add(checkoutPanel);
+        c.add(checkoutAndCart);
         FrontEndUtilities.configureFrame(this);
 
     }
