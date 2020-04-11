@@ -2,7 +2,6 @@ package frontend;
 
 
 import backend.DatabaseQueries;
-import backend.Reports;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -11,6 +10,7 @@ import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Objects;
 
 public class AdminScreen extends JFrame implements ActionListener, ChangeListener {
     protected static final JCheckBox billingSameAsShipping = new JCheckBox("Billing Address is the same as Shipping Address"),
@@ -39,7 +39,7 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
     /* JTextFields*/
     // AdminScreen
     // Reports
-    protected static JTextArea reportContainer = new JTextArea();
+    protected static final JTextArea reportContainer = new JTextArea();
     // addBook
     protected static final JTextField newISBNTF = new JTextField(15),
             newBookTitleTF = new JTextField(15),
@@ -1721,7 +1721,7 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
         generateReport.addActionListener(this);
         logout.addActionListener(this);
         reportCB.addActionListener(e -> {
-                if(reportCB.getSelectedItem().equals("Sales v Expense")){
+                if(Objects.requireNonNull(reportCB.getSelectedItem()).equals("Sales v Expense")){
                     reportSortCB.setSelectedIndex(2);
                 } else {
                     reportSortCB.setSelectedIndex(0);

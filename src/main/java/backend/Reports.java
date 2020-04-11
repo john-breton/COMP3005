@@ -5,10 +5,6 @@
 
 package backend;
 
-import frontend.AdminScreen;
-
-import javax.swing.*;
-import java.awt.*;
 import java.sql.*;
 
 public class Reports {
@@ -61,22 +57,22 @@ public class Reports {
             statement = connection.createStatement();
             ResultSet rs = statement.executeQuery(query);
 
-            String data = "";
-            data += String.format("%-35s ", column1);
-            data += String.format("%-20s", column2);
-            data += String.format("%-20s", column3);
-            data += String.format("%-20s", column4);
-            data += String.format("%10s%n", column5);
+            StringBuilder data = new StringBuilder();
+            data.append(String.format("%-35s ", column1));
+            data.append(String.format("%-20s", column2));
+            data.append(String.format("%-20s", column3));
+            data.append(String.format("%-20s", column4));
+            data.append(String.format("%10s%n", column5));
 
             while (rs.next()) {
                 //Print one row
-                data += String.format("%-35s", rs.getString("name"));
-                data += String.format("%-20s", rs.getString("quantity"));
-                data += String.format("$%-20.2f", rs.getDouble("revenue"));
-                data += String.format("-$%-20.2f", rs.getDouble("cost"));
-                data += String.format("$%-20.2f%n", rs.getDouble("profit"));
+                data.append(String.format("%-35s", rs.getString("name")));
+                data.append(String.format("%-20s", rs.getString("quantity")));
+                data.append(String.format("$%-20.2f", rs.getDouble("revenue")));
+                data.append(String.format("-$%-20.2f", rs.getDouble("cost")));
+                data.append(String.format("$%-20.2f%n", rs.getDouble("profit")));
             }
-            return data;
+            return data.toString();
 
         } catch (SQLException throwables) {
             throwables.printStackTrace();
@@ -118,23 +114,23 @@ public class Reports {
             statement = connection.createStatement();
             ResultSet rs = statement.executeQuery(query);
 
-            String data = "";
-            data += String.format("%10s ", column1);
-            data += String.format("%30s", column2);
-            data += String.format("%30s", column3);
-            data += String.format("%30s", column4);
-            data += String.format("%20s%n", column5);
+            StringBuilder data = new StringBuilder();
+            data.append(String.format("%10s ", column1));
+            data.append(String.format("%30s", column2));
+            data.append(String.format("%30s", column3));
+            data.append(String.format("%30s", column4));
+            data.append(String.format("%20s%n", column5));
 
             while (rs.next()) {
                 //Print one row
                 String name =  rs.getString("name") + " " + rs.getString("auth_ln");
-                data += String.format("%-35s", name);
-                data += String.format("%-20s", rs.getString("quantity"));
-                data += String.format("$%-20.2f", rs.getDouble("revenue"));
-                data += String.format("-$%-20.2f", rs.getDouble("cost"));
-                data += String.format("$%-20.2f%n", rs.getDouble("profit"));
+                data.append(String.format("%-35s", name));
+                data.append(String.format("%-20s", rs.getString("quantity")));
+                data.append(String.format("$%-20.2f", rs.getDouble("revenue")));
+                data.append(String.format("-$%-20.2f", rs.getDouble("cost")));
+                data.append(String.format("$%-20.2f%n", rs.getDouble("profit")));
             }
-            return data;
+            return data.toString();
 
         } catch (SQLException throwables) {
             throwables.printStackTrace();
@@ -176,22 +172,22 @@ public class Reports {
             statement = connection.createStatement();
             ResultSet rs = statement.executeQuery(query);
 
-            String data = "";
-            data += String.format("%15s ", column1);
-            data += String.format("%90s", column2);
-            data += String.format("%20s", column3);
-            data += String.format("%20s", column4);
-            data += String.format("%20s%n", column5);
+            StringBuilder data = new StringBuilder();
+            data.append(String.format("%15s ", column1));
+            data.append(String.format("%90s", column2));
+            data.append(String.format("%20s", column3));
+            data.append(String.format("%20s", column4));
+            data.append(String.format("%20s%n", column5));
 
             while (rs.next()) {
                 //Print one row
-                data += String.format("%-100s", rs.getString("name"));
-                data += String.format("%-20s", rs.getString("quantity"));
-                data += String.format("$%-20.2f", rs.getDouble("revenue"));
-                data += String.format("-$%-20.2f", rs.getDouble("cost"));
-                data += String.format("$%-10.2f%n", rs.getDouble("profit"));
+                data.append(String.format("%-100s", rs.getString("name")));
+                data.append(String.format("%-20s", rs.getString("quantity")));
+                data.append(String.format("$%-20.2f", rs.getDouble("revenue")));
+                data.append(String.format("-$%-20.2f", rs.getDouble("cost")));
+                data.append(String.format("$%-10.2f%n", rs.getDouble("profit")));
             }
-            return data;
+            return data.toString();
 
         } catch (SQLException throwables) {
             throwables.printStackTrace();
@@ -209,12 +205,11 @@ public class Reports {
      * @return a string of data
      */
     public static String expenseReport(String timeInter, String[] sortOption) {
-        final String column1 = timeInter;
         final String column2 = "Quantity";
         final String column3 = "Total Revenue";
         final String column4 = "Total Cost";
         final String column5 = "Total Profit";
-        String sortDate = "";
+        String sortDate;
         int datePart = 0;
 
         if(sortOption[0].equals("date")){
@@ -224,7 +219,8 @@ public class Reports {
         switch (timeInter){
             case "Year" -> datePart = 6;
             case "Month" -> datePart = 3;
-            case "Day", "Week" -> datePart = 0;
+            case "Day", "Week" -> {
+            }
         }
 
         try {
@@ -240,26 +236,54 @@ public class Reports {
             statement = connection.createStatement();
             ResultSet rs = statement.executeQuery(query);
 
-            String data = "";
-            data += String.format("%10s ", column1);
-            data += String.format("%20s", column2);
-            data += String.format("%20s", column3);
-            data += String.format("%20s", column4);
-            data += String.format("%20s%n", column5);
+            StringBuilder data = new StringBuilder();
+            data.append(String.format("%10s ", timeInter));
+            data.append(String.format("%20s", column2));
+            data.append(String.format("%20s", column3));
+            data.append(String.format("%20s", column4));
+            data.append(String.format("%20s%n", column5));
 
             while (rs.next()) {
                 //Print one row
-                data += String.format("%-20s", rs.getString("time").substring(0, 10 - datePart));
-                data += String.format("%-20s", rs.getString("quantity"));
-                data += String.format("$%-20.2f", rs.getDouble("revenue"));
-                data += String.format("-$%-20.2f", rs.getDouble("cost"));
-                data += String.format("$%-10.2f%n", rs.getDouble("profit"));
+                data.append(String.format("%-20s", rs.getString("time").substring(0, 10 - datePart)));
+                data.append(String.format("%-20s", rs.getString("quantity")));
+                data.append(String.format("$%-20.2f", rs.getDouble("revenue")));
+                data.append(String.format("-$%-20.2f", rs.getDouble("cost")));
+                data.append(String.format("$%-10.2f%n", rs.getDouble("profit")));
             }
-            return data;
+            return data.toString();
 
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
         return null;
+    }
+
+    /**
+     * Return the quantity of a specific book sold in the previous time interval
+     *
+     * @param isbn the book to look for
+     * @param option the time interval to check (ex "1 month")
+     * @return the quantity of the book that was sold in the previous time interval
+     */
+    public static int booksSold(String isbn, String option){
+        int quantity = 0;
+        try {
+            String query = String.format("SELECT isbn, sum(quantity) as quantity " +
+                    "from (project.order natural join project.checkout natural join project.bask_item natural join project.book) " +
+                    "WHERE date_placed > now() - interval '%s' " +
+                    "AND isbn = %s" +
+                    "group by isbn;", option, isbn);
+            statement = connection.createStatement();
+            ResultSet rs = statement.executeQuery(query);
+
+            while (rs.next()) {
+                quantity = rs.getInt("quantity");
+            }
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return quantity;
     }
 }

@@ -177,6 +177,7 @@ public class CheckoutScreen extends JFrame implements ActionListener {
         con.gridwidth = 8;
         checkoutErrorLabel.setForeground(Color.red);
         con.fill = GridBagConstraints.HORIZONTAL;
+        con.anchor = GridBagConstraints.CENTER;
         checkoutPanel.add(checkoutErrorLabel, con);
 
         con.gridy = 1;
@@ -555,7 +556,6 @@ public class CheckoutScreen extends JFrame implements ActionListener {
 
         checkoutErrorLabel.setForeground(Color.BLACK);
         checkoutErrorLabel.setText("Order successful! Your order number is: " + orderNumber);
-        checkoutErrorLabel.setFocusable(true);
         submitOrder.setEnabled(false);
         cancelOrder.setText("Return to Bookstore");
     }

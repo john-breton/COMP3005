@@ -564,8 +564,7 @@ public class DatabaseQueries {
     private static void emailPublisher(String isbn){
         try{
             ResultSet publisher = connection.createStatement().executeQuery(String.format("SELECT pub_name, email_add FROM project.publisher NATURAL JOIN project.publishes WHERE isbn = %s", isbn));
-            // TODO: make a function that returns the number of books sold last month
-            int numBooks = 100;
+            int numBooks = Reports.booksSold(isbn, "1 month");
             while(publisher.next()){
                 System.out.println("Sending an email to: " + publisher.getString("pub_name") + " (" + publisher.getString("email_add") + ") \nto order " + numBooks + " more books with isbn = " + isbn);
             }

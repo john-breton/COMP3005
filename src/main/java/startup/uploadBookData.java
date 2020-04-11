@@ -8,15 +8,10 @@ import com.google.gson.*;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.IOException;
 import java.math.BigInteger;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.sql.*;
 import java.util.Objects;
 import java.util.Random;
-import java.util.stream.Stream;
 
 /**
  * The type Upload book data.
@@ -205,7 +200,7 @@ public class uploadBookData {
             // Add items to their cart.
             double totalPrice = 0;
             String cartID = DatabaseQueries.getCartID(username);
-            ResultSet priceOfBook = null;
+            ResultSet priceOfBook;
             int itemsPurchased = r.nextInt(10) + 1;
             // Have them order between 1 and 10 books of a random quantity.
             for (int i = 0; i < itemsPurchased; i++) {

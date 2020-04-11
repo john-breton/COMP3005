@@ -9,7 +9,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Objects;
 
 /**
@@ -209,7 +208,7 @@ public class UserScreen extends JFrame implements ActionListener {
             searchResult.removeAll();
             // Get the filter we want to sort by
             switch (Objects.requireNonNull(resultFilters.getSelectedItem()).toString()) {
-                case "Price: High to low" -> Collections.sort(bookButtons, Collections.reverseOrder((a, b) -> {
+                case "Price: High to low" -> bookButtons.sort(Collections.reverseOrder((a, b) -> {
                     String[] textA = a.getText().split("Price:");
                     String[] textB = b.getText().split("Price:");
                     StringBuilder priceA = new StringBuilder();
@@ -227,7 +226,7 @@ public class UserScreen extends JFrame implements ActionListener {
                     }
                     return (int) (Double.parseDouble(priceA.toString()) - Double.parseDouble(priceB.toString()));
                 }));
-                case "Price: Low to high" -> Collections.sort(bookButtons, (a, b) -> {
+                case "Price: Low to high" -> bookButtons.sort((a, b) -> {
                     String[] textA = a.getText().split("Price:");
                     String[] textB = b.getText().split("Price:");
                     StringBuilder priceA = new StringBuilder();
@@ -245,17 +244,17 @@ public class UserScreen extends JFrame implements ActionListener {
                     }
                     return (int) (Double.parseDouble(priceA.toString()) - Double.parseDouble(priceB.toString()));
                 });
-                case "Title: A-Z" -> Collections.sort(bookButtons, (a, b) -> {
+                case "Title: A-Z" -> bookButtons.sort((a, b) -> {
                     String[] textA = a.getText().split("Title");
                     String[] textB = b.getText().split("Title");
                     return textA[1].compareTo(textB[1]);
                 });
-                case "Title: Z-A" -> Collections.sort(bookButtons, Collections.reverseOrder((a, b) -> {
+                case "Title: Z-A" -> bookButtons.sort(Collections.reverseOrder((a, b) -> {
                     String[] textA = a.getText().split("Title");
                     String[] textB = b.getText().split("Title");
                     return textA[1].compareTo(textB[1]);
                 }));
-                case "Year: High to low" -> Collections.sort(bookButtons, Collections.reverseOrder((a, b) -> {
+                case "Year: High to low" -> bookButtons.sort(Collections.reverseOrder((a, b) -> {
                     String[] textA = a.getText().split("Year:");
                     String[] textB = b.getText().split("Year:");
                     StringBuilder yearA = new StringBuilder();
@@ -271,9 +270,9 @@ public class UserScreen extends JFrame implements ActionListener {
                         yearB.append(textB[1].substring(5).charAt(i));
                         i++;
                     }
-                    return (Integer.valueOf(yearA.toString()) - Integer.valueOf(yearB.toString()));
+                    return (Integer.parseInt(yearA.toString()) - Integer.parseInt(yearB.toString()));
                 }));
-                case "Year: Low to high" -> Collections.sort(bookButtons, (a, b) -> {
+                case "Year: Low to high" -> bookButtons.sort((a, b) -> {
                     String[] textA = a.getText().split("Year:");
                     String[] textB = b.getText().split("Year:");
                     StringBuilder yearA = new StringBuilder();
@@ -289,7 +288,7 @@ public class UserScreen extends JFrame implements ActionListener {
                         yearB.append(textB[1].substring(5).charAt(i));
                         i++;
                     }
-                    return (Integer.valueOf(yearA.toString()) - Integer.valueOf(yearB.toString()));
+                    return (Integer.parseInt(yearA.toString()) - Integer.parseInt(yearB.toString()));
                 });
             }
             for (JButton btn : bookButtons) {
