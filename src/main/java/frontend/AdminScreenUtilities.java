@@ -974,33 +974,30 @@ public class AdminScreenUtilities extends AdminScreen {
             switch (Objects.requireNonNull(reportCB.getSelectedItem()).toString()) {
                 case "Sales v Expense" -> {
                     if (reportSortCB.getSelectedIndex() > 1) {
-                        reportContainer.setText(Reports.expenseReport(Objects.requireNonNull(timeCB.getSelectedItem()).toString(), sortOption));
+                        reportContainer.setViewportView(Reports.expenseReport(Objects.requireNonNull(timeCB.getSelectedItem()).toString(), sortOption));
                         reportErrorLabel.setText("");
                     }else reportErrorLabel.setText("Invalid Report Selection. Cannot Sort Dates by Name");
                 }
                 case "Sales per Genre" -> {
                     if (reportSortCB.getSelectedIndex() != 2 && reportSortCB.getSelectedIndex() != 3) {
-                        reportContainer.setText(Reports.genreReport(Objects.requireNonNull(timeCB.getSelectedItem()).toString(), sortOption));
+                        reportContainer.setViewportView(Reports.genreReport(Objects.requireNonNull(timeCB.getSelectedItem()).toString(), sortOption));
                         reportErrorLabel.setText("");
                     } else reportErrorLabel.setText("Invalid Report Selection. Cannot Sort Genres by Date");
                 }
                 case "Sales per Author" -> {
                     if (reportSortCB.getSelectedIndex() != 2 && reportSortCB.getSelectedIndex() != 3){
-                        reportContainer.setText(Reports.authorReport(Objects.requireNonNull(timeCB.getSelectedItem()).toString(), sortOption));
+                        reportContainer.setViewportView(Reports.authorReport(Objects.requireNonNull(timeCB.getSelectedItem()).toString(), sortOption));
                         reportErrorLabel.setText("");
                     } else reportErrorLabel.setText("Invalid Report Selection. Cannot Sort Authors by Date");
                 }
                 case "Sales per Publisher" -> {
                     if (reportSortCB.getSelectedIndex() != 2 && reportSortCB.getSelectedIndex() != 3) {
-                        reportContainer.setText(Reports.publisherReport(Objects.requireNonNull(timeCB.getSelectedItem()).toString(), sortOption));
+                        reportContainer.setViewportView(Reports.publisherReport(Objects.requireNonNull(timeCB.getSelectedItem()).toString(), sortOption));
                         reportErrorLabel.setText("");
                     } else reportErrorLabel.setText("Invalid Report Selection. Cannot Sort Publishers by Date");
                 }
             }
         } else reportErrorLabel.setText("Please select a type of report.");
-
-        reportContainer.setVisible(true);
-        reportContainer.setCaretPosition(0);
     }
 
 }

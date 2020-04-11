@@ -39,7 +39,7 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
     /* JTextFields*/
     // AdminScreen
     // Reports
-    protected static final JTextArea reportContainer = new JTextArea();
+    protected static final JScrollPane reportContainer = new JScrollPane();
     // addBook
     protected static final JTextField newISBNTF = new JTextField(15),
             newBookTitleTF = new JTextField(15),
@@ -314,6 +314,10 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
         editStatusCB.setSelectedItem("--");
 
         // reports
+        reportSortCB.setSelectedIndex(0);
+        reportCB.setSelectedIndex(0);
+        timeCB.setSelectedIndex(0);
+        reportContainer.setViewportView(null);
 
         // Disable the fields by default.
         billingSameAsShipping.setSelected(true);
@@ -1770,11 +1774,11 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
         con.fill = GridBagConstraints.BOTH;
         con.weighty = 1.0;
         con.gridwidth = 8;
-        reportContainer.setEditable(false);
+        //reportContainer.setEditable(false);
         reportContainer.setAlignmentX(JTextArea.CENTER_ALIGNMENT);
-        JScrollPane reportView = new JScrollPane(reportContainer);
-        reportView.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        generateReportPanel.add(reportView, con);
+        //JScrollPane reportView = new JScrollPane(reportContainer);
+        //reportView.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        generateReportPanel.add(reportContainer, con);
 
         return generateReportPanel;
     }

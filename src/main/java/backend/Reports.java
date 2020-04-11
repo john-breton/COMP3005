@@ -5,7 +5,9 @@
 
 package backend;
 
+import javax.swing.*;
 import java.sql.*;
+import java.util.Vector;
 
 public class Reports {
     // Just putting this here so we can change it when we test.
@@ -24,19 +26,20 @@ public class Reports {
     }
 
     /**
-     * Produces a string of information with sales by genre, including the genre,
+     * Produces a table of information with sales by genre, including the genre,
      * the quantity of books sold from that genre and the
      * revenue, cost, profit from that genre
      *
      * @param timeInter the interval of time in the past from now
-     * @return a string of data
+     * @return a JTable of data
      */
-    public static String genreReport(String timeInter, String[] sortOption) {
-        final String column1 = "Name";
+    public static JTable genreReport(String timeInter, String[] sortOption) {
+        final String column1 = "Genre";
         final String column2 = "Quantity";
         final String column3 = "Total Revenue";
         final String column4 = "Total Cost";
         final String column5 = "Total Profit";
+        Vector<Vector<java.io.Serializable>> data = new Vector<Vector<java.io.Serializable>>();
 
         switch(timeInter){
             case "Year" -> timeInter = "1 year";
@@ -57,22 +60,23 @@ public class Reports {
             statement = connection.createStatement();
             ResultSet rs = statement.executeQuery(query);
 
-            StringBuilder data = new StringBuilder();
-            data.append(String.format("%-35s ", column1));
-            data.append(String.format("%-20s", column2));
-            data.append(String.format("%-20s", column3));
-            data.append(String.format("%-20s", column4));
-            data.append(String.format("%10s%n", column5));
+            Vector<java.io.Serializable> columnNames = new Vector<>();
+            columnNames.add(column1);
+            columnNames.add(column2);
+            columnNames.add(column3);
+            columnNames.add(column4);
+            columnNames.add(column5);
 
             while (rs.next()) {
-                //Print one row
-                data.append(String.format("%-35s", rs.getString("name")));
-                data.append(String.format("%-20s", rs.getString("quantity")));
-                data.append(String.format("$%-20.2f", rs.getDouble("revenue")));
-                data.append(String.format("-$%-20.2f", rs.getDouble("cost")));
-                data.append(String.format("$%-20.2f%n", rs.getDouble("profit")));
+                Vector<java.io.Serializable> row = new Vector<java.io.Serializable>();
+                row.add(rs.getString("name"));
+                row.add(rs.getString("quantity"));
+                row.add(rs.getDouble("revenue"));
+                row.add("-" + rs.getDouble("cost"));
+                row.add(rs.getDouble("profit"));
+                data.add(row);
             }
-            return data.toString();
+            return new JTable(data, columnNames);
 
         } catch (SQLException throwables) {
             throwables.printStackTrace();
@@ -81,19 +85,20 @@ public class Reports {
     }
 
     /**
-     * Produces a string of information with sales by author, including the author name,
+     * Produces a table of information with sales by author, including the author name,
      * the quantity of books sold from that author and the
      * revenue, cost, profit from that author
      *
      * @param timeInter the interval of time in the past from now
-     * @return a string of data
+     * @return a JTable of data
      */
-    public static String authorReport(String timeInter, String[] sortOption) {
-        final String column1 = "Name";
+    public static JTable authorReport(String timeInter, String[] sortOption) {
+        final String column1 = "Author";
         final String column2 = "Quantity";
         final String column3 = "Total Revenue";
         final String column4 = "Total Cost";
         final String column5 = "Total Profit";
+        Vector<Vector<java.io.Serializable>> data = new Vector<Vector<java.io.Serializable>>();
 
         switch(timeInter){
             case "Year" -> timeInter = "1 year";
@@ -114,23 +119,23 @@ public class Reports {
             statement = connection.createStatement();
             ResultSet rs = statement.executeQuery(query);
 
-            StringBuilder data = new StringBuilder();
-            data.append(String.format("%10s ", column1));
-            data.append(String.format("%30s", column2));
-            data.append(String.format("%30s", column3));
-            data.append(String.format("%30s", column4));
-            data.append(String.format("%20s%n", column5));
+            Vector<java.io.Serializable> columnNames = new Vector<>();
+            columnNames.add(column1);
+            columnNames.add(column2);
+            columnNames.add(column3);
+            columnNames.add(column4);
+            columnNames.add(column5);
 
             while (rs.next()) {
-                //Print one row
-                String name =  rs.getString("name") + " " + rs.getString("auth_ln");
-                data.append(String.format("%-35s", name));
-                data.append(String.format("%-20s", rs.getString("quantity")));
-                data.append(String.format("$%-20.2f", rs.getDouble("revenue")));
-                data.append(String.format("-$%-20.2f", rs.getDouble("cost")));
-                data.append(String.format("$%-20.2f%n", rs.getDouble("profit")));
+                Vector<java.io.Serializable> row = new Vector<java.io.Serializable>();
+                row.add(rs.getString("name"));
+                row.add(rs.getString("quantity"));
+                row.add(rs.getDouble("revenue"));
+                row.add("-" + rs.getDouble("cost"));
+                row.add(rs.getDouble("profit"));
+                data.add(row);
             }
-            return data.toString();
+            return new JTable(data, columnNames);
 
         } catch (SQLException throwables) {
             throwables.printStackTrace();
@@ -139,19 +144,20 @@ public class Reports {
     }
 
     /**
-     * Produces a string of information with sales by publisher, including the publisher name,
+     * Produces a table of information with sales by publisher, including the publisher name,
      * the quantity of books sold from that publisher and the
      * revenue, cost, profit from that publisher
      *
      * @param timeInter the interval of time in the past from now
-     * @return a string of data
+     * @return a JTable of data
      */
-    public static String publisherReport(String timeInter, String[] sortOption) {
-        final String column1 = "Name";
+    public static JTable publisherReport(String timeInter, String[] sortOption) {
+        final String column1 = "Publisher";
         final String column2 = "Quantity";
         final String column3 = "Total Revenue";
         final String column4 = "Total Cost";
         final String column5 = "Total Profit";
+        Vector<Vector<java.io.Serializable>> data = new Vector<Vector<java.io.Serializable>>();
 
         switch(timeInter){
             case "Year" -> timeInter = "1 year";
@@ -172,22 +178,23 @@ public class Reports {
             statement = connection.createStatement();
             ResultSet rs = statement.executeQuery(query);
 
-            StringBuilder data = new StringBuilder();
-            data.append(String.format("%15s ", column1));
-            data.append(String.format("%90s", column2));
-            data.append(String.format("%20s", column3));
-            data.append(String.format("%20s", column4));
-            data.append(String.format("%20s%n", column5));
+            Vector<java.io.Serializable> columnNames = new Vector<>();
+            columnNames.add(column1);
+            columnNames.add(column2);
+            columnNames.add(column3);
+            columnNames.add(column4);
+            columnNames.add(column5);
 
             while (rs.next()) {
-                //Print one row
-                data.append(String.format("%-100s", rs.getString("name")));
-                data.append(String.format("%-20s", rs.getString("quantity")));
-                data.append(String.format("$%-20.2f", rs.getDouble("revenue")));
-                data.append(String.format("-$%-20.2f", rs.getDouble("cost")));
-                data.append(String.format("$%-10.2f%n", rs.getDouble("profit")));
+                Vector<java.io.Serializable> row = new Vector<java.io.Serializable>();
+                row.add(rs.getString("name"));
+                row.add(rs.getString("quantity"));
+                row.add(rs.getDouble("revenue"));
+                row.add("-" + rs.getDouble("cost"));
+                row.add(rs.getDouble("profit"));
+                data.add(row);
             }
-            return data.toString();
+            return new JTable(data, columnNames);
 
         } catch (SQLException throwables) {
             throwables.printStackTrace();
@@ -196,19 +203,21 @@ public class Reports {
     }
 
     /**
-     * Produces a string of information with sales by time frame, including the time frame,
+     * Produces a table of information with sales by time frame, including the time frame,
      * the quantity of books sold in that time and the
      * revenue, cost, profit during that period.
      *
-     * @param timeInter the interval of time to seperate the data
-     *                  (ie Month would seperate the data into each month in the past until the beginning of time)
-     * @return a string of data
+     * @param timeInter the interval of time to separate the data
+     *                  (ie Month would separate the data into each month in the past until the beginning of time)
+     * @return a JTable of data
      */
-    public static String expenseReport(String timeInter, String[] sortOption) {
+    public static JTable expenseReport(String timeInter, String[] sortOption) {
+        final String column1 = "Date";
         final String column2 = "Quantity";
         final String column3 = "Total Revenue";
         final String column4 = "Total Cost";
         final String column5 = "Total Profit";
+        Vector<Vector<java.io.Serializable>> data = new Vector<Vector<java.io.Serializable>>();
         String sortDate;
         int datePart = 0;
 
@@ -236,22 +245,23 @@ public class Reports {
             statement = connection.createStatement();
             ResultSet rs = statement.executeQuery(query);
 
-            StringBuilder data = new StringBuilder();
-            data.append(String.format("%10s ", timeInter));
-            data.append(String.format("%20s", column2));
-            data.append(String.format("%20s", column3));
-            data.append(String.format("%20s", column4));
-            data.append(String.format("%20s%n", column5));
+            Vector<java.io.Serializable> columnNames = new Vector<>();
+            columnNames.add(column1);
+            columnNames.add(column2);
+            columnNames.add(column3);
+            columnNames.add(column4);
+            columnNames.add(column5);
 
             while (rs.next()) {
-                //Print one row
-                data.append(String.format("%-20s", rs.getString("time").substring(0, 10 - datePart)));
-                data.append(String.format("%-20s", rs.getString("quantity")));
-                data.append(String.format("$%-20.2f", rs.getDouble("revenue")));
-                data.append(String.format("-$%-20.2f", rs.getDouble("cost")));
-                data.append(String.format("$%-10.2f%n", rs.getDouble("profit")));
+                Vector<java.io.Serializable> row = new Vector<java.io.Serializable>();
+                row.add(rs.getString("time").substring(0, 10 - datePart));
+                row.add(rs.getString("quantity"));
+                row.add(rs.getDouble("revenue"));
+                row.add("-" + rs.getDouble("cost"));
+                row.add(rs.getDouble("profit"));
+                data.add(row);
             }
-            return data.toString();
+            return new JTable(data, columnNames);
 
         } catch (SQLException throwables) {
             throwables.printStackTrace();
