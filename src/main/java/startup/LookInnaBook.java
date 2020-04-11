@@ -3,10 +3,13 @@ package startup;
  * Copyright © 3.2020. Ryan Godfrey, John Breton.
  * All rights reserved.
  */
+
 import frontend.LoginScreen;
+
 import javax.swing.*;
 import javax.swing.plaf.ColorUIResource;
 import java.awt.*;
+
 /**
  * LookInnaBook is responsible for beginning the application.
  * This may be refactored to be within a different class in the future.

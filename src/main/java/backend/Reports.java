@@ -41,7 +41,7 @@ public class Reports {
         final String column5 = "Total Profit";
         Vector<Vector<java.io.Serializable>> data = new Vector<Vector<java.io.Serializable>>();
 
-        switch(timeInter){
+        switch (timeInter) {
             case "Year" -> timeInter = "1 year";
             case "Month" -> timeInter = "1 month";
             case "Week" -> timeInter = "1 week";
@@ -100,14 +100,14 @@ public class Reports {
         final String column5 = "Total Profit";
         Vector<Vector<java.io.Serializable>> data = new Vector<Vector<java.io.Serializable>>();
 
-        switch(timeInter){
+        switch (timeInter) {
             case "Year" -> timeInter = "1 year";
             case "Month" -> timeInter = "1 month";
             case "Week" -> timeInter = "1 week";
             case "Day" -> timeInter = "1 day";
         }
         try {
-            String query = String.format("SELECT auth_fn as name, auth_ln, " +
+            String query = String.format("SELECT coalesce(auth_fn, '') ||' '|| coalesce(auth_ln, '') as name, " +
                     "sum(quantity) as quantity, " +
                     "sum(quantity*price) as revenue, " +
                     "sum(quantity*price*royalty/100) as cost, " +
@@ -159,7 +159,7 @@ public class Reports {
         final String column5 = "Total Profit";
         Vector<Vector<java.io.Serializable>> data = new Vector<Vector<java.io.Serializable>>();
 
-        switch(timeInter){
+        switch (timeInter) {
             case "Year" -> timeInter = "1 year";
             case "Month" -> timeInter = "1 month";
             case "Week" -> timeInter = "1 week";
@@ -221,11 +221,11 @@ public class Reports {
         String sortDate;
         int datePart = 0;
 
-        if(sortOption[0].equals("date")){
+        if (sortOption[0].equals("date")) {
             sortDate = String.format("date_trunc('%s', date_placed)", timeInter);
         } else sortDate = sortOption[0];
 
-        switch (timeInter){
+        switch (timeInter) {
             case "Year" -> datePart = 6;
             case "Month" -> datePart = 3;
             case "Day", "Week" -> {
@@ -272,11 +272,11 @@ public class Reports {
     /**
      * Return the quantity of a specific book sold in the previous time interval
      *
-     * @param isbn the book to look for
+     * @param isbn   the book to look for
      * @param option the time interval to check (ex "1 month")
      * @return the quantity of the book that was sold in the previous time interval
      */
-    public static int booksSold(String isbn, String option){
+    public static int booksSold(String isbn, String option) {
         int quantity = 0;
         try {
             String query = String.format("SELECT isbn, sum(quantity) as quantity " +

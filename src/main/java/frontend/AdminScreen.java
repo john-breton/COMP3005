@@ -191,6 +191,21 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
         editEntitiesPanel.addTab("Edit User", null, editUser(), "Edit properties of existing users");
         editEntitiesPanel.addTab("Edit Order", null, editOrder(), "Edit status and tracking number of existing order");
 
+        // Format JComboBoxes
+        billProvinceCB.setBackground(Color.WHITE);
+        pubProvinceCB.setBackground(Color.WHITE);
+        shippingAdminProvinceCB.setBackground(Color.WHITE);
+        billAdminProvinceCB.setBackground(Color.WHITE);
+        editShippingProvinceCB.setBackground(Color.WHITE);
+        editBillProvinceCB.setBackground(Color.WHITE);
+        editStatusCB.setBackground(Color.WHITE);
+        reportCB.setBackground(Color.WHITE);
+        timeCB.setBackground(Color.WHITE);
+        reportSortCB.setBackground(Color.WHITE);
+        isUserAdminCB.setBackground(Color.WHITE);
+        newIsUserAdminCB.setBackground(Color.WHITE);
+        editBillingSameAsShipping.setBackground(Color.WHITE);
+
         /* ChangeListeners */
         adminView.addChangeListener(this);
         newEntitiesPanel.addChangeListener(this);
@@ -1621,7 +1636,7 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
      *
      * @return lookupOrderScreen for adminView
      */
-    private JPanel editOrder(){
+    private JPanel editOrder() {
         /* JPanels */
         JPanel lookupOrderScreen = new JPanel(new GridBagLayout());
         lookupOrderScreen.setBorder(new EmptyBorder(10, 10, 10, 10));
@@ -1701,7 +1716,7 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
         con.fill = GridBagConstraints.BOTH;
         lookupOrderScreen.add(Box.createGlue(), con);
 
-    return lookupOrderScreen;
+        return lookupOrderScreen;
     }
 
     /**
@@ -1725,11 +1740,11 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
         generateReport.addActionListener(this);
         logout.addActionListener(this);
         reportCB.addActionListener(e -> {
-                if(Objects.requireNonNull(reportCB.getSelectedItem()).equals("Sales v Expense")){
-                    reportSortCB.setSelectedIndex(2);
-                } else {
-                    reportSortCB.setSelectedIndex(0);
-                }
+            if (Objects.requireNonNull(reportCB.getSelectedItem()).equals("Sales v Expense")) {
+                reportSortCB.setSelectedIndex(2);
+            } else {
+                reportSortCB.setSelectedIndex(0);
+            }
         });
 
         // setup panel
@@ -1792,8 +1807,9 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
 
         Object[] options = {userButton, cancelButton};
         final JOptionPane screenChoice = new JOptionPane("Are you sure you wish to change views?\nYou cannot switch back without logging out.", JOptionPane.PLAIN_MESSAGE, JOptionPane.YES_NO_OPTION, null, options, options[1]);
-        screenChoice.setIcon(FrontEndUtilities.WINDOW_ICON);
+        //screenChoice.setIcon(FrontEndUtilities.WINDOW_ICON);
         final JDialog dialog = screenChoice.createDialog("Admin");
+        dialog.setIconImage(FrontEndUtilities.WINDOW_ICON.getImage());
         dialog.setContentPane(screenChoice);
         dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 
@@ -1901,7 +1917,7 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
                 } // Admin Add User Screen
                 case "Delete Book" -> confirmDelete("book"); // Admin Screen
                 case "Update Order" -> {
-                    if(AdminScreenUtilities.sendOrderDetails()) {
+                    if (AdminScreenUtilities.sendOrderDetails()) {
                         defaultAdminViewFields();
                         lookupOrderErrorLabel.setForeground(Color.BLACK);
                         lookupOrderErrorLabel.setText("Order Updated");

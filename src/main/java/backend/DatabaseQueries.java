@@ -5,8 +5,8 @@ package backend;
  */
 
 import java.sql.*;
-import java.util.Date;
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * The backend.LookForaBook class represents the back-end for the util.LookInnaBook application.
@@ -69,7 +69,7 @@ public class DatabaseQueries {
      *
      * @param orderNumber The order number associated with an order.
      * @return An ArrayList of containing order information from the database if the order was found. Null if no order was found.
-     *         If an order was found: [0] = tracking_num, [1] = date_placed, [2] = status
+     * If an order was found: [0] = tracking_num, [1] = date_placed, [2] = status
      */
     public static ArrayList<String> lookForanOrder(String orderNumber) {
         try {
@@ -490,8 +490,8 @@ public class DatabaseQueries {
      * Add an order to the database.
      *
      * @param trackingNumber The tracking number of an order.
-     * @param totalCost The total cost of an order.
-     * @param oneAddress True if there the order has the same billing and shipping address, false otherwise.
+     * @param totalCost      The total cost of an order.
+     * @param oneAddress     True if there the order has the same billing and shipping address, false otherwise.
      * @return The order number associated with the order.
      */
     public static String addOrder(String trackingNumber, String totalCost, boolean oneAddress) {
@@ -520,8 +520,8 @@ public class DatabaseQueries {
      * same as addOrder, execpt generates random timestamp
      *
      * @param trackingNumber The tracking number of an order.
-     * @param totalCost The total cost of an order.
-     * @param oneAddress True if there the order has the same billing and shipping address, false otherwise.
+     * @param totalCost      The total cost of an order.
+     * @param oneAddress     True if there the order has the same billing and shipping address, false otherwise.
      * @return The order number associated with the order.
      */
     public static String addOrderRandom(String trackingNumber, String totalCost, boolean oneAddress) {
@@ -529,7 +529,7 @@ public class DatabaseQueries {
         long offset = Timestamp.valueOf("2000-01-01 00:00:00").getTime();
         long end = Timestamp.valueOf("2020-04-16 00:00:00").getTime();
         long diff = end - offset + 1;
-        Timestamp rand = new Timestamp(offset + (long)(Math.random() * diff));
+        Timestamp rand = new Timestamp(offset + (long) (Math.random() * diff));
 
         try {
             ResultSet result;
@@ -556,11 +556,11 @@ public class DatabaseQueries {
      * @param orderNum the order number
      * @param basketID the basket id
      */
-    public static void addCheckout(String orderNum, String basketID){
-        try{
+    public static void addCheckout(String orderNum, String basketID) {
+        try {
             statement.executeUpdate(String.format("INSERT INTO project.checkout VALUES (%s, %s)", basketID, orderNum));
             decrementStock(basketID);
-        } catch(SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }
@@ -570,42 +570,44 @@ public class DatabaseQueries {
      *
      * @param basketID the basket id
      */
-    private static void decrementStock(String basketID){
-        try{
+    private static void decrementStock(String basketID) {
+        try {
             ResultSet result = statement.executeQuery(String.format("SELECT * FROM project.bask_item WHERE basket_id = %s", basketID));
 
-            while(result.next()){
+            while (result.next()) {
                 connection.createStatement().executeUpdate(String.format("UPDATE project.book SET stock = stock - %s WHERE isbn = %s", result.getString("quantity"), result.getString("isbn")));
 
                 // check book stock
                 PreparedStatement moreBooks = connection.prepareStatement(String.format("SELECT order_more_books(%s)", result.getString("isbn")));
                 ResultSet rs = moreBooks.executeQuery();
-                while(rs.next()) {
+                while (rs.next()) {
                     if (rs.getBoolean("order_more_books")) {
                         emailPublisher(result.getString("isbn"));
                     }
                 }
             }
-        } catch(SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
     /**
-     *  Queries the db for pub_name and email to email the publisher for more books with a specific isbn
+     * Queries the db for pub_name and email to email the publisher for more books with a specific isbn
+     *
      * @param isbn the isbn of the book to be ordered
      */
-    private static void emailPublisher(String isbn){
-        try{
+    private static void emailPublisher(String isbn) {
+        try {
             ResultSet publisher = connection.createStatement().executeQuery(String.format("SELECT pub_name, email_add FROM project.publisher NATURAL JOIN project.publishes WHERE isbn = %s", isbn));
             int numBooks = Reports.booksSold(isbn, "1 month");
-            while(publisher.next()){
+            while (publisher.next()) {
                 System.out.println("Sending an email to: " + publisher.getString("pub_name") + " (" + publisher.getString("email_add") + ") \nto order " + numBooks + " more books with isbn = " + isbn);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
+
     /**
      * Add an address into the database.
      *
@@ -714,10 +716,10 @@ public class DatabaseQueries {
     /**
      * Adds a publisher to the database
      *
-     * @param name The name of the publisher.
-     * @param email The email of the publisher.
+     * @param name     The name of the publisher.
+     * @param email    The email of the publisher.
      * @param phoneNum The phone number of the publisher.
-     * @param bankAcc The bank account number of the publisher.
+     * @param bankAcc  The bank account number of the publisher.
      * @return true if successful, false otherwise
      */
     public static boolean addPublisher(String name, String email, String phoneNum, String bankAcc) {
@@ -995,13 +997,12 @@ public class DatabaseQueries {
     }
 
     /**
-     *
      * @param orderNum unique order identifier
      * @param tracking unique tracking number
-     * @param status status of the order
+     * @param status   status of the order
      * @return true if successful, false otherwise
      */
-    public static boolean updateOrder(String orderNum, String tracking, String status){
+    public static boolean updateOrder(String orderNum, String tracking, String status) {
         try {
             statement = connection.createStatement();
             if (tracking.isEmpty()) { // no tracking number yet

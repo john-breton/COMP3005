@@ -466,17 +466,17 @@ public class AdminScreenUtilities extends AdminScreen {
     }
 
     /**
-     *  Populates editOrder with order info
+     * Populates editOrder with order info
      */
     public static void fetchOrderDetails() {
         ArrayList<String> orderInfo = new ArrayList<>();
-        if(!searchOrderNumber.getText().isEmpty())
+        if (!searchOrderNumber.getText().isEmpty())
             orderInfo = DatabaseQueries.lookForanOrder(searchOrderNumber.getText());
         else {
             defaultAdminViewFields();
             lookupOrderErrorLabel.setText("Please enter an order number before searching.");
         }
-        if(orderInfo == null || orderInfo.size() == 0){
+        if (orderInfo == null || orderInfo.size() == 0) {
             defaultAdminViewFields();
             lookupOrderErrorLabel.setText("Order not found");
         } else {
@@ -494,22 +494,23 @@ public class AdminScreenUtilities extends AdminScreen {
     }
 
     /**
-     *  Sends order information to the DB
+     * Sends order information to the DB
+     *
      * @return true if order is updated
      */
     public static boolean sendOrderDetails() {
         lookupOrderErrorLabel.setForeground(Color.RED);
-        if(editStatusCB.getSelectedIndex() > 2){
-            if(trackingNumber.getText().isEmpty()){
+        if (editStatusCB.getSelectedIndex() > 2) {
+            if (trackingNumber.getText().isEmpty()) {
                 lookupOrderErrorLabel.setText("Order with this status needs a tracking number");
                 return false;
             }
         }
-        if(editStatusCB.getSelectedIndex() == 0){
+        if (editStatusCB.getSelectedIndex() == 0) {
             lookupOrderErrorLabel.setText("Order needs a status");
             return false;
         } else {
-               return DatabaseQueries.updateOrder(currentOrderNumber.getText(), trackingNumber.getText(), (String) editStatusCB.getSelectedItem());
+            return DatabaseQueries.updateOrder(currentOrderNumber.getText(), trackingNumber.getText(), (String) editStatusCB.getSelectedItem());
         }
     }
 
@@ -917,9 +918,9 @@ public class AdminScreenUtilities extends AdminScreen {
     }
 
 
-    public static void reportSelection(){
+    public static void reportSelection() {
         String[] sortOption = {"Name", "ASC"};
-        switch(Objects.requireNonNull(reportSortCB.getSelectedItem()).toString()){
+        switch (Objects.requireNonNull(reportSortCB.getSelectedItem()).toString()) {
             case "Name: A-Z" -> {
                 sortOption[0] = "name";
                 sortOption[1] = "ASC";
@@ -970,13 +971,13 @@ public class AdminScreenUtilities extends AdminScreen {
             }
         }
 
-        if(reportCB.getSelectedIndex() != 0) {
+        if (reportCB.getSelectedIndex() != 0) {
             switch (Objects.requireNonNull(reportCB.getSelectedItem()).toString()) {
                 case "Sales v Expense" -> {
                     if (reportSortCB.getSelectedIndex() > 1) {
                         reportContainer.setViewportView(Reports.expenseReport(Objects.requireNonNull(timeCB.getSelectedItem()).toString(), sortOption));
                         reportErrorLabel.setText("");
-                    }else reportErrorLabel.setText("Invalid Report Selection. Cannot Sort Dates by Name");
+                    } else reportErrorLabel.setText("Invalid Report Selection. Cannot Sort Dates by Name");
                 }
                 case "Sales per Genre" -> {
                     if (reportSortCB.getSelectedIndex() != 2 && reportSortCB.getSelectedIndex() != 3) {
@@ -985,7 +986,7 @@ public class AdminScreenUtilities extends AdminScreen {
                     } else reportErrorLabel.setText("Invalid Report Selection. Cannot Sort Genres by Date");
                 }
                 case "Sales per Author" -> {
-                    if (reportSortCB.getSelectedIndex() != 2 && reportSortCB.getSelectedIndex() != 3){
+                    if (reportSortCB.getSelectedIndex() != 2 && reportSortCB.getSelectedIndex() != 3) {
                         reportContainer.setViewportView(Reports.authorReport(Objects.requireNonNull(timeCB.getSelectedItem()).toString(), sortOption));
                         reportErrorLabel.setText("");
                     } else reportErrorLabel.setText("Invalid Report Selection. Cannot Sort Authors by Date");

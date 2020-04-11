@@ -546,10 +546,10 @@ public class CheckoutScreen extends JFrame implements ActionListener {
         if (sameAsBilling) {
             orderNumber = DatabaseQueries.addOrder(trackingNumber, totalCost.substring(1), true);
         } else {
-        // Case 2: Different billing and shipping.
+            // Case 2: Different billing and shipping.
             DatabaseQueries.addAddress(checkoutBillingStreetNumTF.getText(), checkoutBillingStreetNameTF.getText(), checkoutBillingApartmentTF.getText(), checkoutBillingCityTF.getText(), Objects.requireNonNull(checkoutBillingProvinceCB.getSelectedItem()).toString(), checkoutBillingCountryTF.getText(), checkoutBillingPostalCodeTF.getText());
             orderNumber = DatabaseQueries.addOrder(trackingNumber, totalCost.substring(1), false);
-           }
+        }
 
         DatabaseQueries.addCheckout(orderNumber, Objects.requireNonNull(DatabaseQueries.checkForCart(username)).get(0));
         DatabaseQueries.registerCart(username);
