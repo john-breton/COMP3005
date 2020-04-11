@@ -2,6 +2,7 @@ package frontend;
 
 
 import backend.DatabaseQueries;
+import backend.Reports;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -28,12 +29,17 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
             billAdminProvinceCB = new JComboBox<>(FrontEndUtilities.provincesArr),
             editShippingProvinceCB = new JComboBox<>(FrontEndUtilities.provincesArr),
             editBillProvinceCB = new JComboBox<>(FrontEndUtilities.provincesArr),
-            editStatusCB = new JComboBox<>(FrontEndUtilities.statusArr);
+            editStatusCB = new JComboBox<>(FrontEndUtilities.statusArr),
+            reportCB = new JComboBox<>(FrontEndUtilities.reportChoiceArr),
+            timeCB = new JComboBox<>(FrontEndUtilities.reportTimeFrameArr),
+            reportSortCB = new JComboBox<>(FrontEndUtilities.reportSortArr);
     protected static final JCheckBox isUserAdminCB = new JCheckBox("Is the user an admin?"),
             newIsUserAdminCB = new JCheckBox("Is the user an admin?");
     protected static final JCheckBox editBillingSameAsShipping = new JCheckBox("Billing Address is the same as Shipping Address");
     /* JTextFields*/
     // AdminScreen
+    // Reports
+    protected static JTextArea reportContainer = new JTextArea();
     // addBook
     protected static final JTextField newISBNTF = new JTextField(15),
             newBookTitleTF = new JTextField(15),
@@ -134,7 +140,8 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
             confirmBookEditLabel = new JLabel("", JLabel.CENTER),
             lookupOrderErrorLabel = new JLabel("", JLabel.CENTER),
             currentOrderNumber = new JLabel(""),
-            dateOrderPlaced = new JLabel("");
+            dateOrderPlaced = new JLabel(""),
+            reportErrorLabel = new JLabel("", JLabel.CENTER);
 
     /* JButtons */
     protected static final JButton deleteBookButton = FrontEndUtilities.formatButton("Delete Book");
@@ -1692,6 +1699,7 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
 
     return lookupOrderScreen;
     }
+
     /**
      * Creates the "Reports" tab for the adminScreen
      * TODO: reportPanel()
@@ -1700,17 +1708,69 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
      */
     private JPanel reportPanel() {
         JPanel generateReportPanel = new JPanel(new GridBagLayout());
-        JScrollPane reportContainer = new JScrollPane();
+        generateReportPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
 
         /* JButtons */
         JButton generateReport = FrontEndUtilities.formatButton("Generate Report");
         JButton logout = FrontEndUtilities.formatButton("Logout");
 
         /* JLabels */
+        JLabel reportLabel = new JLabel("Report:"),
+                timeLabel = new JLabel("Time Frame:");
 
         /* ActionListeners */
+        generateReport.addActionListener(this);
+        logout.addActionListener(this);
 
-        return new JPanel();
+        // setup panel
+        GridBagConstraints con = new GridBagConstraints();
+
+        con.gridy = 0;
+        con.gridx = 0;
+        con.gridwidth = 1;
+        con.fill = GridBagConstraints.NONE;
+        con.anchor = GridBagConstraints.LINE_START;
+        generateReportPanel.add(logout, con);
+        con.gridx = 1;
+        con.gridwidth = 6;
+        con.fill = GridBagConstraints.HORIZONTAL;
+        con.anchor = GridBagConstraints.CENTER;
+        reportErrorLabel.setForeground(Color.RED);
+        generateReportPanel.add(reportErrorLabel, con);
+        con.gridx = 7;
+        con.gridwidth = 1;
+        con.anchor = GridBagConstraints.LINE_END;
+        con.fill = GridBagConstraints.NONE;
+        generateReportPanel.add(generateReport, con);
+
+        con.gridy = 1;
+        con.gridx = 1;
+        con.anchor = GridBagConstraints.LINE_START;
+        generateReportPanel.add(reportLabel, con);
+        con.gridx = 2;
+        generateReportPanel.add(reportCB, con);
+        con.gridx = 3;
+        generateReportPanel.add(timeLabel, con);
+        con.gridx = 4;
+        generateReportPanel.add(timeCB, con);
+        con.gridx = 5;
+        generateReportPanel.add(new JLabel("Sort By:"), con);
+        con.gridx = 6;
+        generateReportPanel.add(reportSortCB, con);
+
+        con.gridy = 2;
+        con.gridx = 0;
+        con.anchor = GridBagConstraints.CENTER;
+        con.fill = GridBagConstraints.BOTH;
+        con.weighty = 1.0;
+        con.gridwidth = 8;
+        reportContainer.setEditable(false);
+        reportContainer.setAlignmentX(JTextArea.CENTER_ALIGNMENT);
+        JScrollPane reportView = new JScrollPane(reportContainer);
+        reportView.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        generateReportPanel.add(reportView, con);
+
+        return generateReportPanel;
     }
 
     /**
@@ -1785,7 +1845,6 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
     public void actionPerformed(ActionEvent e) {
         Object o = e.getSource();
 
-
         if (o instanceof JButton) {
             switch (((JButton) o).getText()) {
                 case "Logout" -> FrontEndUtilities.confirmLogout(this); // Anywhere and everywhere
@@ -1839,6 +1898,7 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
                     }
                 } // edit order
                 case "Search Order" -> AdminScreenUtilities.fetchOrderDetails(); // edit order
+                case "Generate Report" -> AdminScreenUtilities.reportSelection();
                 default -> System.out.println("Error");
             }
         }

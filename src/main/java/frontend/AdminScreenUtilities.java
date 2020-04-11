@@ -1,6 +1,7 @@
 package frontend;
 
 import backend.DatabaseQueries;
+import backend.Reports;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -918,4 +919,69 @@ public class AdminScreenUtilities extends AdminScreen {
         // Done.
         return true;
     }
+
+
+    public static void reportSelection(){
+        String[] sortOption = {"Name", "ASC"};
+        switch(reportSortCB.getSelectedItem().toString()){
+            case "Name: A-Z" -> {
+                sortOption[0] = "name";
+                sortOption[1] = "ASC";
+            }
+            case "Name: Z-A" -> {
+                sortOption[0] = "name";
+                sortOption[1] = "DESC";
+            }
+            case "Quantity: High to Low" -> {
+                sortOption[0] = "quantity";
+                sortOption[1] = "DESC";
+            }
+            case "Quantity: Low to High" -> {
+                sortOption[0] = "quantity";
+                sortOption[1] = "ASC";
+            }
+            case "Revenue: High to Low" -> {
+                sortOption[0] = "revenue";
+                sortOption[1] = "DESC";
+            }
+            case "Revenue: Low to High" -> {
+                sortOption[0] = "revenue";
+                sortOption[1] = "ASC";
+            }
+            case "Cost: High to Low" -> {
+                sortOption[0] = "cost";
+                sortOption[1] = "DESC";
+            }
+            case "Cost: Low to High" -> {
+                sortOption[0] = "cost";
+                sortOption[1] = "ASC";
+            }
+            case "Profit: High to Low" -> {
+                sortOption[0] = "profit";
+                sortOption[1] = "DESC";
+            }
+            case "Profit: Low to High" -> {
+                sortOption[0] = "profit";
+                sortOption[1] = "ASC";
+            }
+        }
+        switch(reportCB.getSelectedItem().toString()) {
+            case "Sales v Expense" -> {
+                reportContainer.setText(Reports.expenseReport(timeCB.getSelectedItem().toString(), sortOption));
+            }
+            case "Sales per Genre" -> {
+                reportContainer.setText(Reports.genreReport(timeCB.getSelectedItem().toString(), sortOption));
+            }
+            case "Sales per Author" -> {
+                reportContainer.setText(Reports.authorReport(timeCB.getSelectedItem().toString(), sortOption));
+            }
+            case "Sales per Publisher" -> {
+                reportContainer.setText(Reports.publisherReport(timeCB.getSelectedItem().toString(), sortOption));
+
+            }
+        }
+        reportContainer.setVisible(true);
+        reportContainer.setCaretPosition(0);
+    }
+
 }

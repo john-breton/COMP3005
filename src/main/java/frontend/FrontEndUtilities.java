@@ -11,7 +11,9 @@ public class FrontEndUtilities {
     // JComboBox Arrays
     static final String[] resultFilterArr = {"Price: High to low", "Price: Low to high", "Title: A-Z", "Title: Z-A", "Year: High to low", "Year: Low to high"};
     static final String[] searchFilterArr = {"Title", "Author", "Genre", "ISBN", "Publisher", "Year"};
-    static final String[] reportChoiceArr = {"--", "Sales v Expense", "Sales per Genre", "Sales per Author", "Sales per Publisher", "Sales per Month", "Sales per Year", "Expense per Month", "Expense per Year"};
+    static final String[] reportChoiceArr = {"--", "Sales v Expense", "Sales per Genre", "Sales per Author", "Sales per Publisher"};
+    static final String[] reportTimeFrameArr = {"Year", "Month", "Week", "Day"};
+    static final String[] reportSortArr = {"Name: A-Z", "Name: Z-A", "Quantity: High to Low", "Quantity: Low to High", "Revenue: High to Low", "Revenue: Low to High", "Cost: High to Low", "Cost: Low to High", "Profit: High to Low", "Profit: Low to High"};
     static final String[] provincesArr = {"--", "AB", "BC", "MB", "NB", "NL", "NS", "NT", "NU", "ON", "PE", "QC", "SK", "YT"};
     static final String[] statusArr = {"--", "Processing", "Ready for Shipment", "On the Way!", "Delivered"};
 

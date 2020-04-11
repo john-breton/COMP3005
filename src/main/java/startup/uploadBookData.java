@@ -43,18 +43,18 @@ public class uploadBookData {
             statement = connection.createStatement();
 
             // emptyDB
-            StringBuilder resetDB = new StringBuilder();
-            Stream<String> stream = Files.lines(Paths.get("documentation/DDL/COMP 3005 - project - DDL file.txt"), StandardCharsets.UTF_8);
-            stream.forEach(s -> resetDB.append(s).append("\n"));
-            statement.executeUpdate(resetDB.toString());
+           // StringBuilder resetDB = new StringBuilder();
+            //Stream<String> stream = Files.lines(Paths.get("documentation/DDL/COMP 3005 - project - DDL file.txt"), StandardCharsets.UTF_8);
+           // stream.forEach(s -> resetDB.append(s).append("\n"));
+            //statement.executeUpdate(resetDB.toString());
 
             // add admin
-            statement.executeUpdate("Insert into project.user values ('" + USER + "', '" + USER + "', 'Post', 'Gres', 'postgres@email.ca');" +
-                    "insert into project.librarian values ('" + USER + "', 300.00);");
+            //statement.executeUpdate("Insert into project.user values ('" + USER + "', '" + USER + "', 'Post', 'Gres', 'postgres@email.ca');" +
+             //       "insert into project.librarian values ('" + USER + "', 300.00);");
             // Give them their own cart.
-            statement.executeUpdate("INSERT INTO project.bask_manage values ('" + USER + "', '1')");
+            //statement.executeUpdate("INSERT INTO project.bask_manage values ('" + USER + "', '1')");
 
-        } catch (SQLException | IOException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
 
@@ -67,7 +67,7 @@ public class uploadBookData {
             FileReader file = new FileReader("documentation/bookdata.json");
             JsonArray arr = JsonParser.parseReader(file).getAsJsonArray();
 
-            arr.forEach(book -> {
+           /* arr.forEach(book -> {
                 parseBookObject((JsonObject) book);
 
                 if (titleObject != null && isbnObject != null && pgCntObject != -1 && yearObject != -1 && authorsObject != null &&
@@ -75,7 +75,7 @@ public class uploadBookData {
                     addPublisher(publishersObject);
                     addBook(isbnObject, titleObject, pgCntObject);
                 }
-            });
+            });*/
 
             // populate DB with users + addresses
             for (int i = 0; i < 1000; i++)

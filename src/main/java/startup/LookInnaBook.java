@@ -3,6 +3,7 @@ package startup;
  * Copyright © 3.2020. Ryan Godfrey, John Breton.
  * All rights reserved.
  */
+import backend.Reports;
 import frontend.LoginScreen;
 import javax.swing.*;
 import javax.swing.plaf.ColorUIResource;
