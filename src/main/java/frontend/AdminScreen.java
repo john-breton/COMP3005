@@ -1702,7 +1702,6 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
 
     /**
      * Creates the "Reports" tab for the adminScreen
-     * TODO: reportPanel()
      *
      * @return reportPanel for adminView
      */
@@ -1721,6 +1720,13 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
         /* ActionListeners */
         generateReport.addActionListener(this);
         logout.addActionListener(this);
+        reportCB.addActionListener(e -> {
+                if(reportCB.getSelectedItem().equals("Sales v Expense")){
+                    reportSortCB.setSelectedIndex(2);
+                } else {
+                    reportSortCB.setSelectedIndex(0);
+                }
+        });
 
         // setup panel
         GridBagConstraints con = new GridBagConstraints();

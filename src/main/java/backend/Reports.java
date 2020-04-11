@@ -214,7 +214,12 @@ public class Reports {
         final String column3 = "Total Revenue";
         final String column4 = "Total Cost";
         final String column5 = "Total Profit";
+        String sortDate = "";
         int datePart = 0;
+
+        if(sortOption[0].equals("date")){
+            sortDate = String.format("date_trunc('%s', date_placed)", timeInter);
+        } else sortDate = sortOption[0];
 
         switch (timeInter){
             case "Year" -> datePart = 6;
@@ -224,13 +229,14 @@ public class Reports {
 
         try {
             String query = String.format("SELECT date_trunc('%s', date_placed) as time, " +
-                    "sum(quantity), sum(quantity*price) as revenue, " +
+                    "sum(quantity) as quantity, " +
+                    "sum(quantity*price) as revenue, " +
                     "sum(quantity*price*royalty/100) as cost, " +
                     "sum(quantity*price)-sum(quantity*price*royalty/100) as profit " +
                     "from (project.order natural join project.checkout natural join project.bask_item natural join project.book) " +
-                    "WHERE date_placed < now()" +
-                    "group by date_trunc('%s', date_placed)" +
-                    "ORDER BY date_trunc('%s', date_placed);", timeInter, timeInter, timeInter, timeInter);
+                    "WHERE date_placed < now() " +
+                    "group by date_trunc('%s', date_placed) " +
+                    "ORDER BY %s %s;", timeInter, timeInter, sortDate, sortOption[1]);
             statement = connection.createStatement();
             ResultSet rs = statement.executeQuery(query);
 
@@ -244,7 +250,7 @@ public class Reports {
             while (rs.next()) {
                 //Print one row
                 data += String.format("%-20s", rs.getString("time").substring(0, 10 - datePart));
-                data += String.format("%-20s", rs.getString("sum"));
+                data += String.format("%-20s", rs.getString("quantity"));
                 data += String.format("$%-20.2f", rs.getDouble("revenue"));
                 data += String.format("-$%-20.2f", rs.getDouble("cost"));
                 data += String.format("$%-10.2f%n", rs.getDouble("profit"));
