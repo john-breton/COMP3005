@@ -47,7 +47,7 @@ public class UserScreen extends JFrame implements ActionListener {
 
         this.username = username;
         totalPrice = new JLabel("$0.00", JLabel.CENTER);
-        this.setPreferredSize(new Dimension(798, 850));
+        this.setPreferredSize(new Dimension(800, 850));
         if (this.getJMenuBar() != null) this.getJMenuBar().setVisible(false);
         Container c = this.getContentPane();
         c.removeAll();
@@ -125,20 +125,20 @@ public class UserScreen extends JFrame implements ActionListener {
         con.gridy = 1;
         searchLabel.setAlignmentX(JPanel.LEFT_ALIGNMENT);
         searchAndResults.add(searchLabel, con);
-
         con.insets = everythingElse;
         con.gridx = 1;
         searchAndResults.add(searchFilters, con);
-
         con.fill = GridBagConstraints.HORIZONTAL;
         con.gridx = 2;
-        userSearchTF.setPreferredSize(new Dimension(200, 20));
-        userSearchTF.setMinimumSize(new Dimension(200, 20));
-        userSearchTF.setMaximumSize(new Dimension(200, 20));
+        con.gridwidth = 2;
+        userSearchTF.setPreferredSize(new Dimension(150, 20));
+        userSearchTF.setMinimumSize(new Dimension(150, 20));
+        userSearchTF.setMaximumSize(new Dimension(150, 20));
         searchAndResults.add(userSearchTF, con);
-
         con.fill = GridBagConstraints.NONE;
-        con.gridx = 3;
+        con.gridx = 4;
+        con.gridwidth = 1;
+        searchButton.setPreferredSize(new Dimension(100, 20));
         searchAndResults.add(searchButton, con);
 
         con.gridx = 0;
@@ -147,18 +147,18 @@ public class UserScreen extends JFrame implements ActionListener {
         con.fill = GridBagConstraints.NONE;
         filterLabel.setAlignmentX(JPanel.LEFT_ALIGNMENT);
         searchAndResults.add(filterLabel, con);
-
         con.gridx = 1;
         con.insets = everythingElse;
+        con.gridwidth = 2;
         searchAndResults.add(resultFilters, con);
-        con.gridx = 2;
+        con.gridx = 3;
         searchAndResults.add(errorLabel, con);
 
         con.gridx = 0;
         con.gridy = 3;
         con.weighty = 1.0;
         con.weightx = 1.0;
-        con.gridwidth = 4;
+        con.gridwidth = 5;
         con.insets = new Insets(5, 5, 5, 5);
         con.fill = GridBagConstraints.BOTH;
         con.anchor = GridBagConstraints.CENTER;
@@ -311,6 +311,7 @@ public class UserScreen extends JFrame implements ActionListener {
         errorLabel.setText("");
 
         if (searchText.isEmpty()) {
+            errorLabel.setForeground(Color.RED);
             errorLabel.setText("There's nothing here to search with!");
             return;
         }
@@ -323,8 +324,10 @@ public class UserScreen extends JFrame implements ActionListener {
         // Execute the search.
         ArrayList<Object> results = DatabaseQueries.lookForaBook(searchText, searchTerm);
         if (results == null) {
-            errorLabel.setText("Did not find any books, please try again!");
+            errorLabel.setForeground(Color.RED);
+            errorLabel.setText("No books found, please try again");
         } else if (results.get(0).equals("-1")) { //illegal author search
+            errorLabel.setForeground(Color.RED);
             errorLabel.setText("Nobody has 4 names!...you fool");
         } else {
             if (results.size() / 11 > 4) {
