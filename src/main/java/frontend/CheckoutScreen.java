@@ -86,7 +86,7 @@ public class CheckoutScreen extends JFrame implements ActionListener {
         ArrayList<Object> userInfo = DatabaseQueries.lookForaUser(username);
         Container c = this.getContentPane();
         // Clear GUI in order to reload
-        this.setPreferredSize(new Dimension(1100, 500));
+        this.setPreferredSize(new Dimension(1150, 550));
         this.setMaximumSize(new Dimension(1100, 500));
         if (this.getJMenuBar() != null) this.getJMenuBar().setVisible(false);
         c.removeAll();
