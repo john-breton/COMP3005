@@ -517,6 +517,40 @@ public class DatabaseQueries {
     }
 
     /**
+     * same as addOrder, execpt generates random timestamp
+     *
+     * @param trackingNumber The tracking number of an order.
+     * @param totalCost The total cost of an order.
+     * @param oneAddress True if there the order has the same billing and shipping address, false otherwise.
+     * @return The order number associated with the order.
+     */
+    public static String addOrderRandom(String trackingNumber, String totalCost, boolean oneAddress) {
+        Date date = new Date();
+        long offset = Timestamp.valueOf("2000-01-01 00:00:00").getTime();
+        long end = Timestamp.valueOf("2020-04-16 00:00:00").getTime();
+        long diff = end - offset + 1;
+        Timestamp rand = new Timestamp(offset + (long)(Math.random() * diff));
+
+        try {
+            ResultSet result;
+            if (oneAddress) {
+                statement.execute("INSERT INTO project.order values (nextval('project.order_order_num_seq'), '" + trackingNumber + "', '" + rand + "', '" + totalCost + "', 'Processing')");
+                statement.execute("INSERT INTO project.ordadd values (currval('project.order_order_num_seq'), currval('project.address_add_id_seq'), true, true)");
+            } else {
+                statement.execute("INSERT INTO project.order values (nextval('project.order_order_num_seq'), '" + trackingNumber + "', '" + rand + "', '" + totalCost + "', 'Processing')");
+                statement.execute("INSERT INTO project.ordadd values (currval('project.order_order_num_seq'), currval('project.address_add_id_seq') - 1, true, false)");
+                statement.execute("INSERT INTO project.ordadd values (currval('project.order_order_num_seq'), currval('project.address_add_id_seq'), false, true)");
+            }
+            result = statement.executeQuery("SELECT * FROM project.order WHERE tracking_num = '" + trackingNumber + "'");
+            result.next();
+            return result.getString("order_num");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
      * Add checout relation
      *
      * @param orderNum the order number

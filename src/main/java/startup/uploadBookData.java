@@ -8,10 +8,15 @@ import com.google.gson.*;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
 import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.sql.*;
 import java.util.Objects;
 import java.util.Random;
+import java.util.stream.Stream;
 
 /**
  * The type Upload book data.
@@ -38,18 +43,18 @@ public class uploadBookData {
             statement = connection.createStatement();
 
             // emptyDB
-           // StringBuilder resetDB = new StringBuilder();
-            //Stream<String> stream = Files.lines(Paths.get("documentation/DDL/COMP 3005 - project - DDL file.txt"), StandardCharsets.UTF_8);
-           // stream.forEach(s -> resetDB.append(s).append("\n"));
-            //statement.executeUpdate(resetDB.toString());
+            StringBuilder resetDB = new StringBuilder();
+            Stream<String> stream = Files.lines(Paths.get("documentation/DDL/COMP 3005 - project - DDL file.txt"), StandardCharsets.UTF_8);
+            stream.forEach(s -> resetDB.append(s).append("\n"));
+            statement.executeUpdate(resetDB.toString());
 
             // add admin
-            //statement.executeUpdate("Insert into project.user values ('" + USER + "', '" + USER + "', 'Post', 'Gres', 'postgres@email.ca');" +
-             //       "insert into project.librarian values ('" + USER + "', 300.00);");
+            statement.executeUpdate("Insert into project.user values ('" + USER + "', '" + USER + "', 'Post', 'Gres', 'postgres@email.ca');" +
+                    "insert into project.librarian values ('" + USER + "', 300.00);");
             // Give them their own cart.
-            //statement.executeUpdate("INSERT INTO project.bask_manage values ('" + USER + "', '1')");
+            statement.executeUpdate("INSERT INTO project.bask_manage values ('" + USER + "', '1')");
 
-        } catch (SQLException e) {
+        } catch (SQLException | IOException e) {
             e.printStackTrace();
         }
 
@@ -62,7 +67,7 @@ public class uploadBookData {
             FileReader file = new FileReader("documentation/bookdata.json");
             JsonArray arr = JsonParser.parseReader(file).getAsJsonArray();
 
-           /* arr.forEach(book -> {
+            arr.forEach(book -> {
                 parseBookObject((JsonObject) book);
 
                 if (titleObject != null && isbnObject != null && pgCntObject != -1 && yearObject != -1 && authorsObject != null &&
@@ -70,7 +75,7 @@ public class uploadBookData {
                     addPublisher(publishersObject);
                     addBook(isbnObject, titleObject, pgCntObject);
                 }
-            });*/
+            });
 
             // populate DB with users + addresses
             for (int i = 0; i < 1000; i++)
@@ -228,7 +233,7 @@ public class uploadBookData {
             int trackingNumber2 = r.nextInt(99999999 - low) + low;
             String trackingNumber = String.valueOf(trackingNumber1) + trackingNumber2;
             // Register the order as completed
-            String orderNumber = DatabaseQueries.addOrder(trackingNumber, String.valueOf(totalPrice), isBilling);
+            String orderNumber = DatabaseQueries.addOrderRandom(trackingNumber, String.valueOf(totalPrice), isBilling);
             DatabaseQueries.addCheckout(orderNumber, Objects.requireNonNull(DatabaseQueries.checkForCart(username)).get(0));
             // Give the user a new cart after their order is done.
             DatabaseQueries.registerCart(username);
