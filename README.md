@@ -2,8 +2,8 @@
 Created for the COMP 3005 course at Carleton University. Winter 2020.
 
 ## Possible TODOs
-- ToolTipText on report screen
-- Polish the report
+- Create SQL documents with appropriate comments
+- Finish the report and submit
 
 ## Current Database Schema
 <p style="text-align:right">
