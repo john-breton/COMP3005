@@ -211,6 +211,58 @@ public class UserScreen extends JFrame implements ActionListener {
     }
 
     /**
+     * Compares the prices contained with two JButtons or "books"
+     *
+     * @param a The first JButton used in the comparision
+     * @param b The second JButton used in the comparision
+     * @return The difference in value between the prices of the first and second JButtons
+     */
+    private static int comparePrice(JButton a, JButton b) {
+        String[] textA = a.getText().split("Price:");
+        String[] textB = b.getText().split("Price:");
+        StringBuilder priceA = new StringBuilder();
+        StringBuilder priceB = new StringBuilder();
+
+        int i = 0;
+        while (textA[1].substring(6).charAt(i) != '<') {
+            priceA.append(textA[1].substring(6).charAt(i));
+            i++;
+        }
+        i = 0;
+        while (textB[1].substring(6).charAt(i) != '<') {
+            priceB.append(textB[1].substring(6).charAt(i));
+            i++;
+        }
+        return (int) (Double.parseDouble(priceA.toString()) - Double.parseDouble(priceB.toString()));
+    }
+
+    /**
+     * Compares the years contained with two JButtons or "books"
+     *
+     * @param a The first JButton used in the comparision
+     * @param b The second JButton used in the comparision
+     * @return The difference in value between the years of the first and second JButtons
+     */
+    private static int compareYear(JButton a, JButton b) {
+        String[] textA = a.getText().split("Year:");
+        String[] textB = b.getText().split("Year:");
+        StringBuilder yearA = new StringBuilder();
+        StringBuilder yearB = new StringBuilder();
+
+        int i = 0;
+        while (textA[1].substring(5).charAt(i) != '<') {
+            yearA.append(textA[1].substring(5).charAt(i));
+            i++;
+        }
+        i = 0;
+        while (textB[1].substring(5).charAt(i) != '<') {
+            yearB.append(textB[1].substring(5).charAt(i));
+            i++;
+        }
+        return (Integer.parseInt(yearA.toString()) - Integer.parseInt(yearB.toString()));
+    }
+
+    /**
      * Sort the results returned by a search based on the search filter.
      */
     private void sort() {
@@ -219,42 +271,8 @@ public class UserScreen extends JFrame implements ActionListener {
             searchResult.removeAll();
             // Get the filter we want to sort by
             switch (Objects.requireNonNull(resultFilters.getSelectedItem()).toString()) {
-                case "Price: High to Low" -> bookButtons.sort(Collections.reverseOrder((a, b) -> {
-                    String[] textA = a.getText().split("Price:");
-                    String[] textB = b.getText().split("Price:");
-                    StringBuilder priceA = new StringBuilder();
-                    StringBuilder priceB = new StringBuilder();
-
-                    int i = 0;
-                    while (textA[1].substring(6).charAt(i) != '<') {
-                        priceA.append(textA[1].substring(6).charAt(i));
-                        i++;
-                    }
-                    i = 0;
-                    while (textB[1].substring(6).charAt(i) != '<') {
-                        priceB.append(textB[1].substring(6).charAt(i));
-                        i++;
-                    }
-                    return (int) (Double.parseDouble(priceA.toString()) - Double.parseDouble(priceB.toString()));
-                }));
-                case "Price: Low to High" -> bookButtons.sort((a, b) -> {
-                    String[] textA = a.getText().split("Price:");
-                    String[] textB = b.getText().split("Price:");
-                    StringBuilder priceA = new StringBuilder();
-                    StringBuilder priceB = new StringBuilder();
-
-                    int i = 0;
-                    while (textA[1].substring(6).charAt(i) != '<') {
-                        priceA.append(textA[1].substring(6).charAt(i));
-                        i++;
-                    }
-                    i = 0;
-                    while (textB[1].substring(6).charAt(i) != '<') {
-                        priceB.append(textB[1].substring(6).charAt(i));
-                        i++;
-                    }
-                    return (int) (Double.parseDouble(priceA.toString()) - Double.parseDouble(priceB.toString()));
-                });
+                case "Price: High to Low" -> bookButtons.sort(Collections.reverseOrder(UserScreen::comparePrice));
+                case "Price: Low to High" -> bookButtons.sort(UserScreen::comparePrice);
                 case "Title: A-Z" -> bookButtons.sort((a, b) -> {
                     String[] textA = a.getText().split("Title");
                     String[] textB = b.getText().split("Title");
@@ -265,42 +283,8 @@ public class UserScreen extends JFrame implements ActionListener {
                     String[] textB = b.getText().split("Title");
                     return textA[1].compareTo(textB[1]);
                 }));
-                case "Year: High to Low" -> bookButtons.sort(Collections.reverseOrder((a, b) -> {
-                    String[] textA = a.getText().split("Year:");
-                    String[] textB = b.getText().split("Year:");
-                    StringBuilder yearA = new StringBuilder();
-                    StringBuilder yearB = new StringBuilder();
-
-                    int i = 0;
-                    while (textA[1].substring(5).charAt(i) != '<') {
-                        yearA.append(textA[1].substring(5).charAt(i));
-                        i++;
-                    }
-                    i = 0;
-                    while (textB[1].substring(5).charAt(i) != '<') {
-                        yearB.append(textB[1].substring(5).charAt(i));
-                        i++;
-                    }
-                    return (Integer.parseInt(yearA.toString()) - Integer.parseInt(yearB.toString()));
-                }));
-                case "Year: Low to High" -> bookButtons.sort((a, b) -> {
-                    String[] textA = a.getText().split("Year:");
-                    String[] textB = b.getText().split("Year:");
-                    StringBuilder yearA = new StringBuilder();
-                    StringBuilder yearB = new StringBuilder();
-
-                    int i = 0;
-                    while (textA[1].substring(5).charAt(i) != '<') {
-                        yearA.append(textA[1].substring(5).charAt(i));
-                        i++;
-                    }
-                    i = 0;
-                    while (textB[1].substring(5).charAt(i) != '<') {
-                        yearB.append(textB[1].substring(5).charAt(i));
-                        i++;
-                    }
-                    return (Integer.parseInt(yearA.toString()) - Integer.parseInt(yearB.toString()));
-                });
+                case "Year: High to Low" -> bookButtons.sort(Collections.reverseOrder(UserScreen::compareYear));
+                case "Year: Low to High" -> bookButtons.sort(UserScreen::compareYear);
             }
             for (JButton btn : bookButtons) {
                 btn.setToolTipText("Click to add to the cart");

@@ -22,10 +22,10 @@ import java.util.stream.Stream;
  * The type Upload book data.
  */
 @SuppressWarnings("JavaDoc")
-public class uploadBookData {
+public class UploadBookData {
 
-    private static final String DATABASE = "LookInnaBook";
-    private static final String USER = "ryan";
+    private static final String DATABASE = "lookinnabook";
+    private static final String USER = "postgres";
     static String titleObject;
     static BigInteger isbnObject;
     static JsonArray authorsObject;
@@ -58,11 +58,11 @@ public class uploadBookData {
             e.printStackTrace();
         }
 
-        new uploadBookData();
+        new UploadBookData();
         System.out.println("Database has been updated");
     }
 
-    public uploadBookData() {
+    public UploadBookData() {
         try {
             FileReader file = new FileReader("documentation/bookdata.json");
             JsonArray arr = JsonParser.parseReader(file).getAsJsonArray();

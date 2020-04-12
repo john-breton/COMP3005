@@ -1865,7 +1865,7 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
     /**
      * Confirms the admin wants to exit the admin view
      */
-    private void confirmDelete(String option) {
+    private void confirmDelete() {
         JButton cancelButton = FrontEndUtilities.formatButton("Cancel");
         cancelButton.setToolTipText("Cancel the deletion");
         JButton deleteButton = FrontEndUtilities.formatButton("Delete");
@@ -1873,10 +1873,7 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
 
         Object[] options = {deleteButton, cancelButton};
         final JOptionPane screenChoice = new JOptionPane("", JOptionPane.PLAIN_MESSAGE, JOptionPane.YES_NO_OPTION, null, options, options[1]);
-        if (option.equals("user"))
-            screenChoice.setMessage("Are you sure you wish to delete " + currentUserNameLabel.getText() + "?\nThis cannot be reversed.");
-        if (option.equals("book"))
-            screenChoice.setMessage("Are you sure you wish to delete " + currentISBNLabel.getText() + "?\nThis cannot be reversed.");
+        screenChoice.setMessage("Are you sure you wish to delete " + currentISBNLabel.getText() + "?\nThis cannot be reversed.");
         screenChoice.setIcon(FrontEndUtilities.WINDOW_ICON);
         final JDialog dialog = screenChoice.createDialog("Admin");
         dialog.setContentPane(screenChoice);
@@ -1954,7 +1951,7 @@ public class AdminScreen extends JFrame implements ActionListener, ChangeListene
                         confirmAdminReg.setText("New User Added");
                     }
                 } // Admin Add User Screen
-                case "Delete Book" -> confirmDelete("book"); // Admin Screen
+                case "Delete Book" -> confirmDelete(); // Admin Screen
                 case "Update Order" -> {
                     if (AdminScreenUtilities.sendOrderDetails()) {
                         defaultAdminViewFields();

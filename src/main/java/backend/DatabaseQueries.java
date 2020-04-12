@@ -19,8 +19,8 @@ import java.util.Date;
 public class DatabaseQueries {
 
     // Just putting this here so we can change it when we test.
-    private static final String USER = "ryan";
-    private static final String DATABASE = "LookInnaBook";
+    private static final String USER = "postgres";
+    private static final String DATABASE = "lookinnabook";
     public static Connection connection;
     public static Statement statement;
 
@@ -213,8 +213,7 @@ public class DatabaseQueries {
     }
 
     /**
-     * Pretty sure this searches for a book. I mean I hope that's what it does because that's what I'm using it for.
-     * TODO Expand options to allow searches to be conducted using different parameters. Maybe a switch and a mode variable can be used?
+     * Searches for a book in the database. The search will execute using the passed searchType and will look for entries matching the searchText.
      *
      * @param searchText The searchText to be used in the search.
      * @param searchType The type of search being performed. Can be
@@ -303,10 +302,10 @@ public class DatabaseQueries {
                     } else {
                         bookInfo.add("-1"); // searching for more than 3 names?
                     }
-                } // search authors
+                } // search genres
                 case "name" -> {
                     String isbn;
-                    result = statement.executeQuery(String.format("SELECT * FROM project.hasgenre WHERE name = '%s'", searchText));
+                    result = statement.executeQuery("SELECT * FROM project.hasgenre WHERE name LIKE '%" + searchText + "%'");
                     while (result.next()) {
                         isbn = result.getString("isbn");
                         statement = connection.createStatement();
@@ -328,9 +327,14 @@ public class DatabaseQueries {
                         }
                     }
 
-                } // search genres
+                } // search for anything else
                 default -> {
-                    result = statement.executeQuery(String.format("SELECT * FROM project.book natural join project.publishes WHERE " + searchType + " = '%s'", searchText));
+                    if (searchType.equals("isbn") || searchType.equals("year")) {
+                        result = statement.executeQuery(String.format("SELECT * FROM project.book natural join project.publishes WHERE %s = %s", searchType, searchText));
+                    } else {
+                        result = statement.executeQuery("SELECT * FROM project.book natural join project.publishes WHERE " + searchType + " LIKE '%" + searchText + "%'");
+                    }
+
                     String isbn;
                     while (result.next()) {
                         isbn = result.getString("isbn");
@@ -525,7 +529,6 @@ public class DatabaseQueries {
      * @return The order number associated with the order.
      */
     public static String addOrderRandom(String trackingNumber, String totalCost, boolean oneAddress) {
-        Date date = new Date();
         long offset = Timestamp.valueOf("2000-01-01 00:00:00").getTime();
         long end = Timestamp.valueOf("2020-04-16 00:00:00").getTime();
         long diff = end - offset + 1;
@@ -551,7 +554,7 @@ public class DatabaseQueries {
     }
 
     /**
-     * Add checout relation
+     * Add checkout relation
      *
      * @param orderNum the order number
      * @param basketID the basket id
@@ -1029,22 +1032,6 @@ public class DatabaseQueries {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-    }
-
-    /**
-     * Counts the number of addresses currently in the database.
-     *
-     * @return The total number of addresses currently stored, as an int.
-     */
-    public static int countAddresses() {
-        try {
-            ResultSet result = statement.executeQuery("SELECT COUNT(*) from project.address");
-            result.next();
-            return Integer.parseInt(result.getString("count"));
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return -1;
     }
 
 }

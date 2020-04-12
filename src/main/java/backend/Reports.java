@@ -39,7 +39,7 @@ public class Reports {
         final String column3 = "Total Revenue";
         final String column4 = "Total Cost";
         final String column5 = "Total Profit";
-        Vector<Vector<java.io.Serializable>> data = new Vector<Vector<java.io.Serializable>>();
+        Vector<Vector<java.io.Serializable>> data = new Vector<>();
 
         switch (timeInter) {
             case "Year" -> timeInter = "1 year";
@@ -68,7 +68,7 @@ public class Reports {
             columnNames.add(column5);
 
             while (rs.next()) {
-                Vector<java.io.Serializable> row = new Vector<java.io.Serializable>();
+                Vector<java.io.Serializable> row = new Vector<>();
                 row.add(rs.getString("name"));
                 row.add(rs.getString("quantity"));
                 row.add(rs.getDouble("revenue"));
@@ -98,7 +98,7 @@ public class Reports {
         final String column3 = "Total Revenue";
         final String column4 = "Total Cost";
         final String column5 = "Total Profit";
-        Vector<Vector<java.io.Serializable>> data = new Vector<Vector<java.io.Serializable>>();
+        Vector<Vector<java.io.Serializable>> data = new Vector<>();
 
         switch (timeInter) {
             case "Year" -> timeInter = "1 year";
@@ -127,7 +127,7 @@ public class Reports {
             columnNames.add(column5);
 
             while (rs.next()) {
-                Vector<java.io.Serializable> row = new Vector<java.io.Serializable>();
+                Vector<java.io.Serializable> row = new Vector<>();
                 row.add(rs.getString("name"));
                 row.add(rs.getString("quantity"));
                 row.add(rs.getDouble("revenue"));
@@ -157,7 +157,7 @@ public class Reports {
         final String column3 = "Total Revenue";
         final String column4 = "Total Cost";
         final String column5 = "Total Profit";
-        Vector<Vector<java.io.Serializable>> data = new Vector<Vector<java.io.Serializable>>();
+        Vector<Vector<java.io.Serializable>> data = new Vector<>();
 
         switch (timeInter) {
             case "Year" -> timeInter = "1 year";
@@ -186,7 +186,7 @@ public class Reports {
             columnNames.add(column5);
 
             while (rs.next()) {
-                Vector<java.io.Serializable> row = new Vector<java.io.Serializable>();
+                Vector<java.io.Serializable> row = new Vector<>();
                 row.add(rs.getString("name"));
                 row.add(rs.getString("quantity"));
                 row.add(rs.getDouble("revenue"));
@@ -217,7 +217,7 @@ public class Reports {
         final String column3 = "Total Revenue";
         final String column4 = "Total Cost";
         final String column5 = "Total Profit";
-        Vector<Vector<java.io.Serializable>> data = new Vector<Vector<java.io.Serializable>>();
+        Vector<Vector<java.io.Serializable>> data = new Vector<>();
         String sortDate;
         int datePart = 0;
 
@@ -253,7 +253,7 @@ public class Reports {
             columnNames.add(column5);
 
             while (rs.next()) {
-                Vector<java.io.Serializable> row = new Vector<java.io.Serializable>();
+                Vector<java.io.Serializable> row = new Vector<>();
                 row.add(rs.getString("time").substring(0, 10 - datePart));
                 row.add(rs.getString("quantity"));
                 row.add(rs.getDouble("revenue"));

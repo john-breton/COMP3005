@@ -45,9 +45,6 @@ public class CheckoutScreen extends JFrame implements ActionListener {
     // JLabels
     private final JTextField checkoutErrorLabel = new JTextField("");
 
-    // JPanels
-    private final JPanel cart = new JPanel(new GridLayout(1, 1));
-
     // Current username
     private final String username;
     // Cost of order
@@ -65,6 +62,8 @@ public class CheckoutScreen extends JFrame implements ActionListener {
         cartPanel.setLayout(new BorderLayout());
         cartLabel.setAlignmentX(JPanel.LEFT_ALIGNMENT);
         cartPanel.add(cartLabel, BorderLayout.PAGE_START);
+        // JPanels
+        JPanel cart = new JPanel(new GridLayout(1, 1));
         JScrollPane currentCart = new JScrollPane(cart,
                 JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
                 JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
